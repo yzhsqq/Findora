@@ -11,7 +11,6 @@
 from __future__ import annotations
 
 import json
-import fcntl
 import os
 import tempfile
 from contextlib import contextmanager
@@ -19,6 +18,24 @@ import hashlib
 import logging
 from pathlib import Path
 from typing import Optional
+
+try:
+    import fcntl
+except ImportError:  # pragma: no cover - Windows compatibility
+    import portalocker
+
+    class _FcntlCompat:
+        LOCK_EX = portalocker.LOCK_EX
+        LOCK_UN = portalocker.LOCK_UN
+
+        @staticmethod
+        def flock(stream, operation):
+            if operation == portalocker.LOCK_UN:
+                portalocker.unlock(stream)
+            else:
+                portalocker.lock(stream, operation)
+
+    fcntl = _FcntlCompat()
 
 from app.domain.buyer.preference import BuyerPreference, PreferenceStore
 from app.domain.session.ports.conversation_store import (
