@@ -23,6 +23,14 @@ python scripts/sync_cj_catalog.py --phase stock --max-stock 500 --max-points 500
 - `warehouseInventoryNum` 表示 CJ 仓库库存，不能据此断言某个目的国可配送或成交时仍有货；`sellPrice` 是 CJ 的美元商品报价，**不是含运费与税的到手价**。实际下单前要重新查询库存和物流报价。
 - 采集是一次快照，不代表实时同步。后续接入 Agent 时，应将 CJ 视为单一供应商，保留来源与采集时间，建立状态更新与语义更新的分离流程，再做向量增量索引。
 
+## 网页与 Agent 使用快照
+
+在 `.env` 增加 `CATALOG_SOURCE=cj` 并重启 API。网页会显示「CJ 商品库」入口，商品卡和 Agent 检索均从 `data/cj_catalog.sqlite3` 读取；原有冻结模拟目录不会混入当前检索。可以用 `GET /commerce/catalog?page=1&page_size=24&query=backpack` 验证。
+
+CJ 模式当前使用 SQLite 标题关键词检索，**不会在服务启动或每次搜索时对 1 万件商品向量化**。这是为了先让真实数据源可浏览，并避免把未核实的物流与库存当作交易事实；后续若要接入向量检索，应在语义字段变化时做增量索引。
+
+采集程序可继续向同一个 SQLite 快照写入新详情；网页下一次请求即可读到最新已提交记录。列表价是 USD 参考价或区间；未查到详情的商品没有可售 SKU，库存快照也不等于实时可售。CJ 商品当前只支持浏览、收藏、比较和咨询，不支持站内下单意向或计算到手价。
+
 查看采集进度：
 
 ```powershell

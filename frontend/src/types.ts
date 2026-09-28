@@ -44,6 +44,7 @@ export interface ProductCard {
     price_major: number;
     currency: string;
     stock: number;
+    stock_known?: boolean;
   }[];
   score: number;
   landed_price?: LandedPrice;
@@ -55,7 +56,7 @@ export interface ProductCard {
   updated_at?: string;
   default_sku_id?: string;
   image_url?: string | null;
-  image_kind?: "illustration" | "placeholder";
+  image_kind?: "illustration" | "placeholder" | "source";
   image_alt?: string;
   source_platform?: string;
   source_price_major?: number;
@@ -63,6 +64,11 @@ export interface ProductCard {
   canonical_product_id?: string;
   material_tags?: string[];
   weight_kg?: number;
+  price_text?: string;
+  price_kind?: "range" | "listing" | "unknown";
+  stock_known?: boolean;
+  inventory_checked_at?: string | null;
+  detail_available?: boolean;
 }
 
 export interface DecisionRequest {
@@ -102,6 +108,7 @@ export interface DecisionCandidate {
 
 export interface DecisionReport {
   version: 2;
+  catalog_source?: "cj" | "fixture";
   request: DecisionRequest;
   status: "ready" | "no_match";
   candidates: DecisionCandidate[];

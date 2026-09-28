@@ -27,11 +27,11 @@ export default function ProductComparison({
           </thead>
           <tbody>
             <tr>
-              <td>商品价</td>
+              <td>商品报价</td>
               {products.map((p) => (
                 <td key={p.product_id}>
                   <span className="compare-price">
-                    {money(p.price_major, p.currency)}
+                    {p.price_text || money(p.price_major, p.currency)}
                   </span>
                 </td>
               ))}
@@ -41,7 +41,7 @@ export default function ProductComparison({
               {products.map((p) => (
                 <td key={p.product_id}>
                   {p.skus.find((sku) => sku.sku_id === p.default_sku_id)
-                    ?.spec || "目录默认规格"}
+                    ?.spec || (p.source_platform === "CJdropshipping" ? "规格未核验" : "目录默认规格")}
                 </td>
               ))}
             </tr>

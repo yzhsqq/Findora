@@ -130,6 +130,40 @@ def build_decision_report(result: dict, *, budget_basis: str = "product") -> dic
                 "evidence": {"kind": kind, "ref": ref, "field": field, "observed_at": observed_at},
             })
 
+        if card.get("source_platform") == "CJdropshipping":
+            # CJ list data identifies a product and quotes a price. It does not
+            # establish a sellable SKU, destination shipping or landed cost.
+            check("product_id", "商品来源", "CJdropshipping 商品快照", kind="cj_snapshot")
+            price = _amount(card.get("price_major"))
+            price_kind = _string(card.get("price_kind"))
+            if price is not None and price_kind != "unknown":
+                check("price_text", "列表报价", _string(card.get("price_text")) + " USD；非最终结算价", kind="cj_snapshot")
+            else:
+                unknowns.append("CJ 列表报价缺失")
+            check("skus.stock", "可售库存", "库存快照不能替代下单时的实时确认", kind="cj_snapshot", known=False)
+            check("ships_to", "配送目的地", "尚未查询目的地运费与可配送范围", kind="cj_snapshot", known=False)
+            unknowns.extend(["实时可售库存未确认", "目的地配送和运费未确认", "到手价未确认"])
+            if request["required_material_tags"] or request["excluded_material_tags"]:
+                unknowns.append("材质条件尚未核验")
+            if cap is not None:
+                if (request["target_currency"] == "USD" and basis == "product"
+                        and price is not None and price_kind != "unknown" and price > cap):
+                    reject(f"CJ 列表起价 {price:g} USD 已超出预算 {cap:g} USD")
+                    continue
+                check("price_max_major", "预算", "报价币种、规格或到手价条件不足，不能核验预算", kind="cj_snapshot", known=False)
+                unknowns.append("预算是否满足尚未核验")
+            if request["category"] and _string(card.get("category")) not in {request["category"], ""}:
+                unknowns.append("CJ 品类与请求品类采用不同分类体系，需人工核对")
+            if not ref:
+                unknowns.append("检索证据引用缺失")
+            if len(candidates) < _MAX_CANDIDATES:
+                candidates.append({
+                    "product": deepcopy(card), "sku_id": _string(card.get("default_sku_id")),
+                    "checks": checks, "reasons": ["来自 CJdropshipping 商品快照"],
+                    "tradeoffs": ["列表报价与具体规格售价可能不同"], "unknowns": unknowns,
+                })
+            continue
+
         sku_id = _string(card.get("default_sku_id"))
         skus = card.get("skus")
         sku = next((item for item in skus if isinstance(item, dict) and item.get("sku_id") == sku_id), None) if isinstance(skus, list) else None
@@ -239,6 +273,9 @@ def build_decision_report(result: dict, *, budget_basis: str = "product") -> dic
 
     return {
         "version": 2, "request": request,
+        "catalog_source": "cj" if result.get("source") == "cj" or any(
+            isinstance(hit, dict) and hit.get("source_platform") == "CJdropshipping" for hit in hits
+        ) else "fixture",
         "status": "ready" if candidates else "no_match",
         "candidates": candidates, "excluded": excluded,
         "evidence_refs": refs,

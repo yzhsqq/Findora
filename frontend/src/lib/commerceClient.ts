@@ -146,6 +146,7 @@ export function readProducts(value: unknown): ProductCard[] {
         price_major: sku.price_major,
         currency: sku.currency,
         stock: sku.stock,
+        ...(typeof sku.stock_known === "boolean" ? { stock_known: sku.stock_known } : {}),
       });
     }
     const card: ProductCard = {
@@ -167,13 +168,18 @@ export function readProducts(value: unknown): ProductCard[] {
       "image_alt",
       "source_platform",
       "canonical_product_id",
+      "price_text",
     ] as const) {
       if (typeof item[key] === "string") card[key] = item[key];
     }
     if (item.image_url === null || typeof item.image_url === "string")
       card.image_url = item.image_url;
-    if (item.image_kind === "illustration" || item.image_kind === "placeholder")
+    if (item.image_kind === "illustration" || item.image_kind === "placeholder" || item.image_kind === "source")
       card.image_kind = item.image_kind;
+    if (item.price_kind === "range" || item.price_kind === "listing" || item.price_kind === "unknown") card.price_kind = item.price_kind;
+    if (typeof item.stock_known === "boolean") card.stock_known = item.stock_known;
+    if (typeof item.detail_available === "boolean") card.detail_available = item.detail_available;
+    if (typeof item.inventory_checked_at === "string" || item.inventory_checked_at === null) card.inventory_checked_at = item.inventory_checked_at;
     if (typeof item.rating_is_live === "boolean")
       card.rating_is_live = item.rating_is_live;
     if (item.rating_summary === null) card.rating_summary = null;

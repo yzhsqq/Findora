@@ -92,12 +92,12 @@ function ProductCards({
               <span className="visual-caption">
                 {product.image_kind === "illustration"
                   ? "商品示意图 · 非实物照片"
-                  : "商品图片待补充"}
+                  : product.image_kind === "source" ? "CJ 商品图片" : "商品图片待补充"}
               </span>
             </div>
             <div className="product-body">
               <div className="product-topline">
-                <span>{product.brand || "精选商品"}</span>
+                <span>{product.brand || (product.source_platform === "CJdropshipping" ? "CJdropshipping" : "精选商品")}</span>
                 {rating && (
                   <span className="rating">
                     <i>★</i> {rating.average.toFixed(1)}{" "}
@@ -116,9 +116,9 @@ function ProductCards({
               </div>
               <div className="product-price-row">
                 <div className="price">
-                  {money(product.price_major, product.currency)}
+                  {product.price_text || money(product.price_major, product.currency)}
                 </div>
-                <span className="price-kind">商品价</span>
+                <span className="price-kind">{product.source_platform === "CJdropshipping" ? "CJ 列表参考价" : "商品价"}</span>
               </div>
               {landed &&
               !landed.unavailable_reason &&
@@ -129,7 +129,7 @@ function ProductCards({
                 </div>
               ) : (
                 <div className="card-landed pending">
-                  到手价待目的地与规格确认
+                  {product.source_platform === "CJdropshipping" ? "运费、配送范围与到手价待核实" : "到手价待目的地与规格确认"}
                 </div>
               )}
               <div className="product-footer">

@@ -80,6 +80,7 @@ export function readDecisionReport(value: unknown): DecisionReport | null {
       : []);
   return {
     version: 2,
+    catalog_source: value.catalog_source === "cj" ? "cj" : "fixture",
     request,
     status: value.status,
     candidates,

@@ -35,23 +35,23 @@ export default function ProductDetail({
         <span className="visual-caption">
           {product.image_kind === "illustration"
             ? "商品示意图 · 非实物照片"
-            : "暂无商品实拍"}
+            : product.image_kind === "source" ? "CJ 商品图片" : "暂无商品实拍"}
         </span>
       </div>
       <div className="drawer-kicker">
-        {product.brand} · {product.product_id}
+        {product.brand || product.source_platform || "商品目录"} · {product.product_id}
       </div>
       <h2>{product.title}</h2>
       <p className="drawer-description">
         {product.description || product.highlights.join("；")}
       </p>
       <div className="price">
-        {money(
+        {product.source_platform === "CJdropshipping" && !sku ? product.price_text || "报价待核实" : money(
           sku?.price_major ?? product.price_major,
           sku?.currency ?? product.currency,
         )}
       </div>
-      <span className="detail-price-kind">当前规格商品价</span>
+      <span className="detail-price-kind">{product.source_platform === "CJdropshipping" ? sku ? "CJ 规格参考价" : "CJ 列表参考价" : "当前规格商品价"}</span>
       {product.skus.length > 0 && (
         <fieldset className="sku-picker">
           <legend>选择规格</legend>
@@ -69,7 +69,7 @@ export default function ProductDetail({
               />
               <span>{item.spec}</span>
               <small>
-                {item.stock > 0 ? `目录库存 ${item.stock}` : "目录暂无库存"}
+                {product.source_platform === "CJdropshipping" && !item.stock_known ? "库存未核验" : item.stock > 0 ? `快照库存 ${item.stock}` : "目录暂无库存"}
               </small>
             </label>
           ))}
@@ -125,29 +125,31 @@ export default function ProductDetail({
             : landed?.unavailable_reason || "到手价待目的地与规格确认。"}
         </p>
       )}
-      <p className="drawer-note">
-        价格、库存为目录查询结果，购买前需要再次核对。图片与评分如标注为示意或样例，不代表实时平台信息。
-      </p>
+      <p className="drawer-note">{product.source_platform === "CJdropshipping"
+        ? "商品来自 CJ 快照。列表报价、规格价与库存记录可能滞后；配送范围、运费和最终价格尚未核实，当前不支持直接下单。"
+        : "价格、库存为目录查询结果，购买前需要再次核对。图片与评分如标注为示意或样例，不代表实时平台信息。"}</p>
       <button
         className="primary-button"
         disabled={busy}
         onClick={() => {
           onAsk(
-            `请进一步核对「${product.title}」（product_id=${product.product_id}${sku ? `，sku_id=${sku.sku_id}，规格=${sku.spec}` : ""}）的当前库存与到手价。`,
+            product.source_platform === "CJdropshipping"
+              ? `请根据 CJ 商品快照介绍「${product.title}」（product_id=${product.product_id}${sku ? `，sku_id=${sku.sku_id}，规格=${sku.spec}` : ""}）。明确区分已知的列表报价和未知的实时库存、目的地配送、运费及到手价，不要把未知项当成已确认。`
+              : `请进一步核对「${product.title}」（product_id=${product.product_id}${sku ? `，sku_id=${sku.sku_id}，规格=${sku.spec}` : ""}）的当前库存与到手价。`,
           );
           onClose();
         }}
       >
         <Icon name="chat" />
-        {busy ? "正在处理上一条需求" : "帮我进一步确认这款"}
+        {busy ? "正在处理上一条需求" : product.source_platform === "CJdropshipping" ? "继续了解这款" : "帮我进一步确认这款"}
       </button>
-      <button
+      {product.source_platform !== "CJdropshipping" && <button
         className="drawer-compare"
         disabled={busy || !sku || sku.stock <= 0}
         onClick={() => sku && onPrepare(product, sku.sku_id)}
       >
         准备下单意向
-      </button>
+      </button>}
       <button
         className="drawer-compare"
         onClick={() =>

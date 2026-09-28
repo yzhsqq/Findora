@@ -17,9 +17,10 @@ import SkillQueryInput from "./components/SkillQueryInput";
 import MyOrders from "./components/MyOrders";
 import BuyerWorkspace from "./components/BuyerWorkspace";
 import DecisionWorkbench from "./components/DecisionWorkbench";
+import CjCatalogPage from "./components/CjCatalogPage";
 import { skillQueryDraft, submitSkillQuery } from "./lib/skills";
 
-type View = "shopping" | "history" | "favorites" | "skills" | "preferences" | "orders";
+type View = "shopping" | "catalog" | "history" | "favorites" | "skills" | "preferences" | "orders";
 const STARTERS = [
   "预算300元以内，找一个轻便的周末旅行背包，寄到中国。",
   "想买日常通勤耳机，帮我理一理选购思路。",
@@ -29,7 +30,7 @@ const VIEW_KEY = "globex.workspace.view";
 function readView(): View {
   try {
     const saved = sessionStorage.getItem(VIEW_KEY);
-    if (saved && ["shopping", "history", "favorites", "skills", "preferences", "orders"].includes(saved))
+    if (saved && ["shopping", "catalog", "history", "favorites", "skills", "preferences", "orders"].includes(saved))
       return saved as View;
   } catch { /* 存储受限时使用首页。 */ }
   return "shopping";
@@ -37,12 +38,14 @@ function readView(): View {
 export default function App() {
   const agent = useCommerceAgent();
   const [selectedSkill, setSelectedSkill] = useState<PublishedSkill | null>(null);
+  const [catalogSource, setCatalogSource] = useState<"cj" | "fixture" | null>(null);
   const [planPickerOpen, setPlanPickerOpen] = useState(false);
   const [slashMenuOpen, setSlashMenuOpen] = useState(false);
   const [view, setView] = useState<View>(readView),
     [input, setInput] = useState("");
   const [favorites, setFavorites] = useState<ProductCard[]>([]),
     [compared, setCompared] = useState<ProductCard[]>([]);
+  const visibleFavorites = catalogSource === "cj" ? favorites.filter(product => product.source_platform === "CJdropshipping") : favorites;
   const [detail, setDetail] = useState<ProductCard | null>(null),
     [showCompare, setShowCompare] = useState(false),
     [toast, setToast] = useState("");
@@ -57,11 +60,21 @@ export default function App() {
   useEffect(() => {
     try { sessionStorage.setItem(VIEW_KEY, view); } catch {}
   }, [view]);
+  useEffect(() => {
+    let active = true;
+    void agent.workspaceRequest("/catalog?page_size=1").then(data => {
+      if (!active) return;
+      const source = data.source === "cj" ? "cj" : "fixture";
+      setCatalogSource(source);
+      if (source === "cj" && readView() === "shopping") setView("catalog");
+    }).catch(() => {});
+    return () => { active = false; };
+  }, [agent.workspaceRequest]);
   const [contextBusy,setContextBusy] = useState(false);
   const busy = agent.status === "running" || contextBusy;
   const favoriteIds = useMemo(
-    () => new Set(favorites.map((p) => p.product_id)),
-    [favorites],
+    () => new Set(visibleFavorites.map((p) => p.product_id)),
+    [visibleFavorites],
   );
   const comparedIds = useMemo(
     () => new Set(compared.map((p) => p.product_id)),
@@ -284,6 +297,7 @@ export default function App() {
   );
   const navItems: { id: View; label: string; icon: string }[] = [
     { id: "shopping", label: "我的选购", icon: "bag" },
+    ...(catalogSource === "cj" ? [{ id: "catalog" as View, label: "CJ 商品库", icon: "globe" }] : []),
     { id: "orders", label: "我的订单", icon: "bag" },
     { id: "history", label: "对话历史", icon: "chat" },
     { id: "favorites", label: "心选收藏", icon: "heart" },
@@ -320,7 +334,7 @@ export default function App() {
               <Icon name={item.icon} />
               {item.label}
               {item.id === "favorites" && (
-                <span className="nav-count">{favorites.length}</span>
+                <span className="nav-count">{visibleFavorites.length}</span>
               )}
             </button>
           ))}
@@ -366,7 +380,7 @@ export default function App() {
               <span>环球好物</span>
               <span>／</span>
               <span>
-                {view === "orders" ? "我的订单" : view === "skills" ? "我的 Skill" : view === "preferences" ? "长期偏好" : view === "history"
+                {view === "catalog" ? "CJ 商品库" : view === "orders" ? "我的订单" : view === "skills" ? "我的 Skill" : view === "preferences" ? "长期偏好" : view === "history"
                   ? "选购对话历史"
                   : view === "favorites"
                     ? "心选收藏"
@@ -404,6 +418,7 @@ export default function App() {
           {view === "orders" && <MyOrders request={agent.workspaceRequest} confirmations={agent.confirmations} busy={agent.confirmationBusy || busy} error={agent.confirmationError} onPrepare={agent.prepareCancel} onResolve={agent.resolveConfirmation} onRefresh={agent.refreshConfirmations} />}
           {(view === "skills" || view === "preferences") && <BuyerWorkspace key={view} mode={view} busy={busy}
             request={agent.workspaceRequest} onSkillsChanged={agent.refreshSkills} />}
+          {view === "catalog" && catalogSource === "cj" && <CjCatalogPage request={agent.workspaceRequest} favoriteIds={favoriteIds} comparedIds={comparedIds} onFavorite={toggleFavorite} onCompare={toggleCompare} onDetail={setDetail} />}
           {view === "shopping" && (
             <>
               <section className="hero">
@@ -631,8 +646,8 @@ export default function App() {
               <p className="library-description">
                 收藏已保存到当前用户，刷新或更换浏览器后仍可查看。以下是上次查看的商品信息，价格与库存请重新查询确认。
               </p>
-              {favorites.length ? (
-                renderCards(favorites)
+              {visibleFavorites.length ? (
+                renderCards(visibleFavorites)
               ) : (
                 <section className="empty-state">
                   <Icon name="heart" />

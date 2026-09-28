@@ -44,6 +44,7 @@ from app.infrastructure.eventbus import TradeEventBus
 from app.infrastructure.persistence.in_memory_repositories import (
     InMemoryProductRepository,
 )
+from app.infrastructure.persistence.cj_catalog import CJCatalog
 from app.infrastructure.persistence.json_file_stores import (
     JsonFileConversationStore,
     JsonFilePreferenceStore,
@@ -145,13 +146,16 @@ class Container:
                 await self.task_queue.ensure_group()
             except Exception as err:  # noqa: BLE001
                 logger.warning("队列消费者组创建失败：%s", err)
-        index_ready = await bootstrap_product_index(
-            self.product_repo, self.embedder, self.vector_index,
-            self.settings.embedding_model, self.settings.embedding_dim,
-        )
-        self.runtime["product_index"] = "ready" if index_ready else "unavailable"
-        if not index_ready and self.catalog_search is not None:
-            self.catalog_search.disable_vector_recall()
+        if self.settings.catalog_source == "cj":
+            self.runtime["product_index"] = "unused_for_cj_snapshot"
+        else:
+            index_ready = await bootstrap_product_index(
+                self.product_repo, self.embedder, self.vector_index,
+                self.settings.embedding_model, self.settings.embedding_dim,
+            )
+            self.runtime["product_index"] = "ready" if index_ready else "unavailable"
+            if not index_ready and self.catalog_search is not None:
+                self.catalog_search.disable_vector_recall()
         await bootstrap_category_knowledge(self.knowledge_base)
 
     async def shutdown(self) -> None:
@@ -181,7 +185,11 @@ async def build_container() -> Container:
     setup_tracing(settings)
 
     # ---- Infrastructure ----
-    product_repo = InMemoryProductRepository()
+    if settings.catalog_source not in {"fixture", "cj"}:
+        raise ValueError("CATALOG_SOURCE 仅支持 fixture 或 cj")
+    if settings.catalog_source == "cj" and not (settings.data_dir / "cj_catalog.sqlite3").is_file():
+        raise RuntimeError("CJ 商品快照不存在，请先运行 scripts/sync_cj_catalog.py")
+    product_repo = InMemoryProductRepository([] if settings.catalog_source == "cj" else None)
     bus = TradeEventBus()
     vector_index = QdrantProductIndex(settings)
     reranker = HttpReranker(settings) if settings.reranker_base_url else None
@@ -272,10 +280,11 @@ async def build_container() -> Container:
     drift_detector = DriftDetector() if settings.drift_detect_enabled else None
 
     # ---- Application ----
-    catalog_search = CatalogSearchUseCase(
-        product_repo, embedder=embedder, vector_index=vector_index, reranker=reranker,
-        hybrid_enabled=settings.hybrid_recall_enabled,
-    )
+    catalog_search = (CJCatalog(settings.data_dir / "cj_catalog.sqlite3") if settings.catalog_source == "cj" else
+        CatalogSearchUseCase(
+            product_repo, embedder=embedder, vector_index=vector_index, reranker=reranker,
+            hybrid_enabled=settings.hybrid_recall_enabled,
+        ))
     place_order = PlaceOrderUseCase(confirmations)
     query_order = QueryOrderUseCase(trade_store)
     cancel_order = CancelOrderUseCase(confirmations)
@@ -337,7 +346,7 @@ async def build_container() -> Container:
         confirmations=confirmations,
         trade_store=trade_store,
         trade_db_engine=trade_db_engine,
-        runtime={"app_source_sha256": source_fingerprint},
+        runtime={"app_source_sha256": source_fingerprint, "catalog_source": settings.catalog_source},
         ag_ui_runtime=AGUIRuntime(AGUIJournal(settings.data_dir / "ag_ui_runs.db"), orchestrator, confirmations),
         session_store=session_store,
         identity_policy=identity_policy,

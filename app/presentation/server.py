@@ -38,6 +38,7 @@ from app.domain.queue.ports.task_queue import IntentTask
 from app.presentation.connection import ConnectionManager
 from app.presentation.confirmations import register_confirmation_routes, confirmation_error
 from app.presentation.decisions import register_decision_routes
+from app.presentation.catalog import register_catalog_routes
 from app.presentation.ag_ui import register_ag_ui_routes
 from app.presentation.buyer_workspace import register_buyer_workspace_routes
 from app.presentation.identity import require_buyer, require_session, require_task, require_metrics_reader
@@ -122,6 +123,7 @@ def build_app() -> FastAPI:
     register_confirmation_routes(api, lambda: container().confirmations)
     register_decision_routes(api, lambda: container().catalog_search,
                              lambda: container().decision_evidence_store)
+    register_catalog_routes(api, lambda: container().catalog_search)
     register_buyer_workspace_routes(api, lambda: container().orchestrator)
     from app.presentation.favorites import register_favorite_routes
     from app.infrastructure.buyer_favorites import BuyerFavoriteStore

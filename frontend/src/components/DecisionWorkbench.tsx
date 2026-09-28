@@ -72,13 +72,13 @@ function Candidate({ candidate, index, onDetail }: {
       <div className="decision-candidate-heading">
         <div className="decision-candidate-index"><span>候选 {String(index + 1).padStart(2, "0")}</span><span>{product.brand || product.category}</span></div>
         <h3>{product.title}</h3>
-        <p>{sku?.spec || candidate.sku_id} · SKU {candidate.sku_id}</p>
+        <p>{candidate.sku_id ? `${sku?.spec || candidate.sku_id} · SKU ${candidate.sku_id}` : "规格待获取"}</p>
       </div>
       <button className="decision-detail-button" type="button" onClick={() => onDetail(product)}>查看商品详情 <span aria-hidden="true">↗</span></button>
     </div>
     <div className="decision-candidate-body">
       <div className="decision-price-strip">
-        <div><small>目录商品价 · 目标币种</small><strong>{money(product.price_major, product.currency)}</strong>
+        <div><small>{product.source_platform === "CJdropshipping" ? "CJ 列表参考价 · USD" : "目录商品价 · 目标币种"}</small><strong>{product.price_text || money(product.price_major, product.currency)}</strong>
           {originalPrice && originalPrice.currency !== product.currency && <small>原币参考 {money(originalPrice.amount, originalPrice.currency)}</small>}
         </div>
         <div><small>估算到手价 · 默认规格</small><strong>{estimate ? money(estimate.landed_total_major, estimate.currency) : "未知"}</strong></div>
@@ -130,7 +130,7 @@ export default function DecisionWorkbench({ report, busy, previewBusy, previewEr
   return <section className="decision-workbench" aria-labelledby="decision-title">
     <div className="decision-head">
       <div><span className="decision-kicker">GLOBEX / DECISION NOTE 02</span><h2 id="decision-title">这份选择，<em>有据可查。</em></h2></div>
-      <div className="decision-head-meta"><span>演示商品目录快照</span><span>生成于 {timeLabel(report.generated_at)}</span></div>
+      <div className="decision-head-meta"><span>{report.catalog_source === "cj" ? "CJ 商品快照" : "商品目录快照"}</span><span>生成于 {timeLabel(report.generated_at)}</span></div>
     </div>
     <div className="decision-layout">
       <form className="decision-controls" onSubmit={submit} aria-label="调整选购条件">
@@ -162,6 +162,6 @@ export default function DecisionWorkbench({ report, busy, previewBusy, previewEr
         </>}
       </div>
     </div>
-    <p className="decision-footnote">商品信息来自演示目录快照；到手价为规则估算。价格、库存与配送信息以实际确认时为准。</p>
+    <p className="decision-footnote">{report.catalog_source === "cj" ? "商品来自 CJ 快照；列表报价不代表最终结算价，库存、运费与配送范围须另行核验。" : "商品信息来自目录快照；到手价为规则估算。价格、库存与配送信息以实际确认时为准。"}</p>
   </section>;
 }
