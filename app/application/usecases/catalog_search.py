@@ -140,6 +140,10 @@ class CatalogSearchUseCase:
         self._reranker = reranker
         self._tariff = tariff_schedule or TariffSchedule(rates=ExchangeRateTable())
 
+    def disable_vector_recall(self) -> None:
+        """建库失败后禁用可能过期的索引，本进程检索走关键词降级。"""
+        self._vector_index = None
+
     async def execute(self, spec: ProductSearchSpec) -> dict:
         # 稳定实体 ID 直接核对权威目录，不能用向量 top-N 判断商品是否存在。
         identifiers = list(dict.fromkeys(re.findall(r"(?<![A-Za-z0-9])P\d{4,}(?:-S\d+)?(?![A-Za-z0-9-])", spec.normalized_query.upper())))
@@ -153,8 +157,14 @@ class CatalogSearchUseCase:
 
         if self._embedder is not None and self._vector_index is not None:
             try:
+                # 硬条件在向量召回后校验。若只取固定前 8 条，符合条件的
+                # 商品可能排在第 9 条以后，被误报为“无结果”。
+                constrained = bool(
+                    spec.category or spec.ship_to or spec.price_max_major is not None
+                    or spec.excluded_material_tags or spec.required_material_tags
+                )
                 scored = await self._vector_recall(
-                    spec, adaptive=spec.budget_basis == "landed" and spec.price_max_major is not None,
+                    spec, adaptive=constrained,
                 )
                 recall_strategy = "embedding_only"
             except Exception as err:  # noqa: BLE001 —— 召回基建异常必须降级而非失败

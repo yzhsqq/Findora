@@ -145,7 +145,13 @@ class Container:
                 await self.task_queue.ensure_group()
             except Exception as err:  # noqa: BLE001
                 logger.warning("队列消费者组创建失败：%s", err)
-        await bootstrap_product_index(self.product_repo, self.embedder, self.vector_index)
+        index_ready = await bootstrap_product_index(
+            self.product_repo, self.embedder, self.vector_index,
+            self.settings.embedding_model, self.settings.embedding_dim,
+        )
+        self.runtime["product_index"] = "ready" if index_ready else "unavailable"
+        if not index_ready and self.catalog_search is not None:
+            self.catalog_search.disable_vector_recall()
         await bootstrap_category_knowledge(self.knowledge_base)
 
     async def shutdown(self) -> None:

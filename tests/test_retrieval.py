@@ -9,7 +9,7 @@ import json
 import pytest
 
 from app.application.usecases.catalog_search import CatalogSearchUseCase
-from app.domain.catalog.ports.retrieval_ports import EmbeddingClient, Reranker
+from app.domain.catalog.ports.retrieval_ports import EmbeddingClient, Reranker, VectorHit
 from app.domain.catalog.product_search_spec import ProductSearchSpec
 from app.domain.catalog.money import Money
 from app.domain.catalog.product import Product
@@ -46,6 +46,42 @@ class ReverseReranker(Reranker):
 
     async def rerank(self, query: str, documents: list[str]) -> list[float]:
         return [float(i) for i in range(len(documents))]
+
+
+class OrderedVectorIndex:
+    """验证过滤发生在召回之后时，检索必须继续扩展候选。"""
+
+    def __init__(self, product_ids: list[str]) -> None:
+        self.product_ids = product_ids
+        self.requested: list[int] = []
+
+    async def search(self, embedding: list[float], top_n: int) -> list[VectorHit]:
+        self.requested.append(top_n)
+        return [VectorHit(product_id, 1.0 - rank * .001)
+                for rank, product_id in enumerate(self.product_ids[:top_n])]
+
+
+async def test_constrained_search_expands_recall_past_invalid_top_results():
+    products = [
+        Product(
+            product_id=f"X{index}", title=f"旅行背包 {index}", brand="A", category="旅行装备",
+            origin_country="CN", description="轻量旅行背包", ships_to=["US"],
+            skus=[Sku(f"X{index}-S1", "标准", Money.from_major_units(99, "CNY"), 3)],
+        )
+        for index in range(40)
+    ]
+    wanted = Product(
+        product_id="X40", title="可寄中国的旅行背包", brand="B", category="旅行装备",
+        origin_country="CN", description="轻量旅行背包", ships_to=["CN"],
+        skus=[Sku("X40-S1", "标准", Money.from_major_units(99, "CNY"), 3)],
+    )
+    products.append(wanted)
+    index = OrderedVectorIndex([product.product_id for product in products])
+    result = await CatalogSearchUseCase(
+        InMemoryProductRepository(products), AxisEmbeddingClient(), index,
+    ).execute(ProductSearchSpec(normalized_query="轻量旅行背包", ship_to="CN"))
+    assert [item["product_id"] for item in result["hits"]] == ["X40"]
+    assert index.requested == [32, 64]
 
 
 def _settings(tmp_path) -> Settings:

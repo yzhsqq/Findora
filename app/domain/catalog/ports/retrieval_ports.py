@@ -31,11 +31,22 @@ class VectorHit:
 
 class ProductVectorIndex(ABC):
     @abstractmethod
+    async def product_fingerprints(self) -> dict[str, str]:
+        """返回索引中商品 ID 与检索文本指纹；缺少指纹的旧记录需重建。"""
+        ...
+
+    @abstractmethod
     async def ensure_ready(self, vector_dim: int) -> None:
         """确保 collection 存在（幂等）。"""
 
     @abstractmethod
-    async def upsert_products(self, products: list[Product], embeddings: list[list[float]]) -> None:
+    async def upsert_products(
+        self, products: list[Product], embeddings: list[list[float]], fingerprints: list[str],
+    ) -> None:
+        ...
+
+    @abstractmethod
+    async def delete_products(self, product_ids: list[str]) -> None:
         ...
 
     @abstractmethod
