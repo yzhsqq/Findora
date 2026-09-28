@@ -65,6 +65,51 @@ export interface ProductCard {
   weight_kg?: number;
 }
 
+export interface DecisionRequest {
+  normalized_query: string;
+  category: string | null;
+  ship_to: string | null;
+  target_currency: string;
+  price_max_major: number | null;
+  budget_basis: "product" | "landed";
+  excluded_material_tags: string[];
+  required_material_tags: string[];
+}
+
+export interface DecisionEvidence {
+  kind: string;
+  ref: string | null;
+  field: string;
+  observed_at: string | null;
+}
+
+export interface DecisionCheck {
+  field: string;
+  label: string;
+  status: "pass" | "unknown";
+  detail: string;
+  evidence: DecisionEvidence;
+}
+
+export interface DecisionCandidate {
+  product: ProductCard;
+  sku_id: string;
+  checks: DecisionCheck[];
+  reasons: string[];
+  tradeoffs: string[];
+  unknowns: string[];
+}
+
+export interface DecisionReport {
+  version: 2;
+  request: DecisionRequest;
+  status: "ready" | "no_match";
+  candidates: DecisionCandidate[];
+  excluded: { product_id: string; title: string; reason: string }[];
+  evidence_refs: string[];
+  generated_at: string;
+}
+
 export interface ChatMessage {
   id: string;
   role: "user" | "assistant";
@@ -98,6 +143,9 @@ export interface CommerceSnapshot {
   sessionId: string;
   messages: ChatMessage[];
   products: ProductCard[];
+  decisionReport: DecisionReport | null;
+  decisionPreviewBusy: boolean;
+  decisionPreviewError: string | null;
   events: DiagnosticEvent[];
   status: "idle" | "running" | "stopped" | "error";
   step: string;

@@ -16,6 +16,7 @@ import ShoppingPlans, { SkillRunStatus } from "./components/ShoppingPlans";
 import SkillQueryInput from "./components/SkillQueryInput";
 import MyOrders from "./components/MyOrders";
 import BuyerWorkspace from "./components/BuyerWorkspace";
+import DecisionWorkbench from "./components/DecisionWorkbench";
 import { skillQueryDraft, submitSkillQuery } from "./lib/skills";
 
 type View = "shopping" | "history" | "favorites" | "skills" | "preferences" | "orders";
@@ -69,9 +70,12 @@ export default function App() {
   const lastUser = [...agent.messages]
     .reverse()
     .find((message) => message.role === "user");
-  const landedDestination = agent.products.find(
+  const landedDestination = agent.decisionReport?.request.ship_to ?? agent.products.find(
     (product) => product.landed_price?.ship_to,
   )?.landed_price?.ship_to;
+  const visibleProducts = agent.decisionReport
+    ? agent.decisionReport.candidates.map(candidate => candidate.product)
+    : agent.products;
 
   const favoriteBusy = useRef(false);
   useEffect(() => {
@@ -150,7 +154,13 @@ export default function App() {
       cancelAnimationFrame(releaseFrame);
       programmaticScroll.current = false;
     };
-  }, [agent.messages, agent.products, view, detail, showCompare]);
+  }, [agent.messages, agent.products, agent.decisionReport, view, detail, showCompare]);
+
+  useEffect(() => {
+    setCompared([]);
+    setShowCompare(false);
+    setDetail(null);
+  }, [agent.decisionReport?.generated_at]);
 
   const submit = useCallback(
     (query: string, selection: PublishedSkill | null = null) => {
@@ -503,7 +513,15 @@ export default function App() {
                   onRefresh={agent.refreshConfirmations}
                 />
               )}
-              {agent.products.length > 0 && (
+              {agent.decisionReport && <DecisionWorkbench
+                report={agent.decisionReport}
+                busy={busy}
+                previewBusy={agent.decisionPreviewBusy}
+                previewError={agent.decisionPreviewError}
+                onPreview={(request) => void agent.previewDecision(request)}
+                onDetail={setDetail}
+              />}
+              {!agent.decisionReport && agent.products.length > 0 && (
                 <section className="search-results" aria-label="商品搜索结果">
                   <div className="results-heading">
                     <div className="results-label">
@@ -533,6 +551,7 @@ export default function App() {
               )}
               {!busy &&
                 agent.searchCompleted &&
+                !agent.decisionReport &&
                 !agent.products.length &&
                 !agent.error && (
                   <section className="empty-state search-empty">
@@ -581,11 +600,11 @@ export default function App() {
                     调整预算
                     <Icon name="arrow" />
                   </button>
-                  {agent.products.length > 1 && (
+                  {visibleProducts.length > 1 && (
                     <button
                       className="suggestion"
                       onClick={() => {
-                        setCompared(agent.products.slice(0, 3));
+                        setCompared(visibleProducts.slice(0, 3));
                         setShowCompare(true);
                       }}
                     >

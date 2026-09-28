@@ -176,13 +176,14 @@ class TestTwoStageRecall:
         assert [hit["product_id"] for hit in result["hits"]] == ["P-METAL"]
         assert result["filtered_out"][0]["reason"] == "material_excluded"
 
-    async def test_embedding_recall_ranks_camping_light_first(self, indexed):
+    async def test_embedding_recall_includes_camping_light(self, indexed):
         repo, embedder, index = indexed
         usecase = CatalogSearchUseCase(repo, embedder=embedder, vector_index=index)
         result = await usecase.execute(ProductSearchSpec(normalized_query="露营灯 抗造"))
         assert result["recall_strategy"] == "embedding_only"
         assert result["rerank_applied"] is False
-        assert result["hits"][0]["product_id"] == "P1008", "露营灯应排第一"
+        # 特征轴中只有“露营灯”，P1008 和 P1039 同分；不假设向量索引的同分顺序。
+        assert "P1008" in {hit["product_id"] for hit in result["hits"]}
 
     async def test_rerank_applied_changes_order(self, indexed):
         repo, embedder, index = indexed
@@ -290,8 +291,9 @@ class TestTwoStageRecall:
         result_event = queue.get_nowait()
         assert result_event.type == "tool.result"
         hits = result_event.payload["hits"]
-        assert hits and hits[0]["product_id"] == "P1008"
-        assert hits[0]["landed_price"]["currency"] == "USD"
+        assert hits and "P1008" in {hit["product_id"] for hit in hits}
+        assert all(hit["landed_price"]["currency"] == "USD" for hit in hits)
         body = json.loads(response.content[0].text)
+        assert [hit["product_id"] for hit in hits] == [hit["product_id"] for hit in body["hits"]]
         assert body.get("filtered_out"), "测试前提：本次检索应有被硬约束挡掉的候选"
         assert result_event.payload["filtered_out"] == body["filtered_out"]

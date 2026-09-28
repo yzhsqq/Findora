@@ -14,10 +14,11 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 def test_category_recall_help_is_renderable() -> None:
     result = subprocess.run(
-        [sys.executable, "scripts/eval/run_category_recall.py", "--help"],
+        [sys.executable, "-X", "utf8", "scripts/eval/run_category_recall.py", "--help"],
         cwd=PROJECT_ROOT,
         capture_output=True,
         text=True,
+        encoding="utf-8",
         check=False,
     )
 

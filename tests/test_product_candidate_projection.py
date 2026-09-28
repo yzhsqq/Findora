@@ -72,6 +72,7 @@ async def test_duplicate_refs_and_source_mutation_do_not_duplicate_or_corrupt_ca
     projection.apply(results["P1003-S1"])
     assert projection.has_result and len(projection.result["hits"]) == 2
     assert projection.result["result_refs"] == ["ctx_0", "ctx_1"]
+    assert projection.result["result_refs_by_product"] == {"P1001": ["ctx_0"], "P1003": ["ctx_1"]}
     assert "result_ref" not in projection.result
     results["P1001-S2"]["hits"][0]["price_major"] = -99
     assert projection.result["hits"][0]["price_major"] > 0

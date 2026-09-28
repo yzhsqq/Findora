@@ -26,6 +26,8 @@ class ProductSearchSpec:
     excluded_material_tags: list[str] | tuple[str, ...] = ()
     # 材质白名单：复合约束评测及“必须是金属/天然纤维”等场景必须结构化过滤。
     required_material_tags: list[str] | tuple[str, ...] = ()
+    # 预算可以针对商品价，也可以针对运费与关税规则估算后的到手价。
+    budget_basis: str = "product"
 
     def __post_init__(self) -> None:
         if not self.normalized_query or not self.normalized_query.strip():
@@ -34,3 +36,7 @@ class ProductSearchSpec:
             raise ValueError("ProductSearchSpec.top_k 必须为1到50的整数")
         if self.price_max_major is not None and (isinstance(self.price_max_major, bool) or not math.isfinite(self.price_max_major) or self.price_max_major < 0):
             raise ValueError("ProductSearchSpec.price_max_major 必须是有限的非负金额")
+        if self.budget_basis not in {"product", "landed"}:
+            raise ValueError("预算口径仅支持 product 或 landed")
+        if self.budget_basis == "landed" and self.price_max_major is not None and not self.ship_to:
+            raise ValueError("到手价预算需要配送目的地")

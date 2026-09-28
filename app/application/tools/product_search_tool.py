@@ -67,6 +67,7 @@ def build_product_search_tool(usecase: CatalogSearchUseCase, bus: TradeEventBus,
         top_k: int | str = 5,
         price_max_major: float | str | None = None,
         target_currency: str = "CNY",
+        budget_basis: str = "product",
         excluded_material_tags: list[str] | None = None,
         required_material_tags: list[str] | None = None,
     ) -> ToolChunk:
@@ -87,6 +88,9 @@ def build_product_search_tool(usecase: CatalogSearchUseCase, bus: TradeEventBus,
                 价格上限（target_currency 主单位），买家有预算硬约束时必传，由检索链路结构化过滤。
             target_currency (`str`):
                 价格口径币种，默认 "CNY"。
+            budget_basis (`str`):
+                预算口径：商品价用 "product"；买家明确说含运费和关税的到手价预算时用 "landed"。
+                到手价预算必须同时传 ship_to，系统以规则估算而非实时结算金额判断。
             excluded_material_tags (`list[str] | None`):
                 材质黑名单，如买家明确不要塑料时传 ["合成聚合物"]。
             required_material_tags (`list[str] | None`):
@@ -102,6 +106,9 @@ def build_product_search_tool(usecase: CatalogSearchUseCase, bus: TradeEventBus,
                     content=[TextBlock(type="text", text=f"[error] top_k 非法：{top_k}")],
                     state=ToolResultState.ERROR,
                 )
+        if type(top_k) is int:
+            # 面向买家的本轮候选保持可比较的规模；检索评测仍可直接调用 UseCase 使用更大的 K。
+            top_k = min(top_k, 5)
         if isinstance(price_max_major, str):
             try:
                 price_max_major = float(price_max_major)
@@ -110,6 +117,11 @@ def build_product_search_tool(usecase: CatalogSearchUseCase, bus: TradeEventBus,
                     content=[TextBlock(type="text", text=f"[error] price_max_major 非法：{price_max_major}")],
                     state=ToolResultState.ERROR,
                 )
+        if budget_basis not in {"product", "landed"}:
+            return ToolChunk(
+                content=[TextBlock(type="text", text="[error] 预算口径仅支持 product 或 landed")],
+                state=ToolResultState.ERROR,
+            )
         snapshot_ctx = ShoppingContext.current()
         context_exclusions = list(snapshot_ctx.excluded_material_tags) if snapshot_ctx else []
         excluded_material_tags = list(
@@ -124,6 +136,7 @@ def build_product_search_tool(usecase: CatalogSearchUseCase, bus: TradeEventBus,
             "top_k": top_k,
             "price_max_major": price_max_major,
             "target_currency": target_currency,
+            "budget_basis": budget_basis,
             "excluded_material_tags": excluded_material_tags or [],
             "required_material_tags": required_material_tags or [],
         }
@@ -143,6 +156,7 @@ def build_product_search_tool(usecase: CatalogSearchUseCase, bus: TradeEventBus,
                 top_k=top_k,
                 price_max_major=price_max_major,
                 target_currency=target_currency,
+                budget_basis=budget_basis,
                 excluded_material_tags=excluded_material_tags or [],
                 required_material_tags=required_material_tags or [],
             )
@@ -168,6 +182,8 @@ def build_product_search_tool(usecase: CatalogSearchUseCase, bus: TradeEventBus,
                 "recall_strategy": result["recall_strategy"],
                 "total_candidates": result["total_candidates"],
                 "rerank_applied": result["rerank_applied"],
+                "query_conditions": result["query_conditions"],
+                "observed_at": result["observed_at"],
                 # 商品卡随事件下发，前端无需再调接口即可渲染（含 landed_price 到手价）
                 "hits": result["hits"],
                 **({"result_ref": result["result_ref"]} if "result_ref" in result else {}),

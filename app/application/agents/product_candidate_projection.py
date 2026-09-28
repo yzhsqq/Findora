@@ -68,6 +68,10 @@ class ProductCandidateProjection:
         result["total_candidates"] = len(ordered)
         result["requested_identifiers"] = list(self.identifiers)
         result["result_refs"] = list(dict.fromkeys(ref for product in ordered for ref in self._references.get(product, [])))
+        # 精确多 ID 合并后，保留每张卡原检索结果的证据引用。
+        result["result_refs_by_product"] = {
+            product: list(self._references.get(product, [])) for product in ordered
+        }
         # 合并结果没有单个原工具引用能代表全部事实，不能误指最后完成的那张卡。
         result.pop("result_ref", None)
         if len(result["result_refs"]) == 1:

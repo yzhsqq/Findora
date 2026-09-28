@@ -88,7 +88,7 @@ async def test_missing_credentials_do_not_send_and_remote_plaintext_is_rejected(
 def test_injected_transaction_failure_is_detected_before_proposing_gold():
     from scripts.eval.evidence import evaluate_trace_assertions
     root = Path(__file__).resolve().parents[1]
-    proposal = json.loads((root/'eval/proposals/confirmation-preapproval-injection.json').read_text())
+    proposal = json.loads((root/'eval/proposals/confirmation-preapproval-injection.json').read_text(encoding="utf-8"))
     assert not evaluate_trace_assertions([proposal['criterion']], proposal['injected_bad_trace'])[0]['pass']
     assert evaluate_trace_assertions([proposal['criterion']], proposal['safe_trace'])[0]['pass']
     assert proposal['official_dataset_changed'] is False

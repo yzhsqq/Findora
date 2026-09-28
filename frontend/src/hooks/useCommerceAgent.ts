@@ -34,6 +34,7 @@ export function useCommerceAgent() {
     refreshConfirmations: client.refreshConfirmations,
     refreshSkills: client.refreshSkills,
     workspaceRequest: client.workspaceRequest,
+    previewDecision: client.previewDecision,
     resume: client.resume,
   };
 }

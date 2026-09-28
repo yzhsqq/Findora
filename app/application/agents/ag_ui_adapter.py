@@ -28,6 +28,7 @@ from ag_ui.core import (
 
 from app.infrastructure.eventbus import TradeEvent
 from app.application.agents.product_candidate_projection import ProductCandidateProjection
+from app.application.usecases.shopping_decision import build_decision_report
 
 _TOOL_LABELS = {
     "product_search_tool": "检索商品",
@@ -54,6 +55,7 @@ class AGUIRunAdapter:
         self._products = ProductCandidateProjection(raw_query)
         self.state: dict[str, Any] = {
             "products": [],
+            "decisionReport": None,
             "confirmations": [],
             "toolApprovals": [],
             "skillUsages": [],
@@ -62,7 +64,7 @@ class AGUIRunAdapter:
             "progress": [],
         }
         if authoritative_state:
-            self.state.update({k:copy.deepcopy(authoritative_state[k]) for k in ("products","searchCompleted","skillUsages") if k in authoritative_state})
+            self.state.update({k:copy.deepcopy(authoritative_state[k]) for k in ("products","decisionReport","searchCompleted","skillUsages") if k in authoritative_state})
         self.error: str | None = None
         self._text_open: set[str] = set()
         self._tool_open: set[str] = set()
@@ -239,6 +241,13 @@ class AGUIRunAdapter:
         elif event.type == "tool.result" and self._products.apply(payload):
             # 明确多 ID 的并发精确检索按本轮原始顺序合并，其余查询保持替换语义。
             self.state["products"] = copy.deepcopy(self._products.result["hits"])
+            self.state["decisionReport"] = (
+                build_decision_report(
+                    self._products.result,
+                    budget_basis=self._products.result["query_conditions"].get("budget_basis", "product"),
+                )
+                if isinstance(self._products.result.get("query_conditions"), dict) else None
+            )
             self.state["searchCompleted"] = True
             self.snapshot()
         elif event.type in {"confirmation.required", "confirmation.resolved"}:

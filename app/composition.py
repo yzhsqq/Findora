@@ -122,6 +122,8 @@ class Container:
     identity_policy: Any = None
     prompt_registry: Any = None
     context_service: Any = None
+    catalog_search: Any = None
+    decision_evidence_store: Any = None
 
     async def startup(self) -> None:
         """建表 / 建向量库 / 建知识库。任一失败只告警，对应能力降级但服务可用。"""
@@ -334,4 +336,6 @@ async def build_container() -> Container:
         session_store=session_store,
         identity_policy=identity_policy,
         prompt_registry=prompt_registry,
+        catalog_search=catalog_search,
+        decision_evidence_store=search_factory.evidence_store,
     )

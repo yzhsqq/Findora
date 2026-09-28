@@ -125,7 +125,10 @@ async def test_restart_preserves_finished_run_without_reexecuting_model(tmp_path
     assert saved["run"]["status"] == "completed"
 
 
-async def test_abandoned_run_becomes_durable_interrupted_terminal(tmp_path):
+async def test_abandoned_run_becomes_durable_interrupted_terminal(tmp_path, monkeypatch):
+    # 控制租约时间，避免慢速 CI 上 40ms 租约在 append 前自然过期。
+    clock = [1_800_000_000.0]
+    monkeypatch.setattr("app.infrastructure.ag_ui_journal.time.time", lambda: clock[0])
     path = tmp_path / "runs.db"
     journal = AGUIJournal(path)
     await journal.reserve(body(), "b1", "dead-process", lease_seconds=0.04)
@@ -134,7 +137,7 @@ async def test_abandoned_run_becomes_durable_interrupted_terminal(tmp_path):
         {"type": "TEXT_MESSAGE_START", "messageId": "a1", "role": "assistant"},
         {"type": "TEXT_MESSAGE_CONTENT", "messageId": "a1", "delta": "已保存部分内容"},
     ])
-    await asyncio.sleep(0.06)
+    clock[0] += 0.06
     reopened = AGUIJournal(path)
     run = await reopened.run("r1", "b1")
     assert run["status"] == "interrupted"

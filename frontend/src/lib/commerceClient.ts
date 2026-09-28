@@ -7,6 +7,8 @@ import type { Message } from "@ag-ui/core";
 import type {
   ChatMessage,
   CommerceSnapshot,
+  DecisionReport,
+  DecisionRequest,
   ProductCard,
   PrepareOrderInput,
   TradeConfirmation,
@@ -16,6 +18,7 @@ import type {
 import { readConfirmations, mergeConfirmations } from "./confirmations";
 import { recoveringFetch } from "./recoveringFetch";
 import { isSelectedSkill, readPublishedSkills, readSkillUsages } from "./skills";
+import { readDecisionReport } from "./decisions";
 
 const STORAGE_KEY = "globex.agui.sessions.v1";
 const BUYER_KEY = "globex.buyer";
@@ -27,6 +30,7 @@ interface SavedSession {
   updatedAt: number;
   messages: ChatMessage[];
   products: ProductCard[];
+  decisionReport: DecisionReport | null;
   searchCompleted: boolean;
   runId?: string | null;
 }
@@ -246,6 +250,9 @@ function emptySnapshot(sessionId = newId()): CommerceSnapshot {
     sessionId,
     messages: [],
     products: [],
+    decisionReport: null,
+    decisionPreviewBusy: false,
+    decisionPreviewError: null,
     events: [],
     status: "idle",
     step: "随时开始新的选购",
@@ -299,6 +306,7 @@ export class CommerceClient {
   private serverHistory: SessionSummary[] = [];
   private historyRevision = 0;
   private skillsRevision = 0;
+  private decisionRevision = 0;
   private restoreLatestSession = true;
 
   constructor(private options: ClientOptions) {
@@ -342,6 +350,7 @@ export class CommerceClient {
                 updatedAt: entry.updatedAt,
                 messages: readMessages(entry.messages),
                 products: readProducts(entry.products),
+                decisionReport: readDecisionReport(entry.decisionReport),
                 searchCompleted: entry.searchCompleted === true,
                 runId: typeof entry.runId === "string" ? entry.runId : null,
               },
@@ -358,6 +367,7 @@ export class CommerceClient {
           ...emptySnapshot(saved.id),
           messages: saved.messages,
           products: saved.products,
+          decisionReport: saved.decisionReport,
           searchCompleted: saved.searchCompleted,
           step: "已恢复本机选购记录",
           recoverableRunId: saved.runId ?? null,
@@ -401,6 +411,7 @@ export class CommerceClient {
       updatedAt: Date.now(),
       messages: this.snapshot.messages.slice(-100),
       products: this.snapshot.products,
+      decisionReport: this.snapshot.decisionReport,
       searchCompleted: this.snapshot.searchCompleted,
       runId: this.snapshot.recoverableRunId,
     };
@@ -433,6 +444,7 @@ export class CommerceClient {
       return;
     }
     ++this.historyRevision;
+    ++this.decisionRevision;
     this.restoreLatestSession = false;
     const runId = newId();
     const messages: ChatMessage[] = [
@@ -474,6 +486,9 @@ export class CommerceClient {
     this.update({
       messages,
       products: [],
+      decisionReport: null,
+      decisionPreviewBusy: false,
+      decisionPreviewError: null,
       skillUsages: [],
       events: [],
       error: null,
@@ -508,6 +523,7 @@ export class CommerceClient {
         this.update({
           toolApprovals: readApprovals(state.toolApprovals),
           products: readProducts(state.products),
+          decisionReport: readDecisionReport(state.decisionReport),
       skillUsages: readSkillUsages(state.skillUsages),
           searchCompleted: state.searchCompleted === true,
           confirmations: mergeConfirmations(
@@ -644,6 +660,8 @@ export class CommerceClient {
     this.update({
       toolApprovals: readApprovals(state.toolApprovals),
       messages: readMessages(run.messages), products: readProducts(state.products),
+      decisionReport: readDecisionReport(state.decisionReport),
+      decisionPreviewBusy: false, decisionPreviewError: null,
       skillUsages: readSkillUsages(state.skillUsages),
       searchCompleted: state.searchCompleted === true,
       confirmations: mergeConfirmations(this.snapshot.confirmations, this.ownedConfirmations(state.confirmations)),
@@ -662,6 +680,10 @@ export class CommerceClient {
       if (!isRecord(data.run)) throw new Error("服务端缺少运行记录");
       this.applyServerRun(data.run);
       this.save();
+      if (data.run.status !== "running") {
+        const updatedAt = typeof data.run.updatedAt === "number" ? data.run.updatedAt : -Infinity;
+        await this.refreshDecisionPreview(id, updatedAt);
+      }
       if (data.run.status === "running") await this.resume();
     } catch {
       if (revision === this.historyRevision && id === this.snapshot.sessionId)
@@ -749,6 +771,57 @@ export class CommerceClient {
     if (!isRecord(data)) throw new Error("个人资料服务返回格式无效");
     return data;
   };
+
+  previewDecision = async (request: DecisionRequest): Promise<void> => {
+    if (this.active || this.snapshot.status === "running" || this.snapshot.decisionPreviewBusy) return;
+    const sessionId = this.snapshot.sessionId;
+    const revision = ++this.decisionRevision;
+    this.update({ decisionPreviewBusy: true, decisionPreviewError: null });
+    try {
+      const data = await this.workspaceRequest("/decisions/preview", "POST", {
+        buyer_id: this.buyerId,
+        session_id: sessionId,
+        query: request.normalized_query,
+        category: request.category,
+        ship_to: request.ship_to,
+        target_currency: request.target_currency,
+        price_max_major: request.price_max_major,
+        budget_basis: request.budget_basis,
+        excluded_material_tags: request.excluded_material_tags,
+        required_material_tags: request.required_material_tags,
+      });
+      const report = readDecisionReport(data);
+      if (!report) throw new Error("决策单格式无效，请稍后重试。");
+      if (revision !== this.decisionRevision || sessionId !== this.snapshot.sessionId) return;
+      this.update({ decisionReport: report, decisionPreviewBusy: false, decisionPreviewError: null });
+      this.save();
+    } catch (error) {
+      if (revision !== this.decisionRevision || sessionId !== this.snapshot.sessionId) return;
+      this.update({ decisionPreviewBusy: false, decisionPreviewError: error instanceof Error
+        ? error.message : "调整条件暂时失败，请重试。" });
+    }
+  };
+
+  private async refreshDecisionPreview(sessionId: string, latestRunUpdatedAt = -Infinity): Promise<void> {
+    const revision = ++this.decisionRevision;
+    try {
+      const data = await this.workspaceRequest(`/decisions/preview?session_id=${encodeURIComponent(sessionId)}`);
+      if (revision !== this.decisionRevision || sessionId !== this.snapshot.sessionId || this.active) return;
+      const report = readDecisionReport(data.report);
+      if (!report) return;
+      const current = this.snapshot.decisionReport;
+      const incomingTime = Date.parse(report.generated_at);
+      const parsedCurrentTime = current ? Date.parse(current.generated_at) : -Infinity;
+      const currentTime = Number.isFinite(parsedCurrentTime) ? parsedCurrentTime : -Infinity;
+      // 新一轮运行可能没有检索结果；不能在刷新后恢复更早一轮的条件预览。
+      if (Number.isFinite(incomingTime) && incomingTime > Math.max(currentTime, latestRunUpdatedAt)) {
+        this.update({ decisionReport: report });
+        this.save();
+      }
+    } catch {
+      // The AG-UI snapshot and local cache remain usable if preview recovery is unavailable.
+    }
+  }
 
   refreshSkills = async (): Promise<void> => {
     const revision = ++this.skillsRevision;
@@ -918,6 +991,7 @@ export class CommerceClient {
   }
   reset = () => {
     this.restoreLatestSession = false;
+    ++this.decisionRevision;
     this.detach();
     ++this.historyRevision;
     this.save();
@@ -933,12 +1007,14 @@ export class CommerceClient {
     const session = this.sessions.find((entry) => entry.id === id);
     const remote = this.serverHistory.some((entry) => entry.id === id);
     if (!session && !remote) return;
+    ++this.decisionRevision;
     this.detach();
     this.save();
     this.update({
       ...emptySnapshot(id),
       messages: session?.messages ?? [],
       products: session?.products ?? [],
+      decisionReport: session?.decisionReport ?? null,
       searchCompleted: session?.searchCompleted ?? false,
       recoverableRunId: session?.runId ?? null,
       history: this.history(),

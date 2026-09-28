@@ -167,7 +167,7 @@ class AGUIJournal:
                 requested=[p['interruptId'] for p in body['resume']]
                 if not requested or len(set(requested))!=len(requested) or not set(requested)<=pending:
                     raise JournalConflict("确认已处理或与当前待执行操作不一致，请刷新会话")
-            trusted_state={k:previous_state[k] for k in ('products','searchCompleted','skillUsages') if k in previous_state} if body.get('resume') else {}
+            trusted_state={k:previous_state[k] for k in ('products','decisionReport','searchCompleted','skillUsages') if k in previous_state} if body.get('resume') else {}
             messages = json.loads(session["messages_json"]) if session else []
             # 客户端历史/state 不是事实来源；只接受本轮 user，旧历史由日志恢复。
             messages = [*messages[-99:], {"id": user["id"], "role": "user", "content": user["content"]}]

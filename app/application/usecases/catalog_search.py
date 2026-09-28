@@ -153,7 +153,9 @@ class CatalogSearchUseCase:
 
         if self._embedder is not None and self._vector_index is not None:
             try:
-                scored = await self._vector_recall(spec)
+                scored = await self._vector_recall(
+                    spec, adaptive=spec.budget_basis == "landed" and spec.price_max_major is not None,
+                )
                 recall_strategy = "embedding_only"
             except Exception as err:  # noqa: BLE001 —— 召回基建异常必须降级而非失败
                 logger.warning("向量召回不可用，降级关键词召回：%s", err)
@@ -290,7 +292,7 @@ class CatalogSearchUseCase:
         if spec.ship_to and spec.ship_to not in product.ships_to:
             return "ship_to_unavailable"
         if not self._within_price_cap(product, spec, primary=primary):
-            return "over_price_cap"
+            return "over_landed_price_cap" if spec.budget_basis == "landed" else "over_price_cap"
         return None
 
     def _to_rejected(self, product: Product, spec: ProductSearchSpec, reason: str, primary=None) -> dict:
@@ -307,7 +309,14 @@ class CatalogSearchUseCase:
     def _within_price_cap(self, product: Product, spec: ProductSearchSpec, primary=None) -> bool:
         if spec.price_max_major is None:
             return True
-        primary_in_target = self._tariff.rates.convert((primary or product.primary_available_sku()).price, spec.target_currency)
+        selected = primary or product.primary_available_sku()
+        if spec.budget_basis == "landed":
+            try:
+                quote = self._tariff.quote(selected.price, product.category, spec.ship_to, 1, spec.target_currency)
+            except ValueError:
+                return False
+            return quote.landed_total().to_major_units() <= spec.price_max_major
+        primary_in_target = self._tariff.rates.convert(selected.price, spec.target_currency)
         return primary_in_target.to_major_units() <= spec.price_max_major
 
     # ---- 一阶段：向量召回 ----

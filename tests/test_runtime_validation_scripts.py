@@ -56,10 +56,11 @@ def test_parallel_interval_parser_ignores_incomplete_auxiliary_events():
 
 def test_parallel_help_does_not_start_network_validation():
     result = subprocess.run(
-        [sys.executable, str(PROJECT_ROOT / "scripts" / "verify_parallel.py"), "--help"],
+        [sys.executable, "-X", "utf8", str(PROJECT_ROOT / "scripts" / "verify_parallel.py"), "--help"],
         cwd=PROJECT_ROOT,
         capture_output=True,
         text=True,
+        encoding="utf-8",
         timeout=10,
         check=False,
     )
