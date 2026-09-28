@@ -140,7 +140,9 @@ class CJCatalog:
             for term in terms:
                 order_args.extend((f"%{term}%", len(term)))
         else:
-            order = "list_fetched_at DESC, pid DESC"
+            # The collector visits categories sequentially. Listing by fetch
+            # time would fill the first storefront page with one category.
+            order = "pid DESC" if not category else "list_fetched_at DESC, pid DESC"
         with closing(self._db()) as db:
             total = db.execute("SELECT count(*) FROM products" + where, args).fetchone()[0]
             rows = db.execute("SELECT * FROM products" + where + " ORDER BY " + order + " LIMIT ? OFFSET ?", [*args, *order_args, page_size, (page - 1) * page_size]).fetchall()

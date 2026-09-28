@@ -4,13 +4,13 @@
 .workspace-heading h1 em { color: var(--green); font-style: normal; }
 .workspace-heading p { color: var(--muted); font-size: 15px; }
 .workspace-grid { display: grid; grid-template-columns: minmax(230px,.75fr) minmax(0,1.5fr); gap: 28px; align-items: start; }
-.workspace-library { padding: 24px; background: #f0f2eb; border-radius: 20px; }
+.workspace-library { padding: 24px; background: #f0eeed; border-radius: 20px; }
 .workspace-editor { background: #fffefa; border: 1px solid var(--line); padding: 30px; border-radius: 22px; }
 .workspace-section-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
 .workspace-section-title h2 { font: 500 21px var(--serif); margin: 0; }
 .workspace-section-title > span { color: var(--muted); font-size: 12px; }
 .workspace-section-title button,.workspace-row-actions button,.workspace-delete-link,.workspace-delete button,.workspace-error button { background: transparent; border: 0; padding: 5px 0; color: var(--green); }
-.workspace-new { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px; border: 1px dashed #b4c1b5; border-radius: 12px; color: var(--green); background: transparent; margin-bottom: 20px; }
+.workspace-new { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px; border: 1px dashed #b8babd; border-radius: 12px; color: var(--green); background: transparent; margin-bottom: 20px; }
 .workspace-item { position: relative; margin-top: 12px; padding: 18px; background: #fffefa; border: 1px solid transparent; border-radius: 14px; overflow-wrap: anywhere; }
 .workspace-item.selected { border-color: var(--green); }
 .workspace-item-main { text-align: left; padding: 0; border: 0; background: transparent; width: 100%; }

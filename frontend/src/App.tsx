@@ -40,6 +40,8 @@ export default function App() {
   const [selectedSkill, setSelectedSkill] = useState<PublishedSkill | null>(null);
   const [catalogSource, setCatalogSource] = useState<"cj" | "fixture" | null>(null);
   const [planPickerOpen, setPlanPickerOpen] = useState(false);
+  const [headerSearch, setHeaderSearch] = useState("");
+  const [catalogSearch, setCatalogSearch] = useState({ query: "", id: 0 });
   const [slashMenuOpen, setSlashMenuOpen] = useState(false);
   const [view, setView] = useState<View>(readView),
     [input, setInput] = useState("");
@@ -66,7 +68,10 @@ export default function App() {
       if (!active) return;
       const source = data.source === "cj" ? "cj" : "fixture";
       setCatalogSource(source);
-      if (source === "cj" && readView() === "shopping") setView("catalog");
+      if (source === "cj" && readView() === "shopping") {
+        setView("catalog");
+        window.scrollTo({ top: 0 });
+      }
     }).catch(() => {});
     return () => { active = false; };
   }, [agent.workspaceRequest]);
@@ -295,9 +300,15 @@ export default function App() {
       onDetail={setDetail}
     />
   );
+  const compareTray = compared.length > 0 && <div className="compare-bar">
+    <div className="compare-mini">{compared.map(product => <ProductImage product={product} key={product.product_id} />)}</div>
+    <span>已选 {compared.length} 件{compared.length === 1 ? "，再选一件比比看" : ""}</span>
+    <button className="compare-go" onClick={() => setShowCompare(true)} disabled={compared.length < 2}>开始比较 <Icon name="arrow" /></button>
+    <button className="compare-clear" onClick={() => setCompared([])}>清空</button>
+  </div>;
   const navItems: { id: View; label: string; icon: string }[] = [
-    { id: "shopping", label: "我的选购", icon: "bag" },
     ...(catalogSource === "cj" ? [{ id: "catalog" as View, label: "CJ 商品库", icon: "globe" }] : []),
+    { id: "shopping", label: "我的选购", icon: "spark" },
     { id: "orders", label: "我的订单", icon: "bag" },
     { id: "history", label: "对话历史", icon: "chat" },
     { id: "favorites", label: "心选收藏", icon: "heart" },
@@ -307,10 +318,10 @@ export default function App() {
 
   return (
     <>
-      <aside className="sidebar" aria-label="主导航">
+      <header className="sidebar" aria-label="主导航">
         <button
           className="brand"
-          onClick={() => switchView("shopping")}
+          onClick={() => switchView(catalogSource === "cj" ? "catalog" : "shopping")}
           aria-label="Globex 环球好物首页"
         >
           <Icon name="globe" className="brand-mark" />
@@ -319,9 +330,18 @@ export default function App() {
             <span className="brand-subtitle">环球好物</span>
           </span>
         </button>
+        {catalogSource === "cj" && <form className="site-search" role="search" onSubmit={event => {
+          event.preventDefault();
+          setCatalogSearch(current => ({ query: headerSearch.trim(), id: current.id + 1 }));
+          switchView("catalog");
+        }}>
+          <Icon name="search" />
+          <input aria-label="搜索 CJ 商品" placeholder="搜索商品、品类或关键词" value={headerSearch} onChange={event => setHeaderSearch(event.target.value)} maxLength={120} />
+          <button type="submit">搜索商品</button>
+        </form>}
         <button className="new-chat" onClick={newShopping} disabled={busy}>
           <Icon name="plus" />
-          开启一次新选购
+          AI 帮我选
         </button>
         <nav className="nav">
           {navItems.map((item) => (
@@ -372,7 +392,7 @@ export default function App() {
             <Icon name="leaf" />
           </div>
         </div>
-      </aside>
+      </header>
       <main>
         <div className="content">
           <header className="topbar">
@@ -418,7 +438,7 @@ export default function App() {
           {view === "orders" && <MyOrders request={agent.workspaceRequest} confirmations={agent.confirmations} busy={agent.confirmationBusy || busy} error={agent.confirmationError} onPrepare={agent.prepareCancel} onResolve={agent.resolveConfirmation} onRefresh={agent.refreshConfirmations} />}
           {(view === "skills" || view === "preferences") && <BuyerWorkspace key={view} mode={view} busy={busy}
             request={agent.workspaceRequest} onSkillsChanged={agent.refreshSkills} />}
-          {view === "catalog" && catalogSource === "cj" && <CjCatalogPage request={agent.workspaceRequest} favoriteIds={favoriteIds} comparedIds={comparedIds} onFavorite={toggleFavorite} onCompare={toggleCompare} onDetail={setDetail} />}
+          {view === "catalog" && catalogSource === "cj" && <CjCatalogPage request={agent.workspaceRequest} externalSearch={catalogSearch} favoriteIds={favoriteIds} comparedIds={comparedIds} onFavorite={toggleFavorite} onCompare={toggleCompare} onDetail={setDetail} />}
           {view === "shopping" && (
             <>
               <section className="hero">
@@ -706,32 +726,10 @@ export default function App() {
           )}
         </div>
       </main>
-      {view !== "skills" && view !== "preferences" && view !== "orders" && <div className="composer-dock">
+      {view === "catalog" && compareTray && <div className="catalog-compare-dock">{compareTray}</div>}
+      {view !== "skills" && view !== "preferences" && view !== "orders" && view !== "catalog" && <div className="composer-dock">
         <div className="composer-wrap">
-          {compared.length > 0 && (
-            <div className="compare-bar">
-              <div className="compare-mini">
-                {compared.map((p) => (
-                  <ProductImage product={p} key={p.product_id} />
-                ))}
-              </div>
-              <span>
-                已选 {compared.length} 件
-                {compared.length === 1 ? "，再选一件比比看" : ""}
-              </span>
-              <button
-                className="compare-go"
-                onClick={() => setShowCompare(true)}
-                disabled={compared.length < 2}
-              >
-                开始比较
-                <Icon name="arrow" />
-              </button>
-              <button className="compare-clear" onClick={() => setCompared([])}>
-                清空
-              </button>
-            </div>
-          )}
+          {compareTray}
           <form
             className="composer"
             onSubmit={(event) => {

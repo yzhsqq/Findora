@@ -9,8 +9,9 @@ type Snapshot = { total: number; all_count: number; detail_count: number; invent
 const CATEGORIES = ["", "Bags & Shoes", "Sports & Outdoors", "Consumer Electronics", "Phones & Accessories", "Home, Garden & Furniture", "Health, Beauty & Hair", "Pet Supplies", "Computer & Office", "Toys, Kids & Babies"];
 const LABELS = ["全部", "箱包鞋履", "户外运动", "消费电子", "手机配件", "家居园艺", "美妆个护", "宠物用品", "电脑办公", "玩具母婴"];
 
-export default function CjCatalogPage({ request, favoriteIds, comparedIds, onFavorite, onCompare, onDetail }: {
+export default function CjCatalogPage({ request, externalSearch, favoriteIds, comparedIds, onFavorite, onCompare, onDetail }: {
   request: Request;
+  externalSearch: { query: string; id: number };
   favoriteIds: Set<string>; comparedIds: Set<string>;
   onFavorite: (product: ProductCard) => void;
   onCompare: (product: ProductCard) => void;
@@ -23,6 +24,11 @@ export default function CjCatalogPage({ request, favoriteIds, comparedIds, onFav
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
   const [busy, setBusy] = useState(true);
   const [error, setError] = useState("");
+  useEffect(() => {
+    setDraft(externalSearch.query);
+    setQuery(externalSearch.query);
+    setPage(1);
+  }, [externalSearch]);
   useEffect(() => {
     let active = true;
     const params = new URLSearchParams({ query, category, page: String(page), page_size: "24" });
@@ -41,25 +47,36 @@ export default function CjCatalogPage({ request, favoriteIds, comparedIds, onFav
   const search = (event: FormEvent) => { event.preventDefault(); setPage(1); setQuery(draft.trim()); };
   return <section className="cj-catalog">
     <div className="cj-hero">
-      <span className="cj-eyebrow">CJ DROPSHIPPING / PRODUCT SNAPSHOT</span>
-      <h1>真实商品，<em>清楚标注。</em></h1>
-      <p>浏览 CJ 商品快照。列表报价来自采集时刻；规格、库存和目的地运费按已取得的信息分别展示。</p>
-      <div className="cj-stats" aria-label="商品快照统计">
-        <div><strong>{snapshot?.all_count.toLocaleString("zh-CN") ?? "—"}</strong><span>商品列表</span></div>
-        <div><strong>{snapshot?.detail_count.toLocaleString("zh-CN") ?? "—"}</strong><span>规格详情</span></div>
-        <div><strong>{snapshot?.inventory_count.toLocaleString("zh-CN") ?? "—"}</strong><span>库存快照</span></div>
+      <div className="cj-hero-copy">
+        <span className="cj-eyebrow"><span className="cj-eyebrow-dot" /> CJ DROPSHIPPING 商品快照</span>
+        <h1>从全球选，<br /><em>挑你喜欢的。</em></h1>
+        <p>在真实商品目录中发现好物。价格按 CJ 原始美元报价呈现，未核实的物流与库存会明确标出。</p>
+        <a className="cj-hero-link" href="#catalog-results">开始逛商品 <span aria-hidden="true">↗</span></a>
+      </div>
+      <div className="cj-hero-panel" aria-label="商品快照统计">
+        <span className="cj-panel-kicker">CATALOG / LOCAL SNAPSHOT</span>
+        <div className="cj-stat-primary"><strong>{snapshot?.all_count.toLocaleString("zh-CN") ?? "—"}</strong><span>件商品列表</span></div>
+        <div className="cj-stat-secondary">
+          <div><strong>{snapshot?.detail_count.toLocaleString("zh-CN") ?? "—"}</strong><span>已取得规格详情</span></div>
+          <div><strong>{snapshot?.inventory_count.toLocaleString("zh-CN") ?? "—"}</strong><span>已取得库存快照</span></div>
+        </div>
       </div>
     </div>
+    <div className="cj-facts"><span><b>01</b> CJ 来源商品</span><span><b>02</b> USD 原始报价</span><span><b>03</b> 未核实信息明确标注</span></div>
     <div className="cj-controls">
       <form onSubmit={search} className="cj-search">
-        <label htmlFor="cj-search-input">搜索商品</label>
-        <div><input id="cj-search-input" value={draft} onChange={e => setDraft(e.target.value)} maxLength={120} placeholder="例如 backpack、耳机、pet" /><button type="submit">搜索 ↗</button></div>
+        <label htmlFor="cj-search-input">找点感兴趣的</label>
+        <div><input id="cj-search-input" value={draft} onChange={e => setDraft(e.target.value)} maxLength={120} placeholder="试试搜索：backpack、耳机、pet" /><button type="submit">搜索 <span aria-hidden="true">↗</span></button></div>
       </form>
+      <div className="cj-quick-search" aria-label="热门搜索">
+        <span>快速发现</span>
+        {["backpack", "headphones", "home storage"].map(term => <button key={term} type="button" onClick={() => { setDraft(term); setQuery(term); setPage(1); }}>{term}</button>)}
+      </div>
       <div className="cj-categories" aria-label="商品品类">
         {CATEGORIES.map((item, i) => <button key={item} type="button" className={category === item ? "active" : ""} onClick={() => { setCategory(item); setPage(1); }}>{LABELS[i]}</button>)}
       </div>
     </div>
-    <div className="cj-list-heading"><div><span>当前目录</span><h2>{query ? `“${query}”的搜索结果` : LABELS[CATEGORIES.indexOf(category)]}</h2></div><span>{snapshot?.total.toLocaleString("zh-CN") ?? "—"} 件</span></div>
+    <div className="cj-list-heading" id="catalog-results"><div><span>EXPLORE / 商品目录</span><h2>{query ? `“${query}”的搜索结果` : category ? LABELS[CATEGORIES.indexOf(category)] : "逛逛全部商品"}</h2></div><span>共 {snapshot?.total.toLocaleString("zh-CN") ?? "—"} 件 · 标题关键词匹配</span></div>
     {error && <p className="cj-error" role="alert">{error}</p>}
     {busy && <p className="cj-loading" role="status">正在读取 CJ 商品快照…</p>}
     {!busy && !error && snapshot && (snapshot.products.length ? <>
