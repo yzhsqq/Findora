@@ -149,17 +149,24 @@ class CJCatalog:
         }
 
     def _browse(self, query: str, category: str, page: int, page_size: int) -> dict:
-        direct_id = query.strip() if re.fullmatch(r"[0-9]{16,24}", query.strip()) else ""
-        terms = [] if direct_id else _terms(query)
+        exact = query.strip()
+        direct_id = exact if re.fullmatch(r"[0-9]{16,24}", exact) else ""
+        direct_sku = exact if re.fullmatch(r"CJ[A-Z0-9_-]{6,96}", exact, flags=re.I) else ""
+        terms = [] if direct_id or direct_sku else _terms(query)
         clauses: list[str] = []
         args: list[str] = []
         categories = _CATEGORIES.get(category, (category,)) if category else ()
-        if categories:
+        if categories and not (direct_id or direct_sku):
             clauses.append("first_category IN (" + ",".join("?" for _ in categories) + ")")
             args.extend(categories)
         if direct_id:
-            clauses.append("pid = ?")
-            args.append(direct_id)
+            clauses.append("(pid = ? OR EXISTS (SELECT 1 FROM json_each(products.detail_json, '$.variants') v "
+                           "WHERE json_extract(v.value, '$.vid') = ?))")
+            args.extend((direct_id, direct_id))
+        elif direct_sku:
+            clauses.append("EXISTS (SELECT 1 FROM json_each(products.detail_json, '$.variants') v "
+                           "WHERE lower(json_extract(v.value, '$.variantSku')) = lower(?))")
+            args.append(direct_sku)
         elif terms:
             clauses.append("(" + " OR ".join("lower(json_extract(list_json, '$.nameEn')) LIKE ?" for _ in terms) + ")")
             args.extend(f"%{term}%" for term in terms)

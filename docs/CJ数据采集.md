@@ -25,7 +25,7 @@ python scripts/sync_cj_catalog.py --phase stock --max-stock 500 --max-points 500
 
 ## 网页与 Agent 使用快照
 
-在 `.env` 增加 `CATALOG_SOURCE=cj` 并重启 API。网页会显示「CJ 商品库」入口，商品卡和 Agent 检索均从 `data/cj_catalog.sqlite3` 读取；原有冻结模拟目录不会混入当前检索。可以用 `GET /commerce/catalog?page=1&page_size=24&query=backpack` 验证。
+在 `.env` 增加 `CATALOG_SOURCE=cj` 并重启 API。网页会显示「CJ 商品库」入口，商品卡和 Agent 检索均从 `data/cj_catalog.sqlite3` 读取；原有冻结模拟目录不会混入当前检索。可以用 `GET /commerce/catalog?page=1&page_size=24&query=backpack` 验证。已取得详情的商品也可用完整 CJ SKU 精确搜索；只有列表、尚未取得规格详情的商品没有可检索的 SKU。
 
 CJ 模式当前使用 SQLite 标题关键词检索，**不会在服务启动或每次搜索时对 1 万件商品向量化**。这是为了先让真实数据源可浏览，并避免把未核实的物流与库存当作交易事实；后续若要接入向量检索，应在语义字段变化时做增量索引。
 

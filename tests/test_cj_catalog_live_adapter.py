@@ -37,3 +37,24 @@ async def test_cj_snapshot_has_real_fields_and_keeps_unknown_fulfillment_unknown
     assert candidate["sku_id"] == ""
     assert all(item["status"] != "pass" for item in candidate["checks"] if item["field"] in {"skus.stock", "ships_to", "price_max_major"})
     assert any("到手价" in value for value in candidate["unknowns"])
+
+
+@pytest.mark.asyncio
+async def test_cj_catalog_finds_exact_sku_even_with_previous_category_filter(tmp_path):
+    path = tmp_path / "cj_catalog.sqlite3"
+    with sqlite3.connect(path) as db:
+        db.execute("""CREATE TABLE products(pid TEXT PRIMARY KEY,first_category TEXT,second_category TEXT,
+            third_category TEXT,list_json TEXT,list_fetched_at TEXT,detail_json TEXT,detail_fetched_at TEXT,
+            inventory_json TEXT,inventory_fetched_at TEXT)""")
+        db.execute("INSERT INTO products VALUES(?,?,?,?,?,?,?,?,?,?)", (
+            "2507170748351600700", "Home, Garden & Furniture", "Storage", "Bags",
+            json.dumps({"nameEn": "Bouquet Buggy Hanging Flower Bag", "sellPrice": "3.02"}),
+            "2026-01-01", json.dumps({"variants": [{"variantSku": "CJYD243282601AZ",
+                                                 "vid": "2507170748351601500", "variantSellPrice": "3.02"}]}),
+            "2026-01-01", None, None,
+        ))
+    catalog = CJCatalog(path)
+    by_sku = await catalog.browse("cjyd243282601az", "Bags & Shoes")
+    assert by_sku["total"] == 1
+    assert by_sku["products"][0]["product_id"] == "2507170748351600700"
+    assert (await catalog.browse("2507170748351601500"))["total"] == 1

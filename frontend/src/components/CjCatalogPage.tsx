@@ -38,7 +38,12 @@ export default function CjCatalogPage({ request, favoriteIds, comparedIds, onFav
       .finally(() => { if (active) setBusy(false); });
     return () => { active = false; };
   }, [request, query, category, page]);
-  const search = (event: FormEvent) => { event.preventDefault(); setPage(1); setQuery(draft.trim()); };
+  const search = (event: FormEvent) => {
+    event.preventDefault(); setPage(1);
+    const value = draft.trim();
+    if (/^(?:\d{16,24}|CJ[A-Z0-9_-]{6,96})$/i.test(value)) setCategory("");
+    setQuery(value);
+  };
   return <section className="cj-catalog">
     <div className="cj-hero">
       <div className="cj-hero-copy">
@@ -60,7 +65,7 @@ export default function CjCatalogPage({ request, favoriteIds, comparedIds, onFav
     <div className="cj-controls">
       <form onSubmit={search} className="cj-search">
         <label htmlFor="cj-search-input">找点感兴趣的</label>
-        <div><input id="cj-search-input" value={draft} onChange={e => setDraft(e.target.value)} maxLength={120} placeholder="试试搜索：backpack、耳机、pet" /><button type="submit">搜索 <span aria-hidden="true">↗</span></button></div>
+        <div><input id="cj-search-input" value={draft} onChange={e => setDraft(e.target.value)} maxLength={120} placeholder="搜索标题、商品 ID 或 CJ SKU" /><button type="submit">搜索 <span aria-hidden="true">↗</span></button></div>
       </form>
       <div className="cj-quick-search" aria-label="热门搜索">
         <span>快速发现</span>
@@ -70,7 +75,7 @@ export default function CjCatalogPage({ request, favoriteIds, comparedIds, onFav
         {CATEGORIES.map((item, i) => <button key={item} type="button" className={category === item ? "active" : ""} onClick={() => { setCategory(item); setPage(1); }}>{LABELS[i]}</button>)}
       </div>
     </div>
-    <div className="cj-list-heading" id="catalog-results"><div><span>EXPLORE / 商品目录</span><h2>{query ? `“${query}”的搜索结果` : category ? LABELS[CATEGORIES.indexOf(category)] : "逛逛全部商品"}</h2></div><span>共 {snapshot?.total.toLocaleString("zh-CN") ?? "—"} 件 · 标题关键词匹配</span></div>
+    <div className="cj-list-heading" id="catalog-results"><div><span>EXPLORE / 商品目录</span><h2>{query ? `“${query}”的搜索结果` : category ? LABELS[CATEGORIES.indexOf(category)] : "逛逛全部商品"}</h2></div><span>共 {snapshot?.total.toLocaleString("zh-CN") ?? "—"} 件 · 标题关键词或编号匹配</span></div>
     {error && <p className="cj-error" role="alert">{error}</p>}
     {busy && <p className="cj-loading" role="status">正在读取 CJ 商品快照…</p>}
     {!busy && !error && snapshot && (snapshot.products.length ? <>
