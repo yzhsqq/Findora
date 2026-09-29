@@ -23,12 +23,15 @@ export default function ProductDetail({
 }) {
   const [product, setProduct] = useState(initialProduct);
   const [skuId, setSkuId] = useState(
-    initialProduct.default_sku_id || initialProduct.skus[0]?.sku_id || "",
+    initialProduct.source_platform === "CJdropshipping" && initialProduct.skus.length !== 1
+      ? ""
+      : initialProduct.default_sku_id || initialProduct.skus[0]?.sku_id || "",
   );
   const [shipTo, setShipTo] = useState("CN");
   const [detailBusy, setDetailBusy] = useState(false);
   const [quoteBusy, setQuoteBusy] = useState(false);
   const [quoteError, setQuoteError] = useState("");
+  const [quoteNotice, setQuoteNotice] = useState("");
   const [quote, setQuote] = useState<CJFreightQuote | null>(null);
   const sku = product.skus.find((item) => item.sku_id === skuId),
     landed = product.landed_price;
@@ -37,30 +40,55 @@ export default function ProductDetail({
     landed &&
     !landed.unavailable_reason &&
     Number.isFinite(landed.landed_total_major);
+  const fetchCJDetail = async (): Promise<ProductCard> => {
+    const data = await request("/catalog/detail", "POST", { product_id: product.product_id });
+    const card = readProducts([data.product])[0];
+    if (!card) throw new Error("CJ 商品详情格式无效");
+    setProduct(card);
+    setSkuId(card.skus.length === 1 ? card.skus[0].sku_id : "");
+    setQuote(null);
+    return card;
+  };
   const loadCJDetail = async () => {
-    setDetailBusy(true); setQuoteError("");
+    setDetailBusy(true); setQuoteError(""); setQuoteNotice("");
     try {
-      const data = await request("/catalog/detail", "POST", { product_id: product.product_id });
-      const card = readProducts([data.product])[0];
-      if (!card) throw new Error("CJ 商品详情格式无效");
-      setProduct(card);
-      setSkuId(card.default_sku_id || card.skus[0]?.sku_id || "");
-      setQuote(null);
+      const card = await fetchCJDetail();
+      if (card.skus.length > 1) setQuoteNotice(`找到 ${card.skus.length} 种规格，请选定后再查询物流。`);
+      if (card.skus.length === 0) setQuoteError("CJ 未提供可报价的规格与价格。");
     } catch (error) {
       setQuoteError(error instanceof Error ? error.message : "详情获取失败");
     } finally { setDetailBusy(false); }
   };
   const loadCJQuote = async () => {
-    if (!sku) return;
-    setQuoteBusy(true); setQuoteError(""); setQuote(null);
+    setQuoteBusy(true); setQuoteError(""); setQuoteNotice(""); setQuote(null);
     try {
+      let selected = sku;
+      if (!selected && !product.detail_available) {
+        const card = await fetchCJDetail();
+        if (card.skus.length === 0) throw new Error("CJ 未提供可报价的规格与价格。");
+        if (card.skus.length > 1) {
+          setQuoteNotice(`找到 ${card.skus.length} 种规格，请选定后再点击查询。`);
+          return;
+        }
+        selected = card.skus[0];
+      }
+      if (!selected) {
+        setQuoteNotice("请先选择一个规格，再查询物流试算。");
+        return;
+      }
       const data = await request("/catalog/quote", "POST", {
-        product_id: product.product_id, sku_id: sku.sku_id, ship_to: shipTo, quantity: 1,
+        product_id: product.product_id, sku_id: selected.sku_id, ship_to: shipTo, quantity: 1,
       });
       const value = data.quote as Partial<CJFreightQuote> | undefined;
       if (value?.status !== "quoted" || typeof value.cj_trial_total_usd !== "number")
         throw new Error("CJ 报价格式无效");
       setQuote(value as CJFreightQuote);
+      // The quote may have refreshed stock. Read the local snapshot without resetting the chosen SKU.
+      try {
+        const refreshed = await request("/catalog/detail", "POST", { product_id: product.product_id });
+        const card = readProducts([refreshed.product])[0];
+        if (card) setProduct(card);
+      } catch { /* The valid quote is still usable. */ }
     } catch (error) {
       setQuoteError(error instanceof Error ? error.message : "物流试算失败");
     } finally { setQuoteBusy(false); }
@@ -102,7 +130,7 @@ export default function ProductDetail({
                 name="product-sku"
                 value={item.sku_id}
                 checked={skuId === item.sku_id}
-                onChange={() => { setSkuId(item.sku_id); setQuote(null); }}
+                onChange={() => { setSkuId(item.sku_id); setQuote(null); setQuoteError(""); setQuoteNotice(""); }}
               />
               <span>{item.spec}</span>
               <small>
@@ -155,17 +183,18 @@ export default function ProductDetail({
         )}
       </div>
       {product.source_platform === "CJdropshipping" ? <div className="cj-quote-panel">
-        {!product.detail_available && <button type="button" className="drawer-compare" disabled={detailBusy}
+        {!product.detail_available && <button type="button" className="drawer-compare" disabled={detailBusy || quoteBusy}
           onClick={() => void loadCJDetail()}>{detailBusy ? "正在获取 CJ 详情…" : "获取这件商品的规格详情"}</button>}
         <div className="cj-quote-controls">
           <label>目的国<select value={shipTo} onChange={event => { setShipTo(event.target.value); setQuote(null); }}>
             <option value="CN">中国 CN</option><option value="US">美国 US</option><option value="GB">英国 GB</option>
             <option value="JP">日本 JP</option><option value="SG">新加坡 SG</option>
           </select></label>
-          <button type="button" disabled={!sku || quoteBusy || detailBusy} onClick={() => void loadCJQuote()}>
-            {quoteBusy ? "正在向 CJ 查询…" : "查询 CJ 物流试算"}
+          <button type="button" disabled={quoteBusy || detailBusy} onClick={() => void loadCJQuote()}>
+            {quoteBusy ? "正在向 CJ 查询…" : !product.detail_available ? "获取规格并查询 CJ 运费" : "查询 CJ 物流试算"}
           </button>
         </div>
+        {quoteNotice && <p className="cj-quote-hint" role="status">{quoteNotice}</p>}
         {quoteError && <p className="cj-quote-error" role="alert">{quoteError}</p>}
         {quote && <div className="cj-quote-result">
           <span>{quote.fee_status === "cj_reported" ? "CJ 试算合计" : "已知费用合计 · 税费待核"}</span>

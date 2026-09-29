@@ -2,8 +2,10 @@
 import json
 from datetime import datetime, timezone
 
+import httpx
 import pytest
 
+import app.infrastructure.cj_live_quote as quote_module
 from app.infrastructure.cj_live_quote import CJLiveQuoteService
 from app.infrastructure.persistence.cj_catalog import CJCatalog
 from scripts.sync_cj_catalog import open_db, store_list_page
@@ -73,3 +75,39 @@ async def test_existing_snapshot_exposes_supplier_not_brand(tmp_path):
     assert card["origin_country"] == "" and card["ship_from_warehouses"] == ["CN"]
     assert card["material_tags"] == ["Nylon"] and card["weight_kg"] == 0.5
     assert card["skus"][0]["variant_id"] == "vid-1"
+
+
+def test_auth_falls_back_to_official_mirror_and_reuses_token(tmp_path, monkeypatch):
+    service = CJLiveQuoteService(tmp_path / "cj.sqlite3")
+    calls = []
+
+    class Client:
+        def __init__(self, *, base_url, timeout):
+            self.base_url = base_url
+
+        def post(self, endpoint, *, json):
+            calls.append((self.base_url, endpoint))
+            if self.base_url == quote_module.API_BASE:
+                raise httpx.ConnectError("primary unavailable")
+
+            class Response:
+                def json(self):
+                    return {"result": True, "data": {"accessToken": "cached-token"}}
+
+            return Response()
+
+        def close(self):
+            pass
+
+    monkeypatch.setattr(quote_module.httpx, "Client", Client)
+    monkeypatch.setattr(quote_module, "dotenv_values", lambda _: {"CJdropshipping_key": "test-key"})
+    monkeypatch.setattr(service, "_pace", lambda: None)
+    first, first_token = service._client()
+    second, second_token = service._client()
+    first.close()
+    second.close()
+    assert first_token == second_token == "cached-token"
+    assert calls == [
+        (quote_module.API_BASE, "/authentication/getAccessToken"),
+        (quote_module.API_MIRROR, "/authentication/getAccessToken"),
+    ]

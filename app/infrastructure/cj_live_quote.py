@@ -22,6 +22,7 @@ from app.infrastructure.settings import PROJECT_ROOT
 
 
 API_BASE = "https://developers.cjdropshipping.com/api2.0/v1"
+API_MIRROR = "https://developers.cjdropshipping.cn/api2.0/v1"
 QUOTE_TTL_SECONDS = 300
 DETAIL_TTL_SECONDS = 600
 STOCK_TTL_SECONDS = 600
@@ -52,11 +53,14 @@ def _amount(value: object) -> Decimal | None:
 class CJLiveQuoteService:
     """One API worker, serial CJ calls, with a persistent pilot point ceiling."""
 
-    def __init__(self, db_path: Path, *, daily_point_limit: int = 300):
+    def __init__(self, db_path: Path, *, daily_point_limit: int = 1000):
         self.db_path = db_path
         self.daily_point_limit = daily_point_limit
         self._lock = asyncio.Lock()
         self._next_call_at = 0.0
+        self._token: str | None = None
+        self._token_cached_until = 0.0
+        self._api_base = API_BASE
 
     @contextmanager
     def _db(self):
@@ -116,16 +120,29 @@ class CJLiveQuoteService:
         return payload.get("data")
 
     def _client(self) -> tuple[httpx.Client, str]:
-        key = dotenv_values(PROJECT_ROOT / ".env").get("CJdropshipping_key")
-        if not key:
-            raise CJQuoteError("CJ API Key 未配置")
-        client = httpx.Client(base_url=API_BASE, timeout=30)
+        client = httpx.Client(base_url=self._api_base, timeout=30)
         try:
+            if self._token and time.monotonic() < self._token_cached_until:
+                return client, self._token
+            key = dotenv_values(PROJECT_ROOT / ".env").get("CJdropshipping_key")
+            if not key:
+                raise CJQuoteError("CJ API Key 未配置")
             self._pace()
-            auth = client.post("/authentication/getAccessToken", json={"apiKey": key}).json()
+            try:
+                auth = client.post("/authentication/getAccessToken", json={"apiKey": key}).json()
+            except httpx.TransportError:
+                if self._api_base != API_BASE:
+                    raise
+                client.close()
+                self._api_base = API_MIRROR
+                client = httpx.Client(base_url=self._api_base, timeout=30)
+                self._pace()
+                auth = client.post("/authentication/getAccessToken", json={"apiKey": key}).json()
             token = (auth.get("data") or {}).get("accessToken")
             if not auth.get("result") or not token:
                 raise CJQuoteError("CJ 授权失败，无法查询详情或物流")
+            self._token = token
+            self._token_cached_until = time.monotonic() + 3600
             return client, token
         except CJQuoteError:
             client.close()

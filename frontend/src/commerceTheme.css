@@ -119,6 +119,7 @@ main { margin-left: 232px; padding: 29px 54px 190px; }
 .cj-quote-controls button { min-height: 38px; padding: 0 13px; border-radius: 7px; background: #e94d36; color: #fff; font-size: 11px; font-weight: 700; }
 .cj-quote-controls button:disabled { opacity: .5; cursor: not-allowed; }
 .cj-quote-error { margin: 10px 0 0; color: #b83727; font-size: 11px; }
+.cj-quote-hint { margin: 10px 0 0; color: #5c6470; font-size: 11px; }
 .cj-quote-result { display: grid; gap: 6px; margin-top: 15px; padding-top: 14px; border-top: 1px solid #f0e3df; }
 .cj-quote-result > span { color: #ad4b3a; font-size: 11px; font-weight: 700; }
 .cj-quote-result strong { color: #d8452f; font-size: 25px; line-height: 1.2; }
