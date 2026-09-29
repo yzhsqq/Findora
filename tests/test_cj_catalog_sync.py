@@ -1,4 +1,5 @@
 from scripts.sync_cj_catalog import (
+    CJClient,
     flatten_list_page,
     interleave_categories,
     list_count,
@@ -39,4 +40,39 @@ def test_page_store_is_idempotent_and_preserves_detail(tmp_path):
     assert list_count(db) == 1
     assert db.execute("SELECT detail_json FROM products WHERE pid='p1'").fetchone()[0] == "{}"
     assert db.execute("SELECT product_count FROM list_pages WHERE category_id='cat'").fetchone()[0] == 1
+    db.close()
+
+
+def test_implausible_cj_points_counter_is_rechecked_before_pausing(tmp_path):
+    db = open_db(tmp_path / "cj.sqlite3")
+
+    class Response:
+        status_code = 200
+
+        def __init__(self, used):
+            self.used = used
+
+        def json(self):
+            return {"code": 200, "result": True, "data": {},
+                    "pointsInfo": {"usedToday": self.used, "remaining": 50000}}
+
+    class Http:
+        def __init__(self):
+            self.calls = []
+
+        def get(self, endpoint, **kwargs):
+            self.calls.append(endpoint)
+            return Response(60370 if len(self.calls) == 1 else 650)
+
+    client = CJClient.__new__(CJClient)
+    client.db = db
+    client.http = Http()
+    client.token = "test"
+    client.max_points = 10000
+    client.used_today = 640
+    client._pace = lambda: None
+
+    client.get("/product/stock/getInventoryByPid", params={"pid": "p1"}, cost=10)
+    assert client.used_today == 650
+    assert client.http.calls == ["/product/stock/getInventoryByPid", "/product/getCategory"]
     db.close()

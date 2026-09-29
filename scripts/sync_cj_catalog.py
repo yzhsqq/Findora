@@ -162,7 +162,22 @@ class CJClient:
             payload = response.json()
             points = payload.get("pointsInfo") or {}
             if isinstance(points.get("usedToday"), (int, float)):
-                self.used_today = int(points["usedToday"])
+                reported = int(points["usedToday"])
+                previous = self.used_today
+                if previous is not None and (reported < previous or reported > previous + cost + 100):
+                    # CJ occasionally reports another, implausibly large counter on an
+                    # otherwise successful stock response. Recheck on a free endpoint;
+                    # fail closed if it cannot establish the account's real usage.
+                    self._pace()
+                    check = self.http.get("/product/getCategory", headers={"CJ-Access-Token": self.token})
+                    check_payload = check.json()
+                    checked = (check_payload.get("pointsInfo") or {}).get("usedToday")
+                    if (check.status_code >= 400 or check_payload.get("result") is not True
+                            or not isinstance(checked, (int, float))):
+                        raise CJQuotaReached("CJ points counter inconsistent; paused for safety")
+                    self.used_today = int(checked)
+                else:
+                    self.used_today = reported
             with self.db:
                 self.db.execute(
                     "INSERT INTO run_log(at,endpoint,points_used_today,points_remaining,result_code) VALUES(?,?,?,?,?)",

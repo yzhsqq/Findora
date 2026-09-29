@@ -130,7 +130,10 @@ export default function ProductDetail({
         {product.source_platform === "CJdropshipping" && <>
           <div><span>品牌</span><span>{product.brand || "CJ 未提供"}</span></div>
           <div><span>供应商</span><span>{product.supplier_name || "未提供"}</span></div>
-          <div><span>发货仓国家</span><span>{product.ship_from_warehouses?.join(" / ") || "库存待核验"}</span></div>
+          <div><span>可选发货仓（库存快照）</span><span>{product.ship_from_warehouses?.join(" / ") ||
+            (product.inventory_checked_at ? "未查到可用仓库" : "库存待核验")}</span></div>
+          <div><span>仓库库存查询于</span><span>{product.inventory_checked_at
+            ? new Date(product.inventory_checked_at).toLocaleString("zh-CN") : "未查询"}</span></div>
           <div><span>材质</span><span>{product.material_tags?.join(" / ") || "未提供"}</span></div>
           <div><span>商品重量</span><span>{product.weight_kg ? `${product.weight_kg} kg` : "未提供"}</span></div>
           <div><span>数据更新时间</span><span>{product.updated_at ? new Date(product.updated_at).toLocaleString("zh-CN") : "未提供"}</span></div>
