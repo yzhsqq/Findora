@@ -123,7 +123,8 @@ def build_app() -> FastAPI:
     register_confirmation_routes(api, lambda: container().confirmations)
     register_decision_routes(api, lambda: container().catalog_search,
                              lambda: container().decision_evidence_store)
-    register_catalog_routes(api, lambda: container().catalog_search)
+    register_catalog_routes(api, lambda: container().catalog_search,
+                            lambda: container().cj_live_quote)
     register_buyer_workspace_routes(api, lambda: container().orchestrator)
     from app.presentation.favorites import register_favorite_routes
     from app.infrastructure.buyer_favorites import BuyerFavoriteStore

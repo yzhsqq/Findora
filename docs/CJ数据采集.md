@@ -29,7 +29,19 @@ python scripts/sync_cj_catalog.py --phase stock --max-stock 500 --max-points 500
 
 CJ 模式当前使用 SQLite 标题关键词检索，**不会在服务启动或每次搜索时对 1 万件商品向量化**。这是为了先让真实数据源可浏览，并避免把未核实的物流与库存当作交易事实；后续若要接入向量检索，应在语义字段变化时做增量索引。
 
-采集程序可继续向同一个 SQLite 快照写入新详情；网页下一次请求即可读到最新已提交记录。列表价是 USD 参考价或区间；未查到详情的商品没有可售 SKU，库存快照也不等于实时可售。CJ 商品当前只支持浏览、收藏、比较和咨询，不支持站内下单意向或计算到手价。
+采集程序可继续向同一个 SQLite 快照写入新详情；网页下一次请求即可读到最新已提交记录。列表价是 USD 参考价或区间；未查到详情的商品没有可售 SKU，库存快照也不等于实时可售。CJ 商品当前只支持浏览、收藏、比较、咨询和按需物流试算，不支持站内下单意向。
+
+## 小范围详情与物流试算验收
+
+这部分仅用于指定商品的人工验收。普通浏览和 Agent 关键词检索只读本地快照，不向 CJ 发起计点请求。打开 CJ 商品详情后，可按需获取缺失的规格详情，再选定 SKU 和目的国点击「查询 CJ 物流试算」。Agent 在用户明确询问指定商品的配送或费用时也可调用同一个服务。
+
+服务通过 CJ `product/query` 获取规格及其商品价，通过 `getInventoryByPid` 核验该规格可用发货仓，再按发货仓、目的国和 variant ID 调 `freightCalculate`。不同 SKU 和目的国要分别试算。详情和库存最多复用 10 分钟，同一 SKU、目的国、数量的报价最多复用 5 分钟；缓存命中不会再次调用计点接口。服务按约 1.2 秒间隔串行请求，并在单进程试运行中设置本地 300 点/UTC 日上限。多进程部署需要改用共享限流器和共享额度账本。
+
+为保留原有提示词注册表和会话数据，先将 `data/cj_catalog.sqlite3` **复制**到 `data/cj_pilot/cj_catalog.sqlite3`，再运行 `python scripts/run_cj_pilot.py`。试运行的商品补查、报价缓存、点数账本、提示词注册表和会话均写在 `data/cj_pilot/`。试运行脚本监听本机 8000 端口；前端仍按原方式启动。原始快照不会被试运行写入。
+
+验收例子：商品 ID `2507170748351600700`、SKU `CJYD243282601AZ`、目的国 `CN`、数量 1。2026-09-29 的 CJ 返回该规格商品价 US$3.02、YTO China Domestic 运杂费 US$1.43、试算合计 US$4.45。这个值是查询当时的 CJ 试算，不是最终支付价；目的地实际税费、支付汇率和结算页费用仍须另行核实。供应商、品牌、生产国是不同字段：CJ 未提供品牌或生产国时显示未知，不能用供应商或发货仓代替。
+
+相关接口：[CJ 商品详情与库存](https://developers.cjdropshipping.com/en/api/api2/api/product.html)、[CJ 物流试算](https://developers.cjdropshipping.com/en/api/api2/api/logistic.html)、[官方点数规则](https://developers.cjdropshipping.com/en/api/api2/standard/points.html)。
 
 查看采集进度：
 

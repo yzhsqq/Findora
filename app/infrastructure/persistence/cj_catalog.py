@@ -55,6 +55,24 @@ def _plain(value: object) -> str:
     return re.sub(r"\s+", " ", html.unescape(_HTML_TAG.sub(" ", text))).strip()[:1400]
 
 
+def _labels(value: object) -> list[str]:
+    if isinstance(value, str):
+        try:
+            value = json.loads(value)
+        except ValueError:
+            value = [value]
+    if not isinstance(value, list):
+        return []
+    return [str(item).strip() for item in value if str(item).strip()]
+
+
+def _positive_count(value: object) -> bool:
+    try:
+        return float(value) > 0
+    except (TypeError, ValueError):
+        return False
+
+
 def _terms(query: str) -> list[str]:
     english = re.findall(r"[a-zA-Z]{3,}", query.lower())
     translated = [word for zh, word in _WORDS.items() if zh in query and not any(
@@ -96,22 +114,34 @@ class CJCatalog:
             if sku_id and kind != "unknown":
                 skus.append({
                     "sku_id": sku_id, "spec": str(item.get("variantKey") or item.get("variantNameEn") or sku_id),
+                    "variant_id": str(item.get("vid") or ""),
                     "price_major": amount, "currency": "USD",
                     "stock": stocks.get(str(item.get("vid")), 0),
                     "stock_known": str(item.get("vid")) in stocks,
                 })
         image = detail.get("bigImage") or listing.get("bigImage")
+        material = _labels(detail.get("materialNameEnSet") or detail.get("materialNameEn"))
+        warehouses = [str(item.get("countryCode")) for item in inventory.get("inventories") or []
+                      if isinstance(item, dict) and item.get("countryCode") and _positive_count(item.get("totalInventoryNum"))]
+        weight = detail.get("productWeight")
+        try:
+            weight_kg = max(0.0, float(weight) / 1000) if weight is not None else None
+        except (TypeError, ValueError):
+            weight_kg = None
         return {
             "product_id": str(row["pid"]),
             "canonical_product_id": str(row["pid"]),
             "title": str(listing.get("nameEn") or detail.get("productNameEn") or "CJ 商品"),
-            "brand": "", "category": str(row["first_category"]), "origin_country": "",
+            "brand": "", "supplier_name": str(detail.get("supplierName") or listing.get("supplierName") or ""),
+            "category": str(row["first_category"]), "origin_country": "",
             "price_major": price, "currency": "USD", "price_text": price_text,
             "price_kind": price_kind, "highlights": [str(row["second_category"]), str(row["third_category"])],
             "skus": skus, "default_sku_id": skus[0]["sku_id"] if skus else "",
             "score": score, "source_platform": "CJdropshipping", "image_url": image,
             "image_kind": "source" if image else "placeholder", "image_alt": str(listing.get("nameEn") or "CJ 商品"),
-            "description": _plain(detail.get("description")), "ships_to": [], "material_tags": [],
+            "description": _plain(detail.get("description") or listing.get("description")),
+            "ships_to": [], "ship_from_warehouses": list(dict.fromkeys(warehouses)),
+            "material_tags": material, "weight_kg": weight_kg,
             "updated_at": row["detail_fetched_at"] or row["list_fetched_at"],
             "inventory_checked_at": row["inventory_fetched_at"],
             "stock_known": bool(inventory),
@@ -119,14 +149,18 @@ class CJCatalog:
         }
 
     def _browse(self, query: str, category: str, page: int, page_size: int) -> dict:
-        terms = _terms(query)
+        direct_id = query.strip() if re.fullmatch(r"[0-9]{16,24}", query.strip()) else ""
+        terms = [] if direct_id else _terms(query)
         clauses: list[str] = []
         args: list[str] = []
         categories = _CATEGORIES.get(category, (category,)) if category else ()
         if categories:
             clauses.append("first_category IN (" + ",".join("?" for _ in categories) + ")")
             args.extend(categories)
-        if terms:
+        if direct_id:
+            clauses.append("pid = ?")
+            args.append(direct_id)
+        elif terms:
             clauses.append("(" + " OR ".join("lower(json_extract(list_json, '$.nameEn')) LIKE ?" for _ in terms) + ")")
             args.extend(f"%{term}%" for term in terms)
         elif query.strip():

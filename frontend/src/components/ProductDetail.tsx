@@ -1,11 +1,13 @@
 import { useState } from "react";
-import type { ProductCard } from "../types";
+import type { CJFreightQuote, ProductCard } from "../types";
+import { readProducts } from "../lib/commerceClient";
 import Icon from "./Icon";
 import Modal from "./Modal";
 import { money, ProductImage } from "./ProductCards";
 export default function ProductDetail({
-  product,
+  product: initialProduct,
   busy,
+  request,
   onClose,
   onCompare,
   onAsk,
@@ -13,14 +15,21 @@ export default function ProductDetail({
 }: {
   product: ProductCard;
   busy: boolean;
+  request: (path: string, method?: string, body?: Record<string, unknown>) => Promise<Record<string, unknown>>;
   onClose: () => void;
   onCompare: (product: ProductCard) => void;
   onAsk: (query: string) => void;
   onPrepare: (product: ProductCard, skuId: string) => void;
 }) {
+  const [product, setProduct] = useState(initialProduct);
   const [skuId, setSkuId] = useState(
-    product.default_sku_id || product.skus[0]?.sku_id || "",
+    initialProduct.default_sku_id || initialProduct.skus[0]?.sku_id || "",
   );
+  const [shipTo, setShipTo] = useState("CN");
+  const [detailBusy, setDetailBusy] = useState(false);
+  const [quoteBusy, setQuoteBusy] = useState(false);
+  const [quoteError, setQuoteError] = useState("");
+  const [quote, setQuote] = useState<CJFreightQuote | null>(null);
   const sku = product.skus.find((item) => item.sku_id === skuId),
     landed = product.landed_price;
   const canShowLanded =
@@ -28,6 +37,34 @@ export default function ProductDetail({
     landed &&
     !landed.unavailable_reason &&
     Number.isFinite(landed.landed_total_major);
+  const loadCJDetail = async () => {
+    setDetailBusy(true); setQuoteError("");
+    try {
+      const data = await request("/catalog/detail", "POST", { product_id: product.product_id });
+      const card = readProducts([data.product])[0];
+      if (!card) throw new Error("CJ 商品详情格式无效");
+      setProduct(card);
+      setSkuId(card.default_sku_id || card.skus[0]?.sku_id || "");
+      setQuote(null);
+    } catch (error) {
+      setQuoteError(error instanceof Error ? error.message : "详情获取失败");
+    } finally { setDetailBusy(false); }
+  };
+  const loadCJQuote = async () => {
+    if (!sku) return;
+    setQuoteBusy(true); setQuoteError(""); setQuote(null);
+    try {
+      const data = await request("/catalog/quote", "POST", {
+        product_id: product.product_id, sku_id: sku.sku_id, ship_to: shipTo, quantity: 1,
+      });
+      const value = data.quote as Partial<CJFreightQuote> | undefined;
+      if (value?.status !== "quoted" || typeof value.cj_trial_total_usd !== "number")
+        throw new Error("CJ 报价格式无效");
+      setQuote(value as CJFreightQuote);
+    } catch (error) {
+      setQuoteError(error instanceof Error ? error.message : "物流试算失败");
+    } finally { setQuoteBusy(false); }
+  };
   return (
     <Modal title={`${product.title} 商品详情`} drawer onClose={onClose}>
       <div className="drawer-visual">
@@ -65,7 +102,7 @@ export default function ProductDetail({
                 name="product-sku"
                 value={item.sku_id}
                 checked={skuId === item.sku_id}
-                onChange={() => setSkuId(item.sku_id)}
+                onChange={() => { setSkuId(item.sku_id); setQuote(null); }}
               />
               <span>{item.spec}</span>
               <small>
@@ -90,6 +127,14 @@ export default function ProductDetail({
           <span>原产地</span>
           <span>{product.origin_country || "未提供"}</span>
         </div>
+        {product.source_platform === "CJdropshipping" && <>
+          <div><span>品牌</span><span>{product.brand || "CJ 未提供"}</span></div>
+          <div><span>供应商</span><span>{product.supplier_name || "未提供"}</span></div>
+          <div><span>发货仓国家</span><span>{product.ship_from_warehouses?.join(" / ") || "库存待核验"}</span></div>
+          <div><span>材质</span><span>{product.material_tags?.join(" / ") || "未提供"}</span></div>
+          <div><span>商品重量</span><span>{product.weight_kg ? `${product.weight_kg} kg` : "未提供"}</span></div>
+          <div><span>数据更新时间</span><span>{product.updated_at ? new Date(product.updated_at).toLocaleString("zh-CN") : "未提供"}</span></div>
+        </>}
         {(product.ships_to?.length ?? 0) > 0 && (
           <div>
             <span>配送地区</span>
@@ -106,7 +151,27 @@ export default function ProductDetail({
           </div>
         )}
       </div>
-      {canShowLanded ? (
+      {product.source_platform === "CJdropshipping" ? <div className="cj-quote-panel">
+        {!product.detail_available && <button type="button" className="drawer-compare" disabled={detailBusy}
+          onClick={() => void loadCJDetail()}>{detailBusy ? "正在获取 CJ 详情…" : "获取这件商品的规格详情"}</button>}
+        <div className="cj-quote-controls">
+          <label>目的国<select value={shipTo} onChange={event => { setShipTo(event.target.value); setQuote(null); }}>
+            <option value="CN">中国 CN</option><option value="US">美国 US</option><option value="GB">英国 GB</option>
+            <option value="JP">日本 JP</option><option value="SG">新加坡 SG</option>
+          </select></label>
+          <button type="button" disabled={!sku || quoteBusy || detailBusy} onClick={() => void loadCJQuote()}>
+            {quoteBusy ? "正在向 CJ 查询…" : "查询 CJ 物流试算"}
+          </button>
+        </div>
+        {quoteError && <p className="cj-quote-error" role="alert">{quoteError}</p>}
+        {quote && <div className="cj-quote-result">
+          <span>{quote.fee_status === "cj_reported" ? "CJ 试算合计" : "已知费用合计 · 税费待核"}</span>
+          <strong>{money(quote.cj_trial_total_usd, "USD")}</strong>
+          <p>规格商品价 {money(quote.product_subtotal_usd, "USD")} + CJ 物流及已列费用 {money(quote.shipping_and_cj_fees_usd, "USD")}</p>
+          <small>{quote.ship_from_warehouse} 仓 → {quote.ship_to} · {quote.shipping_method} · {quote.route_count} 条可选路线</small>
+          <small>查询于 {new Date(quote.quoted_at).toLocaleString("zh-CN")} · 仅为 CJ 试算，非最终支付价</small>
+        </div>}
+      </div> : canShowLanded ? (
         <div className="landed-detail-panel">
           <strong>
             到手价 {money(landed.landed_total_major, landed.currency)}
@@ -126,7 +191,7 @@ export default function ProductDetail({
         </p>
       )}
       <p className="drawer-note">{product.source_platform === "CJdropshipping"
-        ? "商品来自 CJ 快照。列表报价、规格价与库存记录可能滞后；配送范围、运费和最终价格尚未核实，当前不支持直接下单。"
+        ? "商品来自 CJ 快照；发货仓与目的国配送是不同信息。试算前不会假定可配送；试算后仍需在下单前复核价格、库存、地址与税费，当前不支持直接下单。"
         : "价格、库存为目录查询结果，购买前需要再次核对。图片与评分如标注为示意或样例，不代表实时平台信息。"}</p>
       <button
         className="primary-button"
@@ -134,7 +199,7 @@ export default function ProductDetail({
         onClick={() => {
           onAsk(
             product.source_platform === "CJdropshipping"
-              ? `请根据 CJ 商品快照介绍「${product.title}」（product_id=${product.product_id}${sku ? `，sku_id=${sku.sku_id}，规格=${sku.spec}` : ""}）。明确区分已知的列表报价和未知的实时库存、目的地配送、运费及到手价，不要把未知项当成已确认。`
+              ? `请介绍 CJ 商品「${product.title}」（product_id=${product.product_id}${sku ? `，sku_id=${sku.sku_id}，规格=${sku.spec}` : ""}）。若我询问物流或到手费用，请调用 CJ 物流试算工具；区分试算与最终支付价，未知税费不要当作零。`
               : `请进一步核对「${product.title}」（product_id=${product.product_id}${sku ? `，sku_id=${sku.sku_id}，规格=${sku.spec}` : ""}）的当前库存与到手价。`,
           );
           onClose();

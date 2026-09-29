@@ -20,6 +20,7 @@ from agentscope.tool import FunctionTool, Toolkit
 from app.application.agents.context_policy import build_context_config
 from app.application.prompts.loader import load_prompts
 from app.application.tools.category_insight_tool import build_category_insight_tool
+from app.application.tools.cj_live_tools import build_cj_live_tools
 from app.application.tools.product_search_tool import build_product_search_tool
 from app.application.tools.web_search_tool import build_web_search_tool
 from app.application.tools.conversation_fact_lookup import build_conversation_fact_lookup
@@ -27,6 +28,7 @@ from app.infrastructure.persistence.context_evidence import ContextEvidenceStore
 from app.application.usecases.catalog_search import CatalogSearchUseCase
 from app.infrastructure.eventbus import TradeEventBus
 from app.infrastructure.rag.category_knowledge import KNOWLEDGE_DIR
+from app.infrastructure.cj_live_quote import CJLiveQuoteService
 from app.infrastructure.llm import create_chat_model
 from app.infrastructure.throttle import GatewayThrottle
 from app.infrastructure.resilience import (
@@ -46,6 +48,7 @@ class SearchAgentFactory:
         knowledge_base: KnowledgeBase,
         circuit_registry: CircuitBreakerRegistry,
         throttle: GatewayThrottle,
+        cj_live_quote: CJLiveQuoteService | None = None,
     ) -> None:
         self._settings = settings
         self._catalog_search = catalog_search
@@ -54,6 +57,7 @@ class SearchAgentFactory:
         self._circuit_registry = circuit_registry
         # 闸门由组装根下发，三个工厂必须共用同一个，否则各限一份等于没限
         self._throttle = throttle
+        self._cj_live_quote = cj_live_quote
         self.evidence_store = ContextEvidenceStore(settings.data_dir / "context_evidence.db")
 
     def _resilience(self) -> list:
@@ -82,6 +86,9 @@ class SearchAgentFactory:
         ]
         tools.append(FunctionTool(build_conversation_fact_lookup(self.evidence_store), is_read_only=True,
                                   middlewares=self._resilience()))
+        if self._cj_live_quote is not None:
+            tools.extend(FunctionTool(tool, is_read_only=True, middlewares=self._resilience())
+                         for tool in build_cj_live_tools(self._cj_live_quote, self._bus))
         if self._settings.tavily_api_key:
             tools.append(
                 FunctionTool(

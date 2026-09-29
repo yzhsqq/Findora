@@ -65,6 +65,7 @@ from app.infrastructure.rag.category_knowledge import (
     bootstrap_category_knowledge,
     build_category_knowledge_base,
 )
+from app.infrastructure.cj_live_quote import CJLiveQuoteService
 from app.infrastructure.rerank.http_reranker import HttpReranker
 from app.infrastructure.resilience import CircuitBreakerRegistry
 from app.infrastructure.settings import Settings, load_settings
@@ -124,6 +125,7 @@ class Container:
     prompt_registry: Any = None
     context_service: Any = None
     catalog_search: Any = None
+    cj_live_quote: Any = None
     decision_evidence_store: Any = None
 
     async def startup(self) -> None:
@@ -285,12 +287,15 @@ async def build_container() -> Container:
             product_repo, embedder=embedder, vector_index=vector_index, reranker=reranker,
             hybrid_enabled=settings.hybrid_recall_enabled,
         ))
+    cj_live_quote = (CJLiveQuoteService(settings.data_dir / "cj_catalog.sqlite3")
+                     if settings.catalog_source == "cj" else None)
     place_order = PlaceOrderUseCase(confirmations)
     query_order = QueryOrderUseCase(trade_store)
     cancel_order = CancelOrderUseCase(confirmations)
 
     search_factory = SearchAgentFactory(
         settings, catalog_search, bus, knowledge_base, circuit_registry, throttle,
+        cj_live_quote=cj_live_quote,
     )
     trade_factory = TradeAgentFactory(
         settings, place_order, query_order, cancel_order, bus, circuit_registry, throttle,
@@ -352,5 +357,6 @@ async def build_container() -> Container:
         identity_policy=identity_policy,
         prompt_registry=prompt_registry,
         catalog_search=catalog_search,
+        cj_live_quote=cj_live_quote,
         decision_evidence_store=search_factory.evidence_store,
     )

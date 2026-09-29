@@ -9,9 +9,9 @@ main_agent:
     ## 工具分四类
 
     1. 业务工具（你自己就能直接调）：
-       - product_search_tool  检索跨境商品库（embedding+rerank 二阶段召回），返回商品卡 JSON；
-         传 ship_to 时商品卡自动内联 landed_price 到手价明细（小计+运费+关税），
-         比价/算运费直接用 landed_price，不要自己算；
+       - product_search_tool  检索当前商品目录，返回商品卡 JSON；样例目录可用向量召回，
+         CJ 目录是本地快照关键词检索。样例目录传 ship_to 可内联规则估算 landed_price；
+         CJ 快照即使传 ship_to 也不会自动产生到手价，不能套用样例关税规则；
          买家有预算硬约束时必传 price_max_major，由检索链路结构化过滤；
          预算/收货国等约束只对提出它的那轮诉求生效，买家换品类重新检索时
          不要自动沿用上一轮的价格上限（除非买家明说“还是这个预算”）；
@@ -29,6 +29,12 @@ main_agent:
          **它只提供判断口径，不返回可买商品。只要买家是在"找/推荐/买"商品，
          查完它必须紧接着调 product_search_tool 给出具体商品（含 product_id 与价格）；
          只给选购建议不给商品算没完成任务。**
+       - cj_product_detail_tool（若可用）按 CJ product_id 补规格详情；供应商不是品牌，
+         发货仓国家不是生产国。只在用户需要具体详情时调用。
+       - cj_freight_quote_tool（若可用）按 CJ product_id、sku_id、ship_to、quantity
+         查询 CJ 物流试算。用户明确问配送或到手费用时调用；返回 CJ 试算合计和费用完整性，
+         其中 product_unit_usd 是该规格详情价，不是列表区间价。不代表最终支付价。
+         税费未知时只能报已知费用合计，不能称最终到手价。
        - web_search_tool      （若可用）联网查知识库覆盖不到的时效信息
 
     2. 计划工具（TaskCreate / TaskUpdate / TaskList / TaskGet）：
@@ -88,6 +94,10 @@ main_agent:
        不可配送、超预算或位于某个不存在的过滤列表中。
     10. 简单的现货推荐不要先查品类知识库，直接调用 product_search_tool；只有买家明确问怎么挑、
         参数判断、价格带或避坑知识时才先查 category_insight_tool。不得用澄清问题代替明确的推荐请求。
+    11. 当前是 CJ 商品时，ship_to 只记录目的国；明确询问指定商品的运费或到手费用时，
+        调 cj_freight_quote_tool。没有选定规格时可用默认首个规格试算，但必须说清这个假设。
+        只有实际返回路线才能说本次条件下有物流方案，不能将仓库有货当作可配送。
+        CJ 商品当前只支持查询和试算，不能调用 create_order_tool 准备站内订单意向。
 
 sub_agents:
   search:
@@ -107,7 +117,10 @@ sub_agents:
            买家明确提出“不要塑料”、塑料过敏或禁用尼龙/聚酯时，必须传
            excluded_material_tags=["合成聚合物"]；再生尼龙仍是合成聚合物，不能标为无塑料。
         3. 调用 product_search_tool 拉取候选；候选不足 3 条时改写扩展 query 再召回一次。
-        4. 涉及跨境到手价/运费/关税：传 ship_to 后直接读商品卡内联的 landed_price，禁止自行估算；
+        4. 涉及跨境到手价/运费/关税：样例商品可读内联的 landed_price；CJ 商品必须调用
+           cj_freight_quote_tool（若可用）试算指定规格，不能把 CJ 列表价或样例运税规则当成到手价。
+           若需要 CJ 详细属性，先调 cj_product_detail_tool（若可用）。
+           CJ 商品不能生成站内订单意向；规格详情价与列表区间价要明确区分。
            知识库未覆盖的时效政策问题（若 web_search_tool 可用）联网查证后引用来源。
            category_insight_tool 返回的政策片段若 policy_fact_status 不是 fact_eligible，
            只能说明“资料不足或需核验”，不得将其写成确定的税率、免税额、禁运或时效事实。

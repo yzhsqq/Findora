@@ -112,6 +112,18 @@ main { margin-left: 232px; padding: 29px 54px 190px; }
 .catalog-compare-dock { position: fixed; left: calc(50% + 116px); bottom: 18px; z-index: 45; width: min(660px, calc(100vw - 280px)); transform: translateX(-50%); }
 .catalog-compare-dock .compare-bar { margin: 0; box-shadow: 0 12px 34px #2429363d; }
 .toast { left: calc(50% + 116px); }
+.cj-quote-panel { margin: 18px 0; padding: 17px; border: 1px solid #eadfdc; border-radius: 10px; background: #fffaf8; }
+.cj-quote-controls { display: flex; gap: 10px; align-items: end; flex-wrap: wrap; }
+.cj-quote-controls label { display: grid; gap: 6px; font-size: 11px; color: #646a73; }
+.cj-quote-controls select { min-height: 38px; padding: 0 10px; border: 1px solid #dce0e5; border-radius: 7px; background: #fff; color: #303744; }
+.cj-quote-controls button { min-height: 38px; padding: 0 13px; border-radius: 7px; background: #e94d36; color: #fff; font-size: 11px; font-weight: 700; }
+.cj-quote-controls button:disabled { opacity: .5; cursor: not-allowed; }
+.cj-quote-error { margin: 10px 0 0; color: #b83727; font-size: 11px; }
+.cj-quote-result { display: grid; gap: 6px; margin-top: 15px; padding-top: 14px; border-top: 1px solid #f0e3df; }
+.cj-quote-result > span { color: #ad4b3a; font-size: 11px; font-weight: 700; }
+.cj-quote-result strong { color: #d8452f; font-size: 25px; line-height: 1.2; }
+.cj-quote-result p { margin: 0; color: #48505b; font-size: 11px; }
+.cj-quote-result small { color: #838995; font-size: 10px; line-height: 1.5; }
 
 @media (max-width: 1100px) {
   .sidebar { width: 210px; padding: 28px 19px; }

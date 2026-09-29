@@ -142,6 +142,7 @@ export function readProducts(value: unknown): ProductCard[] {
         return [];
       skus.push({
         sku_id: sku.sku_id,
+        ...(typeof sku.variant_id === "string" ? { variant_id: sku.variant_id } : {}),
         spec: sku.spec,
         price_major: sku.price_major,
         currency: sku.currency,
@@ -169,6 +170,7 @@ export function readProducts(value: unknown): ProductCard[] {
       "source_platform",
       "canonical_product_id",
       "price_text",
+      "supplier_name",
     ] as const) {
       if (typeof item[key] === "string") card[key] = item[key];
     }
@@ -197,6 +199,7 @@ export function readProducts(value: unknown): ProductCard[] {
     for (const key of ["ships_to", "material_tags"] as const) {
       if (isStringArray(item[key])) card[key] = [...item[key]];
     }
+    if (isStringArray(item.ship_from_warehouses)) card.ship_from_warehouses = [...item.ship_from_warehouses];
     if (isRecord(item.dimensions_cm)) {
       const dimensions: NonNullable<ProductCard["dimensions_cm"]> = {};
       let valid = true;

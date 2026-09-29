@@ -71,9 +71,9 @@ def build_product_search_tool(usecase: CatalogSearchUseCase, bus: TradeEventBus,
         excluded_material_tags: list[str] | None = None,
         required_material_tags: list[str] | None = None,
     ) -> ToolChunk:
-        """检索跨境商品库（embedding+rerank 二阶段召回），返回 Top-K 商品卡 JSON。
-        传入 ship_to 时商品卡自动内联 landed_price 到手价明细（小计+运费+关税，统一折算 target_currency），
-        无需另行计算价格。
+        """检索当前跨境商品目录，返回 Top-K 商品卡 JSON。
+        样例目录可内联规则估算 landed_price；CJ 快照即使传 ship_to 也不会自动报价，
+        CJ 物流须在用户明确需要时调用 cj_freight_quote_tool。
 
         Args:
             normalized_query (`str`):
@@ -81,7 +81,7 @@ def build_product_search_tool(usecase: CatalogSearchUseCase, bus: TradeEventBus,
             category (`str | None`):
                 品类槽位，可选，如"旅行装备"、"数码配件"。
             ship_to (`str | None`):
-                收货国家二位码，可选，如 "CN"、"US"；传入后过滤不可送达商品并内联到手价。
+                收货国家二位码，可选，如 "CN"、"US"；CJ 快照不能仅凭此核验可配送。
             top_k (`int`):
                 返回候选数量，默认 5。
             price_max_major (`float | None`):

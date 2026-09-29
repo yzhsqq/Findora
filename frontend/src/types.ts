@@ -40,6 +40,7 @@ export interface ProductCard {
   highlights: string[];
   skus: {
     sku_id: string;
+    variant_id?: string;
     spec: string;
     price_major: number;
     currency: string;
@@ -69,6 +70,31 @@ export interface ProductCard {
   stock_known?: boolean;
   inventory_checked_at?: string | null;
   detail_available?: boolean;
+  supplier_name?: string;
+  ship_from_warehouses?: string[];
+}
+
+export interface CJFreightQuote {
+  status: "quoted";
+  quote_kind: string;
+  product_id: string;
+  sku_id: string;
+  variant_id: string;
+  quantity: number;
+  selection_mode: "selected_sku" | "first_variant_assumed";
+  ship_from_warehouse: string;
+  ship_to: string;
+  shipping_method: string;
+  route_count: number;
+  product_unit_usd: number;
+  product_subtotal_usd: number;
+  shipping_and_cj_fees_usd: number;
+  cj_trial_total_usd: number;
+  cj_taxes_fee_usd: number | null;
+  cj_clearance_fee_usd: number | null;
+  fee_status: "cj_reported" | "tax_or_clearance_unknown";
+  quoted_at: string;
+  cache_hit: boolean;
 }
 
 export interface DecisionRequest {

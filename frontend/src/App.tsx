@@ -782,6 +782,7 @@ export default function App() {
           key={detail.product_id}
           product={detail}
           busy={busy}
+          request={agent.workspaceRequest}
           onClose={() => setDetail(null)}
           onCompare={upsertCompare}
           onAsk={submit}
