@@ -9,9 +9,8 @@ type Snapshot = { total: number; all_count: number; detail_count: number; invent
 const CATEGORIES = ["", "Bags & Shoes", "Sports & Outdoors", "Consumer Electronics", "Phones & Accessories", "Home, Garden & Furniture", "Health, Beauty & Hair", "Pet Supplies", "Computer & Office", "Toys, Kids & Babies"];
 const LABELS = ["全部", "箱包鞋履", "户外运动", "消费电子", "手机配件", "家居园艺", "美妆个护", "宠物用品", "电脑办公", "玩具母婴"];
 
-export default function CjCatalogPage({ request, externalSearch, favoriteIds, comparedIds, onFavorite, onCompare, onDetail }: {
+export default function CjCatalogPage({ request, favoriteIds, comparedIds, onFavorite, onCompare, onDetail }: {
   request: Request;
-  externalSearch: { query: string; id: number };
   favoriteIds: Set<string>; comparedIds: Set<string>;
   onFavorite: (product: ProductCard) => void;
   onCompare: (product: ProductCard) => void;
@@ -24,11 +23,6 @@ export default function CjCatalogPage({ request, externalSearch, favoriteIds, co
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
   const [busy, setBusy] = useState(true);
   const [error, setError] = useState("");
-  useEffect(() => {
-    setDraft(externalSearch.query);
-    setQuery(externalSearch.query);
-    setPage(1);
-  }, [externalSearch]);
   useEffect(() => {
     let active = true;
     const params = new URLSearchParams({ query, category, page: String(page), page_size: "24" });
