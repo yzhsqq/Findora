@@ -1,0 +1,10 @@
+{
+  "source": "local CJ pilot SQLite backup",
+  "local_path": "data/cj_eval/v1/catalog.sqlite3",
+  "sha256": "f29e0e107143422f80ca6ac2d4c74c88e9b577ec6f9ca3176c05dfd93bd9928d",
+  "product_count": 10007,
+  "detail_count": 763,
+  "inventory_count": 164,
+  "cached_quote_count": 27,
+  "scope": "Local frozen snapshot for offline evaluation; SQLite file is gitignored."
+}

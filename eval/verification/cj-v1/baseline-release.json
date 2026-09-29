@@ -1,0 +1,319 @@
+{
+  "run_at": "2026-09-29T12:37:36.713213+00:00",
+  "split": "release",
+  "selection": {
+    "split": "release",
+    "only": null,
+    "source_count": 40,
+    "split_count": 11,
+    "selected_count": 11,
+    "case_ids": [
+      "CJ-R019",
+      "CJ-R020",
+      "CJ-R021",
+      "CJ-R022",
+      "CJ-R023",
+      "CJ-R024",
+      "CJ-R031",
+      "CJ-R032",
+      "CJ-R036",
+      "CJ-R039",
+      "CJ-R040"
+    ],
+    "complete_split": true,
+    "split_counts": {
+      "release": 11
+    },
+    "bucket_counts": {
+      "empty": 2,
+      "exact": 1,
+      "lexical": 6,
+      "paraphrase": 2
+    },
+    "selected_content_sha256": "22686920ab12aaaf57d35f0eef12c7aa06db1c1cdf801b771d6def05ed3dace7"
+  },
+  "code": {
+    "git_commit": "cfc8c8f211905c528b44a4f2486dd5b96d19c156",
+    "worktree_sha256": "a9d12e858fc3d9d267a987aaa3d4842ebbb92aca2a4ae77b3ad3c9d9d0ef87ff"
+  },
+  "snapshot": {
+    "source": "local CJ pilot SQLite backup",
+    "local_path": "data/cj_eval/v1/catalog.sqlite3",
+    "sha256": "f29e0e107143422f80ca6ac2d4c74c88e9b577ec6f9ca3176c05dfd93bd9928d",
+    "product_count": 10007,
+    "detail_count": 763,
+    "inventory_count": 164,
+    "cached_quote_count": 27,
+    "scope": "Local frozen snapshot for offline evaluation; SQLite file is gitignored."
+  },
+  "cases_sha256": "17c34a4569dceb68a7b941b05b451e36e0f743db80a4895b52571aa6033de2e6",
+  "top_k": 5,
+  "runtime": {
+    "python": "3.12.10",
+    "sqlite": "3.49.1"
+  },
+  "result": {
+    "case_count": 11,
+    "positive_count": 9,
+    "known_item_hit_at_5": 0.8889,
+    "known_item_mrr": 0.8148,
+    "empty_count": 2,
+    "empty_accuracy": 0.5,
+    "by_kind": {
+      "empty": {
+        "count": 2,
+        "pass_count": 1,
+        "pass_rate": 0.5
+      },
+      "exact": {
+        "count": 1,
+        "pass_count": 1,
+        "pass_rate": 1.0
+      },
+      "lexical": {
+        "count": 6,
+        "pass_count": 6,
+        "pass_rate": 1.0
+      },
+      "paraphrase": {
+        "count": 2,
+        "pass_count": 1,
+        "pass_rate": 0.5
+      }
+    },
+    "failure_types": {
+      "candidate_but_anchor_missing": 1,
+      "unexpected_candidates": 1
+    },
+    "local_latency_ms_p50": 571.56,
+    "local_latency_ms_p95": 653.18
+  },
+  "cost_scope": {
+    "cj_points": 0,
+    "llm_tokens": 0,
+    "scope": "offline_sqlite_retrieval_only"
+  },
+  "observations": [
+    {
+      "id": "CJ-R019",
+      "split": "release",
+      "kind": "lexical",
+      "query": "comfortable U-shape travel pillow",
+      "anchor_id": "CBAAC34D-ABD5-4C3D-8245-B34ADDE3D2D6",
+      "retrieved": [
+        "CBAAC34D-ABD5-4C3D-8245-B34ADDE3D2D6",
+        "1833794770880581632",
+        "2504270351581616600",
+        "1400751666202021888",
+        "1806244307075485696"
+      ],
+      "rank": 1,
+      "pass": true,
+      "failure_type": null,
+      "total_candidates": 497,
+      "actual_strategy": "cj_snapshot_keyword",
+      "latency_ms": 588.94,
+      "expected_empty": false
+    },
+    {
+      "id": "CJ-R020",
+      "split": "release",
+      "kind": "lexical",
+      "query": "rectangular tinplate storage box clasp latch",
+      "anchor_id": "2096531498850877442",
+      "retrieved": [
+        "2096531498850877442",
+        "2045064905648082946",
+        "D0A87027-21E3-4B64-B321-48BDB5A37D24",
+        "2506260736531628000",
+        "1382609822364602368"
+      ],
+      "rank": 1,
+      "pass": true,
+      "failure_type": null,
+      "total_candidates": 313,
+      "actual_strategy": "cj_snapshot_keyword",
+      "latency_ms": 614.37,
+      "expected_empty": false
+    },
+    {
+      "id": "CJ-R021",
+      "split": "release",
+      "kind": "lexical",
+      "query": "elevated dog sofa bed olive green",
+      "anchor_id": "2045061130183086081",
+      "retrieved": [
+        "2045061130183086081",
+        "1919683108816281601",
+        "1837340361317306368",
+        "2506050050051612300",
+        "1919636680270143489"
+      ],
+      "rank": 1,
+      "pass": true,
+      "failure_type": null,
+      "total_candidates": 770,
+      "actual_strategy": "cj_snapshot_keyword",
+      "latency_ms": 601.57,
+      "expected_empty": false
+    },
+    {
+      "id": "CJ-R022",
+      "split": "release",
+      "kind": "lexical",
+      "query": "32 X19x31in blue camping chair",
+      "anchor_id": "1889560903567851521",
+      "retrieved": [
+        "2045072108333404162",
+        "1945722691007078402",
+        "1889560903567851521",
+        "2501250714061615700",
+        "2407010336241602800"
+      ],
+      "rank": 3,
+      "pass": true,
+      "failure_type": null,
+      "total_candidates": 351,
+      "actual_strategy": "cj_snapshot_keyword",
+      "latency_ms": 546.37,
+      "expected_empty": false
+    },
+    {
+      "id": "CJ-R023",
+      "split": "release",
+      "kind": "lexical",
+      "query": "wireless translation headphones in-ear translator",
+      "anchor_id": "1797499509468045312",
+      "retrieved": [
+        "1797499509468045312",
+        "2501201503051619600",
+        "2098297911772504066",
+        "1769299254402625536",
+        "2099318719472959489"
+      ],
+      "rank": 1,
+      "pass": true,
+      "failure_type": null,
+      "total_candidates": 930,
+      "actual_strategy": "cj_snapshot_keyword",
+      "latency_ms": 653.18,
+      "expected_empty": false
+    },
+    {
+      "id": "CJ-R024",
+      "split": "release",
+      "kind": "lexical",
+      "query": "LED flashing cat ear headphones",
+      "anchor_id": "C18AA15C-2E06-4067-9FB1-A06C97D78ACF",
+      "retrieved": [
+        "C18AA15C-2E06-4067-9FB1-A06C97D78ACF",
+        "2406140207141600800",
+        "2503310747021600500",
+        "2501201503051619600",
+        "2099318719472959489"
+      ],
+      "rank": 1,
+      "pass": true,
+      "failure_type": null,
+      "total_candidates": 1350,
+      "actual_strategy": "cj_snapshot_keyword",
+      "latency_ms": 672.19,
+      "expected_empty": false
+    },
+    {
+      "id": "CJ-R031",
+      "split": "release",
+      "kind": "paraphrase",
+      "query": "会发光的猫耳朵耳机",
+      "anchor_id": "C18AA15C-2E06-4067-9FB1-A06C97D78ACF",
+      "retrieved": [
+        "C18AA15C-2E06-4067-9FB1-A06C97D78ACF",
+        "2503310747021600500",
+        "8C71A3D7-AC03-4F07-A9A4-25DABE1562A3",
+        "2501201503051619600",
+        "2408070712121627400"
+      ],
+      "rank": 1,
+      "pass": true,
+      "failure_type": null,
+      "total_candidates": 484,
+      "actual_strategy": "cj_snapshot_keyword",
+      "latency_ms": 543.91,
+      "expected_empty": false
+    },
+    {
+      "id": "CJ-R032",
+      "split": "release",
+      "kind": "paraphrase",
+      "query": "带拉扣的长方形铁皮收纳盒",
+      "anchor_id": "2096531498850877442",
+      "retrieved": [
+        "2508201238151608800",
+        "2508150153331629500",
+        "2508130240191619400",
+        "2508130219411601800",
+        "2508120227591618400"
+      ],
+      "rank": null,
+      "pass": false,
+      "failure_type": "candidate_but_anchor_missing",
+      "total_candidates": 159,
+      "actual_strategy": "cj_snapshot_keyword",
+      "latency_ms": 517.44,
+      "expected_empty": false
+    },
+    {
+      "id": "CJ-R036",
+      "split": "release",
+      "kind": "exact",
+      "query": "2045061130183086081",
+      "anchor_id": "2045061130183086081",
+      "retrieved": [
+        "2045061130183086081"
+      ],
+      "rank": 1,
+      "pass": true,
+      "failure_type": null,
+      "total_candidates": 1,
+      "actual_strategy": "cj_snapshot_keyword",
+      "latency_ms": 571.56,
+      "expected_empty": false
+    },
+    {
+      "id": "CJ-R039",
+      "split": "release",
+      "kind": "empty",
+      "query": "CJNOTREALSKU99999",
+      "anchor_id": null,
+      "retrieved": [],
+      "rank": null,
+      "pass": true,
+      "failure_type": null,
+      "total_candidates": 0,
+      "actual_strategy": "cj_snapshot_keyword",
+      "latency_ms": 494.78,
+      "expected_empty": true
+    },
+    {
+      "id": "CJ-R040",
+      "split": "release",
+      "kind": "empty",
+      "query": "hyperdimensional toaster meteorite xyzq",
+      "anchor_id": null,
+      "retrieved": [
+        "1661380623438712832",
+        "2503060212221602300",
+        "1783378741209600000",
+        "1727162054026465280",
+        "1679897791172190208"
+      ],
+      "rank": null,
+      "pass": false,
+      "failure_type": "unexpected_candidates",
+      "total_candidates": 5,
+      "actual_strategy": "cj_snapshot_keyword",
+      "latency_ms": 566.27,
+      "expected_empty": true
+    }
+  ]
+}

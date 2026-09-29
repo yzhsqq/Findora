@@ -1,0 +1,40 @@
+{"id":"CJ-R001","split":"dev","kind":"lexical","query":"green sandalwood hair comb","relevant":["05B050F6-9DF5-4488-9218-B1D919650ADE"],"gold_terms":["green","sandalwood","comb"]}
+{"id":"CJ-R002","split":"dev","kind":"lexical","query":"portable tunnel greenhouse four zippered doors","relevant":["1906977218846425090"],"gold_terms":["greenhouse","4 zippered doors"]}
+{"id":"CJ-R003","split":"dev","kind":"lexical","query":"ORICO G11-H4 USB 3.0 laptop hub","relevant":["1377823658046787584"],"gold_terms":["ORICO G11-H4","USB3.0 Hub"]}
+{"id":"CJ-R004","split":"dev","kind":"lexical","query":"Type-C RJ45 Gigabit network card","relevant":["1448918713767170048"],"gold_terms":["Type-C","RJ45","Gigabit"]}
+{"id":"CJ-R005","split":"dev","kind":"lexical","query":"alarm clock bluetooth speaker","relevant":["04AF4351-7F6B-471D-81C0-DBF17E5CD296"],"gold_terms":["alarm clock","bluetooth speaker"]}
+{"id":"CJ-R006","split":"dev","kind":"lexical","query":"dual-screen waterproof HD digital camera","relevant":["CF7448FC-5574-464C-A1DF-CAA74952BB2C"],"gold_terms":["dual-screen","waterproof","digital camera"]}
+{"id":"CJ-R007","split":"dev","kind":"lexical","query":"casual leather outdoor hiking shoes","relevant":["1373809121870090240"],"gold_terms":["leather shoes","hiking shoes"]}
+{"id":"CJ-R008","split":"dev","kind":"lexical","query":"mobile portable WiFi router","relevant":["864F7704-610E-4216-A5A2-CF522E4711C5"],"gold_terms":["portable","wifi router"]}
+{"id":"CJ-R009","split":"dev","kind":"lexical","query":"3D army fan tactical hiking backpack","relevant":["07E5B851-E0CF-4050-98CD-57865C46FF77"],"gold_terms":["3D backpack","tactical","hiking backpack"]}
+{"id":"CJ-R010","split":"dev","kind":"lexical","query":"funny cat interactive pet toys","relevant":["0B14AB3D-4DCB-432E-9354-B76094AD77A1"],"gold_terms":["cat toys","interactive"]}
+{"id":"CJ-R011","split":"dev","kind":"lexical","query":"5 FT reflective dog leash padded handle","relevant":["1812063314538024960"],"gold_terms":["dog leash","5 FT","reflective","padded handle"]}
+{"id":"CJ-R012","split":"dev","kind":"lexical","query":"baby stroller sleeping bag warm foot cover","relevant":["1463064400058519552"],"gold_terms":["baby stroller","sleeping bag","foot cover"]}
+{"id":"CJ-R013","split":"dev","kind":"lexical","query":"eco-friendly NBR yoga mat","relevant":["BAAD67F2-E961-4266-98BA-0E10DFD87F15"],"gold_terms":["NBR","yoga mat"]}
+{"id":"CJ-R014","split":"dev","kind":"lexical","query":"PVC metal tunnel greenhouse kit","relevant":["1906978566568574978"],"gold_terms":["PVC","metal tunnel","greenhouse"]}
+{"id":"CJ-R015","split":"dev","kind":"lexical","query":"rechargeable desk lamp outdoor flashlight","relevant":["1460843315669897216"],"gold_terms":["desk lamp","flashlight","rechargeable"]}
+{"id":"CJ-R016","split":"dev","kind":"lexical","query":"USB charger Quick Charge 3.0 four phone adapter","relevant":["0042D8EE-CA2D-4A79-A4CB-D7D374C300F0"],"gold_terms":["USB Charger","Quick Charge 3.0","4 Phone Adapter"]}
+{"id":"CJ-R017","split":"dev","kind":"lexical","query":"colorful PBT mechanical bluetooth keyboard","relevant":["1384411297810092032"],"gold_terms":["Bluetooth Keyboard","Colorful PBT","Mechanical Keyboard"]}
+{"id":"CJ-R018","split":"dev","kind":"lexical","query":"Japanese ceramic tableware set","relevant":["1357253959319949312"],"gold_terms":["Japanese-Style","Ceramic Tableware"]}
+{"id":"CJ-R019","split":"release","kind":"lexical","query":"comfortable U-shape travel pillow","relevant":["CBAAC34D-ABD5-4C3D-8245-B34ADDE3D2D6"],"gold_terms":["U-Shape","Travel Pillow"]}
+{"id":"CJ-R020","split":"release","kind":"lexical","query":"rectangular tinplate storage box clasp latch","relevant":["2096531498850877442"],"gold_terms":["Rectangular Tinplate","Storage Box","Clasp Latch"]}
+{"id":"CJ-R021","split":"release","kind":"lexical","query":"elevated dog sofa bed olive green","relevant":["2045061130183086081"],"gold_terms":["Elevated Dog Sofa Bed","OLIVE GREEN"]}
+{"id":"CJ-R022","split":"release","kind":"lexical","query":"32 X19x31in blue camping chair","relevant":["1889560903567851521"],"gold_terms":["32 X19x31in","Blue Camping Chair"]}
+{"id":"CJ-R023","split":"release","kind":"lexical","query":"wireless translation headphones in-ear translator","relevant":["1797499509468045312"],"gold_terms":["Translation Headphones","In-ear Translator"]}
+{"id":"CJ-R024","split":"release","kind":"lexical","query":"LED flashing cat ear headphones","relevant":["C18AA15C-2E06-4067-9FB1-A06C97D78ACF"],"gold_terms":["LED flashing","cat ear headphones"]}
+{"id":"CJ-R025","split":"dev","kind":"paraphrase","query":"绿色檀木梳头用的梳子","relevant":["05B050F6-9DF5-4488-9218-B1D919650ADE"],"gold_terms":["Green Sandalwood Hair Comb"]}
+{"id":"CJ-R026","split":"dev","kind":"paraphrase","query":"笔记本加几个USB接口的ORICO G11-H4","relevant":["1377823658046787584"],"gold_terms":["ORICO G11-H4","USB3.0 Hub"]}
+{"id":"CJ-R027","split":"dev","kind":"paraphrase","query":"没有网口的笔记本用Type-C接千兆有线网络","relevant":["1448918713767170048"],"gold_terms":["Type-C","RJ45","Gigabit"]}
+{"id":"CJ-R028","split":"dev","kind":"paraphrase","query":"能防水的双屏数码相机","relevant":["CF7448FC-5574-464C-A1DF-CAA74952BB2C"],"gold_terms":["Dual-screen","waterproof","digital camera"]}
+{"id":"CJ-R029","split":"dev","kind":"paraphrase","query":"宠物狗夜跑反光牵引绳五英尺","relevant":["1812063314538024960"],"gold_terms":["Dog Leash","5 FT","Reflective"]}
+{"id":"CJ-R030","split":"dev","kind":"paraphrase","query":"适合户外登山的双肩战术包","relevant":["07E5B851-E0CF-4050-98CD-57865C46FF77"],"gold_terms":["backpack","mountaineering","tactical"]}
+{"id":"CJ-R031","split":"release","kind":"paraphrase","query":"会发光的猫耳朵耳机","relevant":["C18AA15C-2E06-4067-9FB1-A06C97D78ACF"],"gold_terms":["LED flashing","cat ear headphones"]}
+{"id":"CJ-R032","split":"release","kind":"paraphrase","query":"带拉扣的长方形铁皮收纳盒","relevant":["2096531498850877442"],"gold_terms":["Rectangular Tinplate","Clasp Latch"]}
+{"id":"CJ-R033","split":"dev","kind":"exact","query":"1377823658046787584","relevant":["1377823658046787584"],"gold_terms":["ORICO G11-H4"]}
+{"id":"CJ-R034","split":"dev","kind":"exact","query":"1448918713767170048","relevant":["1448918713767170048"],"gold_terms":["Type-C","RJ45"]}
+{"id":"CJ-R035","split":"dev","kind":"exact","query":"04AF4351-7F6B-471D-81C0-DBF17E5CD296","relevant":["04AF4351-7F6B-471D-81C0-DBF17E5CD296"],"gold_terms":["alarm clock bluetooth speaker"]}
+{"id":"CJ-R036","split":"release","kind":"exact","query":"2045061130183086081","relevant":["2045061130183086081"],"gold_terms":["Elevated Dog Sofa Bed"]}
+{"id":"CJ-R037","split":"dev","kind":"empty","query":"9999999999999999999","relevant":[],"expected_empty":true}
+{"id":"CJ-R038","split":"dev","kind":"empty","query":"zzzxxyyqplm90001","relevant":[],"expected_empty":true}
+{"id":"CJ-R039","split":"release","kind":"empty","query":"CJNOTREALSKU99999","relevant":[],"expected_empty":true}
+{"id":"CJ-R040","split":"release","kind":"empty","query":"hyperdimensional toaster meteorite xyzq","relevant":[],"expected_empty":true,"annotation":"Requires toaster and meteorite jointly; the frozen snapshot has no title containing both. Single-term meteorite phone cases are false matches."}

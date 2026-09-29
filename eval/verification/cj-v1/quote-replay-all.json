@@ -1,0 +1,243 @@
+{
+  "run_at": "2026-09-29T12:37:43.951375+00:00",
+  "split": "all",
+  "selection": {
+    "split": "all",
+    "only": null,
+    "source_count": 8,
+    "split_count": 8,
+    "selected_count": 8,
+    "case_ids": [
+      "CJ-Q001",
+      "CJ-Q002",
+      "CJ-Q003",
+      "CJ-Q004",
+      "CJ-Q005",
+      "CJ-Q006",
+      "CJ-Q007",
+      "CJ-Q008"
+    ],
+    "complete_split": true,
+    "split_counts": {
+      "dev": 6,
+      "release": 2
+    },
+    "bucket_counts": {
+      "unspecified": 8
+    },
+    "selected_content_sha256": "1d0e3ae4ae564f6c8dc1d91501bdf8e112b479bec8105bd50e0db7e0e5a5849f"
+  },
+  "snapshot_sha256": "f29e0e107143422f80ca6ac2d4c74c88e9b577ec6f9ca3176c05dfd93bd9928d",
+  "cases_sha256": "f1d4fda9faa927dff2977320ccae6b3a43ecae4cf6e862d24f7993a150988068",
+  "code_sha256": "a9d12e858fc3d9d267a987aaa3d4842ebbb92aca2a4ae77b3ad3c9d9d0ef87ff",
+  "runtime": {
+    "python": "3.12.10",
+    "sqlite": "3.49.1"
+  },
+  "count": 8,
+  "passed": 8,
+  "route_scopes": {
+    "cross_border": 1,
+    "same_country": 7
+  },
+  "origin_inventory_kinds": {
+    "factory_inventory": 7,
+    "cj_warehouse": 1
+  },
+  "cost_scope": {
+    "cj_points": 0,
+    "llm_tokens": 0,
+    "scope": "cached_quote_replay_only"
+  },
+  "limitations": [
+    "Cached responses do not prove current price, stock, or route availability.",
+    "A CJ trial total does not establish final landed or checkout price.",
+    "No-route and live API failure paths are not covered by these eight successful historical quotes."
+  ],
+  "observations": [
+    {
+      "id": "CJ-Q001",
+      "product_id": "CF4C5A63-F0C6-4BE5-BE26-2BDA1670F5F4",
+      "sku_id": "CJWJYEYE00060-red-3month",
+      "ship_to": "JP",
+      "quote_origin_country": "CN",
+      "route_scope": "cross_border",
+      "origin_inventory_kind": "factory_inventory",
+      "origin_inventory_verified": false,
+      "actual_total_usd": "11.26",
+      "expected_total_usd": "11.26",
+      "checks": {
+        "cache_only": true,
+        "quoted_status": true,
+        "sku_and_destination": true,
+        "total_matches_frozen_evidence": true,
+        "amount_adds_up": true,
+        "route_scope": true,
+        "inventory_kind": true,
+        "legacy_warehouse_label_removed": true
+      },
+      "pass": true
+    },
+    {
+      "id": "CJ-Q002",
+      "product_id": "1377823658046787584",
+      "sku_id": "CJSG106311401AZ",
+      "ship_to": "CN",
+      "quote_origin_country": "CN",
+      "route_scope": "same_country",
+      "origin_inventory_kind": "factory_inventory",
+      "origin_inventory_verified": false,
+      "actual_total_usd": "7.7",
+      "expected_total_usd": "7.70",
+      "checks": {
+        "cache_only": true,
+        "quoted_status": true,
+        "sku_and_destination": true,
+        "total_matches_frozen_evidence": true,
+        "amount_adds_up": true,
+        "route_scope": true,
+        "inventory_kind": true,
+        "legacy_warehouse_label_removed": true
+      },
+      "pass": true
+    },
+    {
+      "id": "CJ-Q003",
+      "product_id": "CF7448FC-5574-464C-A1DF-CAA74952BB2C",
+      "sku_id": "CJXFXJSM00040-Blue",
+      "ship_to": "CN",
+      "quote_origin_country": "CN",
+      "route_scope": "same_country",
+      "origin_inventory_kind": "factory_inventory",
+      "origin_inventory_verified": false,
+      "actual_total_usd": "42.0",
+      "expected_total_usd": "42.00",
+      "checks": {
+        "cache_only": true,
+        "quoted_status": true,
+        "sku_and_destination": true,
+        "total_matches_frozen_evidence": true,
+        "amount_adds_up": true,
+        "route_scope": true,
+        "inventory_kind": true,
+        "legacy_warehouse_label_removed": true
+      },
+      "pass": true
+    },
+    {
+      "id": "CJ-Q004",
+      "product_id": "07E5B851-E0CF-4050-98CD-57865C46FF77",
+      "sku_id": "CJYDYDYD00210-Black crepe",
+      "ship_to": "CN",
+      "quote_origin_country": "CN",
+      "route_scope": "same_country",
+      "origin_inventory_kind": "factory_inventory",
+      "origin_inventory_verified": false,
+      "actual_total_usd": "7.92",
+      "expected_total_usd": "7.92",
+      "checks": {
+        "cache_only": true,
+        "quoted_status": true,
+        "sku_and_destination": true,
+        "total_matches_frozen_evidence": true,
+        "amount_adds_up": true,
+        "route_scope": true,
+        "inventory_kind": true,
+        "legacy_warehouse_label_removed": true
+      },
+      "pass": true
+    },
+    {
+      "id": "CJ-Q005",
+      "product_id": "2507170748351600700",
+      "sku_id": "CJYD243282601AZ",
+      "ship_to": "CN",
+      "quote_origin_country": "CN",
+      "route_scope": "same_country",
+      "origin_inventory_kind": "cj_warehouse",
+      "origin_inventory_verified": true,
+      "actual_total_usd": "4.45",
+      "expected_total_usd": "4.45",
+      "checks": {
+        "cache_only": true,
+        "quoted_status": true,
+        "sku_and_destination": true,
+        "total_matches_frozen_evidence": true,
+        "amount_adds_up": true,
+        "route_scope": true,
+        "inventory_kind": true,
+        "legacy_warehouse_label_removed": true
+      },
+      "pass": true
+    },
+    {
+      "id": "CJ-Q006",
+      "product_id": "DF84C532-9C82-4405-8D92-FF8BC821AB7D",
+      "sku_id": "CJYDYDTB00146-Desert-3XL",
+      "ship_to": "CN",
+      "quote_origin_country": "CN",
+      "route_scope": "same_country",
+      "origin_inventory_kind": "factory_inventory",
+      "origin_inventory_verified": false,
+      "actual_total_usd": "29.74",
+      "expected_total_usd": "29.74",
+      "checks": {
+        "cache_only": true,
+        "quoted_status": true,
+        "sku_and_destination": true,
+        "total_matches_frozen_evidence": true,
+        "amount_adds_up": true,
+        "route_scope": true,
+        "inventory_kind": true,
+        "legacy_warehouse_label_removed": true
+      },
+      "pass": true
+    },
+    {
+      "id": "CJ-Q007",
+      "product_id": "04AF4351-7F6B-471D-81C0-DBF17E5CD296",
+      "sku_id": "CJXFBXYS00074-Black",
+      "ship_to": "CN",
+      "quote_origin_country": "CN",
+      "route_scope": "same_country",
+      "origin_inventory_kind": "factory_inventory",
+      "origin_inventory_verified": false,
+      "actual_total_usd": "6.94",
+      "expected_total_usd": "6.94",
+      "checks": {
+        "cache_only": true,
+        "quoted_status": true,
+        "sku_and_destination": true,
+        "total_matches_frozen_evidence": true,
+        "amount_adds_up": true,
+        "route_scope": true,
+        "inventory_kind": true,
+        "legacy_warehouse_label_removed": true
+      },
+      "pass": true
+    },
+    {
+      "id": "CJ-Q008",
+      "product_id": "864F7704-610E-4216-A5A2-CF522E4711C5",
+      "sku_id": "CJJSWLSG00001-Black",
+      "ship_to": "CN",
+      "quote_origin_country": "CN",
+      "route_scope": "same_country",
+      "origin_inventory_kind": "factory_inventory",
+      "origin_inventory_verified": false,
+      "actual_total_usd": "10.39",
+      "expected_total_usd": "10.39",
+      "checks": {
+        "cache_only": true,
+        "quoted_status": true,
+        "sku_and_destination": true,
+        "total_matches_frozen_evidence": true,
+        "amount_adds_up": true,
+        "route_scope": true,
+        "inventory_kind": true,
+        "legacy_warehouse_label_removed": true
+      },
+      "pass": true
+    }
+  ]
+}
