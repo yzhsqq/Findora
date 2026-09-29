@@ -30,7 +30,7 @@ def spent_today(db: sqlite3.Connection) -> int:
 
 
 def candidates(db: sqlite3.Connection, sample_size: int) -> list[tuple[str, str, str]]:
-    """Take recent, listed-in-stock products from several catalog categories."""
+    """Take recent products whose listings report inventory, including factory stock."""
     groups: dict[str, list[tuple[str, str, str]]] = {}
     for pid, category, raw in db.execute(
         """SELECT pid,first_category,list_json FROM products
@@ -75,7 +75,7 @@ async def run(sample_size: int, point_budget: int) -> dict:
                 item["selected_test_sku"] = sku_id
                 quote = await service.quote(pid, sku_id, "CN", 1)
                 item.update(status="quoted", amount_usd=quote["cj_trial_total_usd"],
-                            warehouse=quote["ship_from_warehouse"],
+                            quote_origin_country=quote["quote_origin_country"],
                             route=quote["shipping_method"], fee_status=quote["fee_status"])
         except CJQuoteError as error:
             item.update(status="unavailable", reason=str(error))

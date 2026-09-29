@@ -20,7 +20,7 @@ python scripts/sync_cj_catalog.py --phase stock --max-stock 500 --max-points 500
 - 官方[商品接口](https://developers.cjdropshipping.com/en/api/api2/api/product.html)：`listV2` 每页最多 100 件，单一查询结果最多 6,000 件。程序按 CJ 第三级品类分区，均匀取相关大类，避免只采一个热门类别。
 - 官方[频率限制](https://developers.cjdropshipping.com/en/api/api2/standard/limit.html)：免费账号通常不超过 1 请求/秒。列表请求串行发送；详情请求起始间隔至少 2 秒、最多 2 个在途请求，遇到限流会退避重试。
 - `cj-products.jsonl` 每行包括来源、CJ 商品 ID、品类、采集时间、原始列表记录，以及可选的原始详情和库存记录。密钥和 Access Token 不写入数据或日志。
-- `warehouseInventoryNum` 表示 CJ 仓库库存，不能据此断言某个目的国可配送或成交时仍有货；`sellPrice` 是 CJ 的美元商品报价，**不是含运费与税的到手价**。实际下单前要重新查询库存和物流报价。
+- `warehouseInventoryNum` 是 CJ 列表返回的库存总量，可能包含工厂备货，**不能直接当作 CJ 仓现货**，也不能据此断言某个目的国可配送或成交时仍有货。规格库存响应需区分 `cjInventory` 与 `factoryInventory`；`sellPrice` 是 CJ 的美元商品报价，**不是含运费与税的到手价**。实际下单前要重新查询库存和物流报价。
 - 采集是一次快照，不代表实时同步。后续接入 Agent 时，应将 CJ 视为单一供应商，保留来源与采集时间，建立状态更新与语义更新的分离流程，再做向量增量索引。
 
 ## 网页与 Agent 使用快照

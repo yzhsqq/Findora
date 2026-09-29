@@ -27,7 +27,7 @@ export default function ProductDetail({
       ? ""
       : initialProduct.default_sku_id || initialProduct.skus[0]?.sku_id || "",
   );
-  const [shipTo, setShipTo] = useState("CN");
+  const [shipTo, setShipTo] = useState("");
   const [detailBusy, setDetailBusy] = useState(false);
   const [quoteBusy, setQuoteBusy] = useState(false);
   const [quoteError, setQuoteError] = useState("");
@@ -35,6 +35,8 @@ export default function ProductDetail({
   const [quote, setQuote] = useState<CJFreightQuote | null>(null);
   const sku = product.skus.find((item) => item.sku_id === skuId),
     landed = product.landed_price;
+  const originCountry = quote?.quote_origin_country ||
+    (quote as (CJFreightQuote & { ship_from_warehouse?: string }) | null)?.ship_from_warehouse || "未提供";
   const canShowLanded =
     skuId === product.default_sku_id &&
     landed &&
@@ -62,6 +64,10 @@ export default function ProductDetail({
   const loadCJQuote = async () => {
     setQuoteBusy(true); setQuoteError(""); setQuoteNotice(""); setQuote(null);
     try {
+      if (!shipTo) {
+        setQuoteNotice("请先选择目的国；中国到中国是同国配送，不属于跨境物流。");
+        return;
+      }
       let selected = sku;
       if (!selected && !product.detail_available) {
         const card = await fetchCJDetail();
@@ -80,7 +86,10 @@ export default function ProductDetail({
         product_id: product.product_id, sku_id: selected.sku_id, ship_to: shipTo, quantity: 1,
       });
       const value = data.quote as Partial<CJFreightQuote> | undefined;
-      if (value?.status !== "quoted" || typeof value.cj_trial_total_usd !== "number")
+      if (value?.status !== "quoted" || typeof value.cj_trial_total_usd !== "number" ||
+          typeof value.quote_origin_country !== "string" ||
+          !["cj_warehouse", "factory_inventory", "unknown"].includes(value.origin_inventory_kind || "") ||
+          !["same_country", "cross_border"].includes(value.route_scope || ""))
         throw new Error("CJ 报价格式无效");
       setQuote(value as CJFreightQuote);
       // The quote may have refreshed stock. Read the local snapshot without resetting the chosen SKU.
@@ -134,7 +143,12 @@ export default function ProductDetail({
               />
               <span>{item.spec}</span>
               <small>
-                {product.source_platform === "CJdropshipping" && !item.stock_known ? "库存未核验" : item.stock > 0 ? `快照库存 ${item.stock}` : "目录暂无库存"}
+                {product.source_platform === "CJdropshipping"
+                  ? !item.stock_known ? "库存未核验"
+                    : item.cj_stock !== undefined && item.factory_stock !== undefined
+                      ? `CJ 仓 ${item.cj_stock} · 工厂备货 ${item.factory_stock}（快照）`
+                      : `CJ 记录总库存 ${item.stock}（可能含工厂备货）`
+                  : item.stock > 0 ? `快照库存 ${item.stock}` : "目录暂无库存"}
               </small>
             </label>
           ))}
@@ -158,9 +172,13 @@ export default function ProductDetail({
         {product.source_platform === "CJdropshipping" && <>
           <div><span>品牌</span><span>{product.brand || "CJ 未提供"}</span></div>
           <div><span>供应商</span><span>{product.supplier_name || "未提供"}</span></div>
-          <div><span>可选发货仓（库存快照）</span><span>{product.ship_from_warehouses?.join(" / ") ||
-            (product.inventory_checked_at ? "未查到可用仓库" : "库存待核验")}</span></div>
-          <div><span>仓库库存查询于</span><span>{product.inventory_checked_at
+          <div><span>CJ 仓有库存的国家</span><span>{product.factory_inventory_countries === undefined
+            ? "旧快照未区分 CJ 仓与工厂备货"
+            : product.ship_from_warehouses?.join(" / ") ||
+              (product.inventory_checked_at ? "未见 CJ 仓现货" : "库存待查询")}</span></div>
+          <div><span>工厂备货记录国家</span><span>{product.factory_inventory_countries?.join(" / ") ||
+            (product.inventory_checked_at && product.factory_inventory_countries !== undefined ? "未见工厂备货" : "库存待查询")}</span></div>
+          <div><span>库存记录查询于</span><span>{product.inventory_checked_at
             ? new Date(product.inventory_checked_at).toLocaleString("zh-CN") : "未查询"}</span></div>
           <div><span>材质</span><span>{product.material_tags?.join(" / ") || "未提供"}</span></div>
           <div><span>商品重量</span><span>{product.weight_kg ? `${product.weight_kg} kg` : "未提供"}</span></div>
@@ -186,8 +204,9 @@ export default function ProductDetail({
         {!product.detail_available && <button type="button" className="drawer-compare" disabled={detailBusy || quoteBusy}
           onClick={() => void loadCJDetail()}>{detailBusy ? "正在获取 CJ 详情…" : "获取这件商品的规格详情"}</button>}
         <div className="cj-quote-controls">
-          <label>目的国<select value={shipTo} onChange={event => { setShipTo(event.target.value); setQuote(null); }}>
-            <option value="CN">中国 CN</option><option value="US">美国 US</option><option value="GB">英国 GB</option>
+          <label>目的国<select value={shipTo} onChange={event => { setShipTo(event.target.value); setQuote(null); setQuoteNotice(""); }}>
+            <option value="">请选择目的国</option>
+            <option value="CN">中国 CN（同国或寄中国）</option><option value="US">美国 US</option><option value="GB">英国 GB</option>
             <option value="JP">日本 JP</option><option value="SG">新加坡 SG</option>
           </select></label>
           <button type="button" disabled={quoteBusy || detailBusy} onClick={() => void loadCJQuote()}>
@@ -197,10 +216,15 @@ export default function ProductDetail({
         {quoteNotice && <p className="cj-quote-hint" role="status">{quoteNotice}</p>}
         {quoteError && <p className="cj-quote-error" role="alert">{quoteError}</p>}
         {quote && <div className="cj-quote-result">
-          <span>{quote.fee_status === "cj_reported" ? "CJ 试算合计" : "已知费用合计 · 税费待核"}</span>
+          <span>{(quote.route_scope || (originCountry === quote.ship_to ? "same_country" : "cross_border")) === "same_country"
+            ? "CJ 同国物流试算" : "CJ 跨境物流试算"}</span>
           <strong>{money(quote.cj_trial_total_usd, "USD")}</strong>
           <p>规格商品价 {money(quote.product_subtotal_usd, "USD")} + CJ 物流及已列费用 {money(quote.shipping_and_cj_fees_usd, "USD")}</p>
-          <small>{quote.ship_from_warehouse} 仓 → {quote.ship_to} · {quote.shipping_method} · {quote.route_count} 条可选路线</small>
+          <small>试算起运国 {originCountry} → 目的国 {quote.ship_to} · {quote.shipping_method} · {quote.route_count} 条可选路线</small>
+          <small>来源库存：{quote.origin_inventory_kind === "cj_warehouse" ? "CJ 仓库存快照"
+            : quote.origin_inventory_kind === "factory_inventory" ? "工厂备货记录，非 CJ 仓现货" : "类型未确认"}
+            {quote.origin_inventory_verified ? " · CJ 标记已核验" : " · CJ 未标记已核验"}。起运国是试算参数，最终发货地待下单核对。</small>
+          {quote.fee_status !== "cj_reported" && <small>税费或清关费用未完整返回；以上仅为已知费用合计。</small>}
           <small>查询于 {new Date(quote.quoted_at).toLocaleString("zh-CN")} · 仅为 CJ 试算，非最终支付价</small>
         </div>}
       </div> : canShowLanded ? (
@@ -223,7 +247,7 @@ export default function ProductDetail({
         </p>
       )}
       <p className="drawer-note">{product.source_platform === "CJdropshipping"
-        ? "商品来自 CJ 快照；发货仓与目的国配送是不同信息。试算前不会假定可配送；试算后仍需在下单前复核价格、库存、地址与税费，当前不支持直接下单。"
+        ? "商品来自 CJ 快照；工厂备货不是 CJ 仓现货。物流起运国由库存记录选择，试算后仍需在下单前复核实际发货地、价格、库存、地址与税费；当前不支持直接下单。"
         : "价格、库存为目录查询结果，购买前需要再次核对。图片与评分如标注为示意或样例，不代表实时平台信息。"}</p>
       <button
         className="primary-button"

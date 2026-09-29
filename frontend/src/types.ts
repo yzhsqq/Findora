@@ -46,6 +46,8 @@ export interface ProductCard {
     currency: string;
     stock: number;
     stock_known?: boolean;
+    cj_stock?: number;
+    factory_stock?: number;
   }[];
   score: number;
   landed_price?: LandedPrice;
@@ -72,6 +74,7 @@ export interface ProductCard {
   detail_available?: boolean;
   supplier_name?: string;
   ship_from_warehouses?: string[];
+  factory_inventory_countries?: string[];
 }
 
 export interface CJFreightQuote {
@@ -82,7 +85,10 @@ export interface CJFreightQuote {
   variant_id: string;
   quantity: number;
   selection_mode: "selected_sku" | "first_variant_assumed";
-  ship_from_warehouse: string;
+  quote_origin_country: string;
+  origin_inventory_kind: "cj_warehouse" | "factory_inventory" | "unknown";
+  origin_inventory_verified: boolean;
+  route_scope: "same_country" | "cross_border";
   ship_to: string;
   shipping_method: string;
   route_count: number;

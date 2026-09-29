@@ -100,11 +100,18 @@ class CJCatalog:
         detail = json.loads(row["detail_json"]) if row["detail_json"] else {}
         inventory = json.loads(row["inventory_json"]) if row["inventory_json"] else {}
         price, price_text, price_kind = _price(listing.get("sellPrice"))
-        stocks = {}
+        stocks: dict[str, dict[str, int]] = {}
         for item in inventory.get("variantInventories") or []:
-            counts = [warehouse.get("totalInventory") for warehouse in item.get("inventory") or []]
+            origins = item.get("inventory") or []
+            counts = [origin.get("totalInventory") for origin in origins]
             if counts and all(type(count) is int and count >= 0 for count in counts):
-                stocks[str(item.get("vid"))] = sum(counts)
+                stock = {"total": sum(counts)}
+                if all(type(origin.get("cjInventory")) is int and origin["cjInventory"] >= 0
+                       and type(origin.get("factoryInventory")) is int and origin["factoryInventory"] >= 0
+                       for origin in origins):
+                    stock["cj"] = sum(origin["cjInventory"] for origin in origins)
+                    stock["factory"] = sum(origin["factoryInventory"] for origin in origins)
+                stocks[str(item.get("vid"))] = stock
         skus = []
         for item in (detail.get("variants") or [])[:60]:
             if not isinstance(item, dict):
@@ -112,17 +119,22 @@ class CJCatalog:
             sku_id = str(item.get("variantSku") or item.get("vid") or "")
             amount, _, kind = _price(item.get("variantSellPrice"))
             if sku_id and kind != "unknown":
+                stock = stocks.get(str(item.get("vid")))
                 skus.append({
                     "sku_id": sku_id, "spec": str(item.get("variantKey") or item.get("variantNameEn") or sku_id),
                     "variant_id": str(item.get("vid") or ""),
                     "price_major": amount, "currency": "USD",
-                    "stock": stocks.get(str(item.get("vid")), 0),
-                    "stock_known": str(item.get("vid")) in stocks,
+                    "stock": stock["total"] if stock else 0,
+                    "stock_known": stock is not None,
+                    **({"cj_stock": stock["cj"], "factory_stock": stock["factory"]}
+                       if stock and "cj" in stock and "factory" in stock else {}),
                 })
         image = detail.get("bigImage") or listing.get("bigImage")
         material = _labels(detail.get("materialNameEnSet") or detail.get("materialNameEn"))
         warehouses = [str(item.get("countryCode")) for item in inventory.get("inventories") or []
-                      if isinstance(item, dict) and item.get("countryCode") and _positive_count(item.get("totalInventoryNum"))]
+                      if isinstance(item, dict) and item.get("countryCode") and _positive_count(item.get("cjInventoryNum"))]
+        factory_countries = [str(item.get("countryCode")) for item in inventory.get("inventories") or []
+                             if isinstance(item, dict) and item.get("countryCode") and _positive_count(item.get("factoryInventoryNum"))]
         weight = detail.get("productWeight")
         try:
             weight_kg = max(0.0, float(weight) / 1000) if weight is not None else None
@@ -141,6 +153,7 @@ class CJCatalog:
             "image_kind": "source" if image else "placeholder", "image_alt": str(listing.get("nameEn") or "CJ 商品"),
             "description": _plain(detail.get("description") or listing.get("description")),
             "ships_to": [], "ship_from_warehouses": list(dict.fromkeys(warehouses)),
+            "factory_inventory_countries": list(dict.fromkeys(factory_countries)),
             "material_tags": material, "weight_kg": weight_kg,
             "updated_at": row["detail_fetched_at"] or row["list_fetched_at"],
             "inventory_checked_at": row["inventory_fetched_at"],

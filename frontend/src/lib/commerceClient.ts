@@ -148,6 +148,8 @@ export function readProducts(value: unknown): ProductCard[] {
         currency: sku.currency,
         stock: sku.stock,
         ...(typeof sku.stock_known === "boolean" ? { stock_known: sku.stock_known } : {}),
+        ...(isCount(sku.cj_stock) ? { cj_stock: sku.cj_stock } : {}),
+        ...(isCount(sku.factory_stock) ? { factory_stock: sku.factory_stock } : {}),
       });
     }
     const card: ProductCard = {
@@ -200,6 +202,7 @@ export function readProducts(value: unknown): ProductCard[] {
       if (isStringArray(item[key])) card[key] = [...item[key]];
     }
     if (isStringArray(item.ship_from_warehouses)) card.ship_from_warehouses = [...item.ship_from_warehouses];
+    if (isStringArray(item.factory_inventory_countries)) card.factory_inventory_countries = [...item.factory_inventory_countries];
     if (isRecord(item.dimensions_cm)) {
       const dimensions: NonNullable<ProductCard["dimensions_cm"]> = {};
       let valid = true;

@@ -50,6 +50,23 @@ def _amount(value: object) -> Decimal | None:
         return None
 
 
+def _origin_evidence(inventory_json: str | None, variant_id: str, country: str) -> dict:
+    """Describe the inventory record used as a quote origin, not a confirmed shipment."""
+    inventory = json.loads(inventory_json) if inventory_json else {}
+    for variant in inventory.get("variantInventories") or []:
+        if str(variant.get("vid")) != variant_id:
+            continue
+        for item in variant.get("inventory") or []:
+            if str(item.get("countryCode")) != country:
+                continue
+            cj = _amount(item.get("cjInventory")) or 0
+            factory = _amount(item.get("factoryInventory")) or 0
+            kind = "cj_warehouse" if cj > 0 else "factory_inventory" if factory > 0 else "unknown"
+            return {"origin_inventory_kind": kind,
+                    "origin_inventory_verified": str(item.get("verifiedWarehouse")) == "1"}
+    return {"origin_inventory_kind": "unknown", "origin_inventory_verified": False}
+
+
 class CJLiveQuoteService:
     """One API worker, serial CJ calls, with a persistent pilot point ceiling."""
 
@@ -204,10 +221,15 @@ class CJLiveQuoteService:
             raise CJQuoteError("试算数量须为 1 至 10")
         cache_key = f"{product_id}:{sku_id}:{destination}:{quantity}"
         with self._db() as db:
+            row = self._product(db, product_id)
             cached = db.execute("SELECT quoted_at,response_json FROM cj_pilot_quotes WHERE cache_key=?", (cache_key,)).fetchone()
             if cached and _fresh(cached["quoted_at"], QUOTE_TTL_SECONDS):
-                return {**json.loads(cached["response_json"]), "cache_hit": True}
-            row = self._product(db, product_id)
+                result = json.loads(cached["response_json"])
+                origin = str(result.pop("ship_from_warehouse", None) or result.get("quote_origin_country") or "")
+                result["quote_origin_country"] = origin
+                result["route_scope"] = "same_country" if origin == destination else "cross_border"
+                result.update(_origin_evidence(row["inventory_json"], str(result.get("variant_id")), origin))
+                return {**result, "cache_hit": True}
             client, token = self._client()
             try:
                 row = self._ensure_detail(db, client, token, row, refresh=True)
@@ -228,7 +250,7 @@ class CJLiveQuoteService:
                                   if item.get("countryCode") and (_amount(item.get("totalInventory")) or 0) > 0),
                                  key=lambda item: -float(item.get("cjInventory") or item.get("totalInventory") or 0))
                 if not origins:
-                    raise CJQuoteError("CJ 当前库存未提供该规格的可用发货仓，无法试算")
+                    raise CJQuoteError("CJ 当前库存未提供该规格的来源国家，无法试算")
                 origin = str(origins[0]["countryCode"])
                 options = self._call(client, token, db, "/logistic/freightCalculate", body={
                     "startCountryCode": origin, "endCountryCode": destination,
@@ -254,7 +276,9 @@ class CJLiveQuoteService:
                 "product_id": product_id, "sku_id": str(variant.get("variantSku")),
                 "variant_id": str(variant["vid"]), "quantity": quantity,
                 "selection_mode": "selected_sku" if sku_id else "first_variant_assumed",
-                "ship_from_warehouse": origin, "ship_to": destination,
+                "quote_origin_country": origin, "ship_to": destination,
+                "route_scope": "same_country" if origin == destination else "cross_border",
+                **_origin_evidence(row["inventory_json"], str(variant["vid"]), origin),
                 "shipping_method": str(option["logisticName"]), "route_count": len(valid),
                 "product_unit_usd": float(price), "product_subtotal_usd": float(subtotal),
                 "shipping_and_cj_fees_usd": float(postage), "cj_trial_total_usd": float(subtotal + postage),
