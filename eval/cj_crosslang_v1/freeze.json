@@ -1,0 +1,9 @@
+{
+  "protocol_version": "cj-crosslang-v1",
+  "baseline_commit": "30b9a4f",
+  "snapshot_sha256": "f29e0e107143422f80ca6ac2d4c74c88e9b577ec6f9ca3176c05dfd93bd9928d",
+  "dev_cases_sha256": "4c8099edf0c79468c5ed5eef1f62d8cd2cc436d9475797b6a05ad915fcc42d42",
+  "holdout_cases_sha256": "376be8e3de0811a0e331e6da7c48e031149e3739384da231019f23986d1cd7ee",
+  "holdout_case_count": 10,
+  "holdout_policy": "Do not execute or inspect search outcomes until code and parameters are frozen after dev and original-40 validation."
+}

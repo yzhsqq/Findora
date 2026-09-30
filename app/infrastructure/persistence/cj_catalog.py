@@ -24,6 +24,13 @@ _WORDS = {
     "猫": "cat", "狗": "dog", "儿童": "kids", "婴儿": "baby",
     "家居": "home", "收纳": "storage", "厨房": "kitchen", "灯": "light",
     "美妆": "beauty", "化妆": "makeup", "办公": "office", "玩具": "toy",
+    # CJ 列表标题主要是英文。将常见中文商品词和属性转成标题词，
+    # 保留原有英文型号词；不在此处调用模型或在线翻译服务。
+    "绿色": "green", "檀木": "sandalwood", "梳子": "comb", "梳头": "comb",
+    "防水": "waterproof", "双屏": "dual", "数码": "digital", "相机": "camera",
+    "反光": "reflective", "牵引绳": "leash", "五英尺": "5 ft",
+    "登山": "mountaineering", "双肩": "backpack", "战术": "tactical",
+    "长方形": "rectangular", "铁皮": "tinplate", "拉扣": "clasp", "盒": "box",
 }
 _CATEGORIES = {
     "旅行装备": ("Bags & Shoes",), "户外运动": ("Sports & Outdoors",),

@@ -1,0 +1,8 @@
+{"id":"CJ-R025","stratum":"literal_attribute","query":"绿色檀木梳头用的梳子","anchor_id":"05B050F6-9DF5-4488-9218-B1D919650ADE","ideal_query":"green sandalwood hair comb","anchor_terms":["Green Sandalwood Hair Comb"]}
+{"id":"CJ-R026","stratum":"mixed_model","query":"笔记本加几个USB接口的ORICO G11-H4","anchor_id":"1377823658046787584","ideal_query":"ORICO G11-H4 laptop USB3.0 hub","anchor_terms":["ORICO G11-H4","USB3.0 Hub"]}
+{"id":"CJ-R027","stratum":"functional","query":"没有网口的笔记本用Type-C接千兆有线网络","anchor_id":"1448918713767170048","ideal_query":"Type-C RJ45 Gigabit network adapter","anchor_terms":["Type-C","RJ45","Gigabit"]}
+{"id":"CJ-R028","stratum":"literal_attribute","query":"能防水的双屏数码相机","anchor_id":"CF7448FC-5574-464C-A1DF-CAA74952BB2C","ideal_query":"dual-screen waterproof digital camera","anchor_terms":["Dual-screen","waterproof","digital camera"]}
+{"id":"CJ-R029","stratum":"measurement","query":"宠物狗夜跑反光牵引绳五英尺","anchor_id":"1812063314538024960","ideal_query":"5 FT reflective dog leash","anchor_terms":["Dog Leash","5 FT","Reflective"]}
+{"id":"CJ-R030","stratum":"synonym","query":"适合户外登山的双肩战术包","anchor_id":"07E5B851-E0CF-4050-98CD-57865C46FF77","ideal_query":"tactical hiking mountaineering backpack","anchor_terms":["backpack","mountaineering","tactical"]}
+{"id":"CJ-R031","stratum":"colloquial","query":"会发光的猫耳朵耳机","anchor_id":"C18AA15C-2E06-4067-9FB1-A06C97D78ACF","ideal_query":"LED flashing cat ear headphones","anchor_terms":["LED flashing","cat ear headphones"]}
+{"id":"CJ-R032","stratum":"material_function","query":"带拉扣的长方形铁皮收纳盒","anchor_id":"2096531498850877442","ideal_query":"rectangular tinplate storage box clasp latch","anchor_terms":["Rectangular Tinplate","Clasp Latch"]}
