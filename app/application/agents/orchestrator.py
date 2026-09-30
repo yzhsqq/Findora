@@ -64,6 +64,7 @@ from app.infrastructure.context import ShoppingContext, ShoppingContextSnapshot
 from app.infrastructure.eventbus import TradeEventBus, observe_run_events
 from app.infrastructure.budget import init_budget, remember_verified_result, get_budget, rule_fallback_text
 from app.infrastructure.security.output_guard import audit_output
+from app.application.agents.product_id_reply_guard import attach_visible_product_ids
 from app.infrastructure.transient import is_transient_error
 from app.infrastructure.capability_registry import CapabilityVersionChanged
 from app.infrastructure.prompt_registry import PromptContractChanged
@@ -325,6 +326,7 @@ class MainAgentOrchestrator:
 
             with observe_run_events(collect_candidates):
                 final_text = await self._reply_with_retry(session_id, agent, inputs)
+            final_text = attach_visible_product_ids(final_text, candidate_projection.result)
             final_text = self._guard_final_text(session_id, final_text)
             await self._check_drift(session_id)
 
