@@ -1,3 +1,6 @@
+import pytest
+
+from scripts.eval.compare_cj_baseline import compare
 from scripts.eval.run_cj_baseline import summarize
 
 
@@ -17,3 +20,16 @@ def test_known_item_and_empty_cases_have_separate_denominators():
     assert result["known_item_mrr"] == 0.25
     assert result["empty_accuracy"] == 1.0
     assert result["failure_types"] == {"no_candidates": 1}
+
+
+def test_comparison_rejects_changed_snapshot_before_claiming_improvement():
+    observation = {"id": "case-1", "kind": "exact", "expected_empty": False,
+                   "anchor_id": "product-1", "pass": False, "rank": None, "retrieved": []}
+    report = {
+        "split": "all", "cases_sha256": "cases", "top_k": 5,
+        "snapshot": {"sha256": "frozen-a"}, "observations": [observation],
+    }
+    changed = {**report, "snapshot": {"sha256": "frozen-b"}}
+
+    with pytest.raises(ValueError, match="frozen CJ snapshot"):
+        compare(report, changed)

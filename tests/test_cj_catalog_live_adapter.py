@@ -58,3 +58,22 @@ async def test_cj_catalog_finds_exact_sku_even_with_previous_category_filter(tmp
     assert by_sku["total"] == 1
     assert by_sku["products"][0]["product_id"] == "2507170748351600700"
     assert (await catalog.browse("2507170748351601500"))["total"] == 1
+
+
+@pytest.mark.asyncio
+async def test_cj_catalog_finds_uuid_product_id_without_matching_title_or_category(tmp_path):
+    path = tmp_path / "cj_catalog.sqlite3"
+    product_id = "04AF4351-7F6B-471D-81C0-DBF17E5CD296"
+    with sqlite3.connect(path) as db:
+        db.execute("""CREATE TABLE products(pid TEXT PRIMARY KEY,first_category TEXT,second_category TEXT,
+            third_category TEXT,list_json TEXT,list_fetched_at TEXT,detail_json TEXT,detail_fetched_at TEXT,
+            inventory_json TEXT,inventory_fetched_at TEXT)""")
+        db.execute("INSERT INTO products VALUES(?,?,?,?,?,?,?,?,?,?)", (
+            product_id, "Consumer Electronics", "Audio", "Speakers",
+            json.dumps({"nameEn": "Alarm clock bluetooth speaker", "sellPrice": "5.00"}),
+            "2026-01-01", None, None, None, None,
+        ))
+    catalog = CJCatalog(path)
+    page = await catalog.browse(product_id.lower(), "Bags & Shoes")
+    assert page["total"] == 1
+    assert page["products"][0]["product_id"] == product_id

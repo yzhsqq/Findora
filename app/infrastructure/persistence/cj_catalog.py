@@ -163,7 +163,10 @@ class CJCatalog:
 
     def _browse(self, query: str, category: str, page: int, page_size: int) -> dict:
         exact = query.strip()
-        direct_id = exact if re.fullmatch(r"[0-9]{16,24}", exact) else ""
+        direct_id = exact if re.fullmatch(
+            r"(?:[0-9]{16,24}|[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12})",
+            exact, flags=re.I,
+        ) else ""
         direct_sku = exact if re.fullmatch(r"CJ[A-Z0-9_-]{6,96}", exact, flags=re.I) else ""
         terms = [] if direct_id or direct_sku else _terms(query)
         clauses: list[str] = []
@@ -173,8 +176,8 @@ class CJCatalog:
             clauses.append("first_category IN (" + ",".join("?" for _ in categories) + ")")
             args.extend(categories)
         if direct_id:
-            clauses.append("(pid = ? OR EXISTS (SELECT 1 FROM json_each(products.detail_json, '$.variants') v "
-                           "WHERE json_extract(v.value, '$.vid') = ?))")
+            clauses.append("(pid = ? COLLATE NOCASE OR EXISTS (SELECT 1 FROM json_each(products.detail_json, '$.variants') v "
+                           "WHERE json_extract(v.value, '$.vid') = ? COLLATE NOCASE))")
             args.extend((direct_id, direct_id))
         elif direct_sku:
             clauses.append("EXISTS (SELECT 1 FROM json_each(products.detail_json, '$.variants') v "

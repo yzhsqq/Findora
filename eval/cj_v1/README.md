@@ -41,3 +41,12 @@
 ## 下一轮单变量实验
 
 先保持同一快照和 40 题不变，单独比较 CJ 现有标题 `LIKE` 与更明确的 ID 查询、英文全文检索/排序。中文改写若仍差，再比较低成本的查询改写与语义召回。记录每种策略的命中、误召回、本地延迟及新增模型成本。检索组件证明有效后，再用独立 Agent 用例测答案证据、报价成功率、token、CJ 点数和工具失败率；不能把本轮组件得分冒充 Agent 成绩。
+
+第一项单变量改进已完成：为 CJ 目录增加 UUID 商品 ID 精确查询，与数字 ID 使用同一查询路径。同一 40 题和同一快照上，已知商品 Hit@5 从 **30/36 提升到 31/36**，精确 ID 题从 **3/4 提升到 4/4**，本批次未通过用例从 **7/40 降至 6/40**；只有 `CJ-R035` 的结果发生变化，无退化用例。中文改写仍是 **3/8**，无结果题仍是 **3/4**。这里的未通过率不是在线接口故障率。这是一个有限的准确性改进，不代表整体选品质量已经达标。对比证据见 [`uuid-fix/comparison.md`](../verification/cj-v1/uuid-fix/comparison.md)。复跑命令为：
+
+```powershell
+.venv\Scripts\python.exe -m scripts.eval.run_cj_baseline --split all --output-dir eval/verification/cj-v1/uuid-fix
+.venv\Scripts\python.exe -m scripts.eval.compare_cj_baseline --before eval/verification/cj-v1/baseline-all.json --after eval/verification/cj-v1/uuid-fix/baseline-all.json --output eval/verification/cj-v1/uuid-fix/comparison.json
+```
+
+对比脚本在计算差异前核对快照、题集、选集、题序和金标；任一不一致则拒绝输出“改进”结论。

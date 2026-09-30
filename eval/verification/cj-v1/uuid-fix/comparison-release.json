@@ -1,0 +1,98 @@
+{
+  "compared_at": "2026-09-30T01:47:54.803951+00:00",
+  "split": "release",
+  "snapshot_sha256": "f29e0e107143422f80ca6ac2d4c74c88e9b577ec6f9ca3176c05dfd93bd9928d",
+  "cases_sha256": "17c34a4569dceb68a7b941b05b451e36e0f743db80a4895b52571aa6033de2e6",
+  "case_count": 11,
+  "code_sha256_before": "a9d12e858fc3d9d267a987aaa3d4842ebbb92aca2a4ae77b3ad3c9d9d0ef87ff",
+  "code_sha256_after": "4ebf3f533130618ab4b3bbae07d4dfcb245101e51fd95087f4593869a680bee7",
+  "known_item_hit_at_5": {
+    "before": 0.8889,
+    "after": 0.8889,
+    "before_count": 8,
+    "after_count": 8,
+    "denominator": 9
+  },
+  "empty_accuracy": {
+    "before": 0.5,
+    "after": 0.5,
+    "denominator": 2
+  },
+  "case_failures": {
+    "before": 2,
+    "after": 2,
+    "denominator": 11
+  },
+  "failure_types_before": {
+    "candidate_but_anchor_missing": 1,
+    "unexpected_candidates": 1
+  },
+  "failure_types_after": {
+    "candidate_but_anchor_missing": 1,
+    "unexpected_candidates": 1
+  },
+  "by_kind_before": {
+    "empty": {
+      "count": 2,
+      "pass_count": 1,
+      "pass_rate": 0.5
+    },
+    "exact": {
+      "count": 1,
+      "pass_count": 1,
+      "pass_rate": 1.0
+    },
+    "lexical": {
+      "count": 6,
+      "pass_count": 6,
+      "pass_rate": 1.0
+    },
+    "paraphrase": {
+      "count": 2,
+      "pass_count": 1,
+      "pass_rate": 0.5
+    }
+  },
+  "by_kind_after": {
+    "empty": {
+      "count": 2,
+      "pass_count": 1,
+      "pass_rate": 0.5
+    },
+    "exact": {
+      "count": 1,
+      "pass_count": 1,
+      "pass_rate": 1.0
+    },
+    "lexical": {
+      "count": 6,
+      "pass_count": 6,
+      "pass_rate": 1.0
+    },
+    "paraphrase": {
+      "count": 2,
+      "pass_count": 1,
+      "pass_rate": 0.5
+    }
+  },
+  "cost_before": {
+    "cj_points": 0,
+    "llm_tokens": 0,
+    "scope": "offline_sqlite_retrieval_only"
+  },
+  "cost_after": {
+    "cj_points": 0,
+    "llm_tokens": 0,
+    "scope": "offline_sqlite_retrieval_only"
+  },
+  "local_latency_ms": {
+    "before_p50": 571.56,
+    "after_p50": 1182.34,
+    "before_p95": 653.18,
+    "after_p95": 1480.81,
+    "interpretation": "Single sequential runs on a shared local machine; no causal performance claim."
+  },
+  "changed_cases": [],
+  "improved_ids": [],
+  "regressed_ids": []
+}

@@ -1,0 +1,114 @@
+{
+  "compared_at": "2026-09-30T01:47:53.525737+00:00",
+  "split": "dev",
+  "snapshot_sha256": "f29e0e107143422f80ca6ac2d4c74c88e9b577ec6f9ca3176c05dfd93bd9928d",
+  "cases_sha256": "17c34a4569dceb68a7b941b05b451e36e0f743db80a4895b52571aa6033de2e6",
+  "case_count": 29,
+  "code_sha256_before": "a9d12e858fc3d9d267a987aaa3d4842ebbb92aca2a4ae77b3ad3c9d9d0ef87ff",
+  "code_sha256_after": "4ebf3f533130618ab4b3bbae07d4dfcb245101e51fd95087f4593869a680bee7",
+  "known_item_hit_at_5": {
+    "before": 0.8148,
+    "after": 0.8519,
+    "before_count": 22,
+    "after_count": 23,
+    "denominator": 27
+  },
+  "empty_accuracy": {
+    "before": 1.0,
+    "after": 1.0,
+    "denominator": 2
+  },
+  "case_failures": {
+    "before": 5,
+    "after": 4,
+    "denominator": 29
+  },
+  "failure_types_before": {
+    "candidate_but_anchor_missing": 2,
+    "exact_id_gap": 1,
+    "no_candidates": 2
+  },
+  "failure_types_after": {
+    "candidate_but_anchor_missing": 2,
+    "no_candidates": 2
+  },
+  "by_kind_before": {
+    "empty": {
+      "count": 2,
+      "pass_count": 2,
+      "pass_rate": 1.0
+    },
+    "exact": {
+      "count": 3,
+      "pass_count": 2,
+      "pass_rate": 0.6667
+    },
+    "lexical": {
+      "count": 18,
+      "pass_count": 18,
+      "pass_rate": 1.0
+    },
+    "paraphrase": {
+      "count": 6,
+      "pass_count": 2,
+      "pass_rate": 0.3333
+    }
+  },
+  "by_kind_after": {
+    "empty": {
+      "count": 2,
+      "pass_count": 2,
+      "pass_rate": 1.0
+    },
+    "exact": {
+      "count": 3,
+      "pass_count": 3,
+      "pass_rate": 1.0
+    },
+    "lexical": {
+      "count": 18,
+      "pass_count": 18,
+      "pass_rate": 1.0
+    },
+    "paraphrase": {
+      "count": 6,
+      "pass_count": 2,
+      "pass_rate": 0.3333
+    }
+  },
+  "cost_before": {
+    "cj_points": 0,
+    "llm_tokens": 0,
+    "scope": "offline_sqlite_retrieval_only"
+  },
+  "cost_after": {
+    "cj_points": 0,
+    "llm_tokens": 0,
+    "scope": "offline_sqlite_retrieval_only"
+  },
+  "local_latency_ms": {
+    "before_p50": 543.65,
+    "after_p50": 1133.94,
+    "before_p95": 655.64,
+    "after_p95": 1601.33,
+    "interpretation": "Single sequential runs on a shared local machine; no causal performance claim."
+  },
+  "changed_cases": [
+    {
+      "id": "CJ-R035",
+      "kind": "exact",
+      "before_pass": false,
+      "after_pass": true,
+      "before_rank": null,
+      "after_rank": 1,
+      "before_retrieved": [],
+      "after_retrieved": [
+        "04AF4351-7F6B-471D-81C0-DBF17E5CD296"
+      ]
+    }
+  ],
+  "improved_ids": [
+    "CJ-R035"
+  ],
+  "regressed_ids": []
+}
