@@ -1,0 +1,9 @@
+{
+  "protocol_version": "cj-crosslang-v2",
+  "origin_v1_fix_commit": "693963a78671e928cd398529f890c0f74853d3eb",
+  "snapshot_sha256": "f29e0e107143422f80ca6ac2d4c74c88e9b577ec6f9ca3176c05dfd93bd9928d",
+  "known_cases_sha256": "376be8e3de0811a0e331e6da7c48e031149e3739384da231019f23986d1cd7ee",
+  "holdout_cases_sha256": "1f276de9bb837619fadeefd61d570aaba04fd36a0258d28e42da38afde5e895a",
+  "holdout_case_count": 10,
+  "status": "sealed_unrun"
+}
