@@ -16,7 +16,7 @@ from pathlib import Path
 from app.domain.catalog.product_search_spec import ProductSearchSpec
 
 
-_WORDS = {
+_BASE_WORDS = {
     "背包": "backpack", "旅行": "travel", "行李": "luggage", "包": "bag",
     "耳机": "headphone", "耳塞": "earbud", "蓝牙": "bluetooth", "手机": "phone",
     "充电": "charger", "电脑": "computer", "键盘": "keyboard", "鼠标": "mouse",
@@ -24,14 +24,16 @@ _WORDS = {
     "猫": "cat", "狗": "dog", "儿童": "kids", "婴儿": "baby",
     "家居": "home", "收纳": "storage", "厨房": "kitchen", "灯": "light",
     "美妆": "beauty", "化妆": "makeup", "办公": "office", "玩具": "toy",
-    # CJ 列表标题主要是英文。将常见中文商品词和属性转成标题词，
-    # 保留原有英文型号词；不在此处调用模型或在线翻译服务。
+}
+# v1 中文词典实验未通过留出集；保留代码供显式回放，默认不参与线上检索。
+_EXPERIMENTAL_WORDS = {
     "绿色": "green", "檀木": "sandalwood", "梳子": "comb", "梳头": "comb",
     "防水": "waterproof", "双屏": "dual", "数码": "digital", "相机": "camera",
     "反光": "reflective", "牵引绳": "leash", "五英尺": "5 ft",
     "登山": "mountaineering", "双肩": "backpack", "战术": "tactical",
     "长方形": "rectangular", "铁皮": "tinplate", "拉扣": "clasp", "盒": "box",
 }
+_WORDS = {**_BASE_WORDS, **_EXPERIMENTAL_WORDS}
 _CATEGORIES = {
     "旅行装备": ("Bags & Shoes",), "户外运动": ("Sports & Outdoors",),
     "数码配件": ("Consumer Electronics", "Phones & Accessories", "Computer & Office"),
@@ -80,10 +82,11 @@ def _positive_count(value: object) -> bool:
         return False
 
 
-def _terms(query: str) -> list[str]:
+def _terms(query: str, *, experimental_lexicon: bool = False) -> list[str]:
+    words = _WORDS if experimental_lexicon else _BASE_WORDS
     english = re.findall(r"[a-zA-Z]{3,}", query.lower())
-    translated = [word for zh, word in _WORDS.items() if zh in query and not any(
-        zh != other and zh in other and other in query for other in _WORDS
+    translated = [word for zh, word in words.items() if zh in query and not any(
+        zh != other and zh in other and other in query for other in words
     )]
     return list(dict.fromkeys([*translated, *english]))[:8]
 
@@ -91,8 +94,9 @@ def _terms(query: str) -> list[str]:
 class CJCatalog:
     source = "cj"
 
-    def __init__(self, path: Path):
+    def __init__(self, path: Path, *, experimental_lexicon: bool = False):
         self.path = path
+        self.experimental_lexicon = experimental_lexicon
 
     def _db(self) -> sqlite3.Connection:
         if not self.path.is_file():
@@ -175,7 +179,7 @@ class CJCatalog:
             exact, flags=re.I,
         ) else ""
         direct_sku = exact if re.fullmatch(r"CJ[A-Z0-9_-]{6,96}", exact, flags=re.I) else ""
-        terms = [] if direct_id or direct_sku else _terms(query)
+        terms = [] if direct_id or direct_sku else _terms(query, experimental_lexicon=self.experimental_lexicon)
         clauses: list[str] = []
         args: list[str] = []
         categories = _CATEGORIES.get(category, (category,)) if category else ()

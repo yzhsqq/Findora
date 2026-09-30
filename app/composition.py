@@ -282,7 +282,9 @@ async def build_container() -> Container:
     drift_detector = DriftDetector() if settings.drift_detect_enabled else None
 
     # ---- Application ----
-    catalog_search = (CJCatalog(settings.data_dir / "cj_catalog.sqlite3") if settings.catalog_source == "cj" else
+    catalog_search = (CJCatalog(settings.data_dir / "cj_catalog.sqlite3",
+                                experimental_lexicon=settings.cj_experimental_lexicon)
+                      if settings.catalog_source == "cj" else
         CatalogSearchUseCase(
             product_repo, embedder=embedder, vector_index=vector_index, reranker=reranker,
             hybrid_enabled=settings.hybrid_recall_enabled,
@@ -351,7 +353,8 @@ async def build_container() -> Container:
         confirmations=confirmations,
         trade_store=trade_store,
         trade_db_engine=trade_db_engine,
-        runtime={"app_source_sha256": source_fingerprint, "catalog_source": settings.catalog_source},
+        runtime={"app_source_sha256": source_fingerprint, "catalog_source": settings.catalog_source,
+                 "cj_experimental_lexicon": settings.cj_experimental_lexicon},
         ag_ui_runtime=AGUIRuntime(AGUIJournal(settings.data_dir / "ag_ui_runs.db"), orchestrator, confirmations),
         session_store=session_store,
         identity_policy=identity_policy,

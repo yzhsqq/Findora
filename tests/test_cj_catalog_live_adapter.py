@@ -96,5 +96,7 @@ async def test_cj_catalog_matches_chinese_attributes_to_english_title(tmp_path):
                 json.dumps({"nameEn": title, "sellPrice": "2.00"}),
                 "2026-01-01", None, None, None, None,
             ))
-    page = await CJCatalog(path).browse("绿色檀木梳头用的梳子")
+    default_page = await CJCatalog(path).browse("绿色檀木梳头用的梳子")
+    assert default_page["products"] == []
+    page = await CJCatalog(path, experimental_lexicon=True).browse("绿色檀木梳头用的梳子")
     assert page["products"][0]["product_id"] == "comb"

@@ -122,6 +122,7 @@ class Settings:
     identity_hmac_secret: str = field(default="", repr=False)
     hybrid_recall_enabled: bool = False  # 冻结评测证明收益后再启用实验召回
     catalog_source: str = "fixture"  # cj = 本地 CJ 快照，fixture = 原有冻结样例
+    cj_experimental_lexicon: bool = False  # 上轮未发布词典，仅显式实验时开启
 
 
 def load_settings() -> Settings:
@@ -145,6 +146,7 @@ def load_settings() -> Settings:
         llm_model=os.getenv("LLM_MODEL", "qwen3-max"),
         hybrid_recall_enabled=os.getenv("HYBRID_RECALL_ENABLED", "0") in ("1", "true", "True"),
         catalog_source=os.getenv("CATALOG_SOURCE", "fixture").lower(),
+        cj_experimental_lexicon=os.getenv("CJ_EXPERIMENTAL_LEXICON", "0") in ("1", "true", "True"),
         port=int(os.getenv("PORT", "8000")),
         log_level=os.getenv("LOG_LEVEL", "info"),
         # embedding 默认复用 LLM 网关（OpenAI 兼容 /v1/embeddings）
