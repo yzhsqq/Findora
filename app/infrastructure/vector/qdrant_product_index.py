@@ -24,14 +24,14 @@ def _point_id(product_id: str) -> str:
 
 
 class QdrantProductIndex(ProductVectorIndex):
-    def __init__(self, settings: Settings) -> None:
+    def __init__(self, settings: Settings, *, collection: str | None = None) -> None:
         if settings.qdrant_url:
             self._client = AsyncQdrantClient(url=settings.qdrant_url)
         else:
             local_path = settings.data_dir / "qdrant"
             local_path.parent.mkdir(parents=True, exist_ok=True)
             self._client = AsyncQdrantClient(path=str(local_path))
-        self._collection = settings.qdrant_collection
+        self._collection = collection or settings.qdrant_collection
 
     async def product_fingerprints(self) -> dict[str, str]:
         if not await self._client.collection_exists(self._collection):

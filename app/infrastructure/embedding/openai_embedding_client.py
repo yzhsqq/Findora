@@ -6,6 +6,7 @@ OpenAI 兼容 /v1/embeddings 客户端（httpx 直连，不引入 openai SDK 的
 """
 from __future__ import annotations
 
+import asyncio
 import os
 
 import httpx
@@ -24,6 +25,7 @@ from app.infrastructure.settings import Settings
 # 直到商品库扩到 60 个做召回评测，建库才开始整批失败——而 `bootstrap_product_index`
 # 会吞掉异常降级到关键词召回，于是表现为「向量检索静默失效」而不是报错。
 _MAX_BATCH = int(os.getenv("EMBEDDING_MAX_BATCH", "10"))
+_MAX_RETRIES = int(os.getenv("EMBEDDING_MAX_RETRIES", "3"))
 
 
 class OpenAIEmbeddingClient(EmbeddingClient):
@@ -50,12 +52,28 @@ class OpenAIEmbeddingClient(EmbeddingClient):
     async def _embed_chunk(
         self, client: httpx.AsyncClient, chunk: list[str],
     ) -> list[list[float]]:
-        response = await client.post(
-            f"{self._base_url}/embeddings",
-            headers={"Authorization": f"Bearer {self._api_key}"},
-            json={"model": self._model, "input": chunk},
-        )
-        response.raise_for_status()
+        response = None
+        for attempt in range(_MAX_RETRIES + 1):
+            try:
+                response = await client.post(
+                    f"{self._base_url}/embeddings",
+                    headers={"Authorization": f"Bearer {self._api_key}"},
+                    json={"model": self._model, "input": chunk},
+                )
+            except httpx.TransportError:
+                if attempt >= _MAX_RETRIES:
+                    raise
+                await asyncio.sleep(0.5 * (2**attempt))
+                continue
+            if response.status_code in {408, 429, 500, 502, 503, 504}:
+                if attempt >= _MAX_RETRIES:
+                    response.raise_for_status()
+                await asyncio.sleep(0.5 * (2**attempt))
+                continue
+            response.raise_for_status()
+            break
+        if response is None:  # pragma: no cover - defensive; loop always assigns or raises.
+            raise RuntimeError("embedding 请求未返回响应")
         if not response.content:
             # 明确指向批量上限，不要让调用方对着 JSONDecodeError 猜
             raise RuntimeError(

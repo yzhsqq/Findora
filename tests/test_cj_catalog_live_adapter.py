@@ -5,8 +5,37 @@ import sqlite3
 import pytest
 
 from app.application.usecases.shopping_decision import build_decision_report
+from app.domain.catalog.ports.retrieval_ports import EmbeddingClient, ProductVectorIndex, VectorHit
 from app.domain.catalog.product_search_spec import ProductSearchSpec
 from app.infrastructure.persistence.cj_catalog import CJCatalog
+
+
+class _Embedding(EmbeddingClient):
+    async def embed(self, text: str) -> list[float]:
+        return [1.0, 0.0]
+
+    async def embed_batch(self, texts: list[str]) -> list[list[float]]:
+        return [[1.0, 0.0] for _ in texts]
+
+
+class _VectorIndex(ProductVectorIndex):
+    def __init__(self, hits: list[VectorHit]):
+        self.hits = hits
+
+    async def product_fingerprints(self) -> dict[str, str]:
+        return {}
+
+    async def ensure_ready(self, vector_dim: int) -> None:
+        return None
+
+    async def upsert_products(self, products, embeddings, fingerprints) -> None:
+        return None
+
+    async def delete_products(self, product_ids: list[str]) -> None:
+        return None
+
+    async def search(self, embedding: list[float], top_n: int) -> list[VectorHit]:
+        return self.hits[:top_n]
 
 
 @pytest.mark.asyncio
@@ -100,3 +129,86 @@ async def test_cj_catalog_matches_chinese_attributes_to_english_title(tmp_path):
     assert default_page["products"] == []
     page = await CJCatalog(path, experimental_lexicon=True).browse("绿色檀木梳头用的梳子")
     assert page["products"][0]["product_id"] == "comb"
+
+
+@pytest.mark.asyncio
+async def test_cj_hybrid_uses_vector_for_cross_language_recall_and_category_is_soft(tmp_path):
+    path = tmp_path / "cj_catalog.sqlite3"
+    with sqlite3.connect(path) as db:
+        db.execute("""CREATE TABLE products(pid TEXT PRIMARY KEY,first_category TEXT,second_category TEXT,
+            third_category TEXT,list_json TEXT,list_fetched_at TEXT,detail_json TEXT,detail_fetched_at TEXT,
+            inventory_json TEXT,inventory_fetched_at TEXT)""")
+        for pid, category, title in (
+            ("dog-cup", "Pet Supplies", "Portable Outdoor Stainless Steel Water Cup for Small Dog"),
+            ("travel-bag", "Bags & Shoes", "Lightweight Travel Bag"),
+        ):
+            db.execute("INSERT INTO products VALUES(?,?,?,?,?,?,?,?,?,?)", (
+                pid, category, "Accessories", "Other",
+                json.dumps({"nameEn": title, "sellPrice": "5.00"}),
+                "2026-01-01", None, None, None, None,
+            ))
+    catalog = CJCatalog(
+        path,
+        embedder=_Embedding(),
+        vector_index=_VectorIndex([VectorHit("dog-cup", 0.95)]),
+        hybrid_enabled=True,
+    )
+    catalog.set_vector_available(True)
+
+    result = await catalog.execute(ProductSearchSpec(
+        "给小狗户外喝水的不锈钢便携水杯", category="旅行装备", top_k=5,
+    ))
+
+    assert result["recall_strategy"] == "cj_hybrid_rrf"
+    assert result["category_mode"] == "soft_boost"
+    assert result["vector_available"] is True
+    assert result["hits"][0]["product_id"] == "dog-cup"
+
+
+@pytest.mark.asyncio
+async def test_cj_hybrid_falls_back_to_bm25_without_hard_category_filter(tmp_path):
+    path = tmp_path / "cj_catalog.sqlite3"
+    with sqlite3.connect(path) as db:
+        db.execute("""CREATE TABLE products(pid TEXT PRIMARY KEY,first_category TEXT,second_category TEXT,
+            third_category TEXT,list_json TEXT,list_fetched_at TEXT,detail_json TEXT,detail_fetched_at TEXT,
+            inventory_json TEXT,inventory_fetched_at TEXT)""")
+        db.execute("INSERT INTO products VALUES(?,?,?,?,?,?,?,?,?,?)", (
+            "camera", "Consumer Electronics", "Camera", "Digital Cameras",
+            json.dumps({"nameEn": "Waterproof Dual Screen Digital Camera", "sellPrice": "20.00"}),
+            "2026-01-01", None, None, None, None,
+        ))
+    catalog = CJCatalog(path, hybrid_enabled=True)
+
+    result = await catalog.execute(ProductSearchSpec(
+        "waterproof digital camera", category="旅行装备", top_k=5,
+    ))
+
+    assert result["recall_strategy"] == "cj_bm25"
+    assert result["vector_available"] is False
+    assert result["hits"][0]["product_id"] == "camera"
+
+
+@pytest.mark.asyncio
+async def test_cj_hybrid_does_not_invent_match_for_unknown_opaque_identifier(tmp_path):
+    path = tmp_path / "cj_catalog.sqlite3"
+    with sqlite3.connect(path) as db:
+        db.execute("""CREATE TABLE products(pid TEXT PRIMARY KEY,first_category TEXT,second_category TEXT,
+            third_category TEXT,list_json TEXT,list_fetched_at TEXT,detail_json TEXT,detail_fetched_at TEXT,
+            inventory_json TEXT,inventory_fetched_at TEXT)""")
+        db.execute("INSERT INTO products VALUES(?,?,?,?,?,?,?,?,?,?)", (
+            "camera", "Consumer Electronics", "Camera", "Digital Cameras",
+            json.dumps({"nameEn": "Waterproof Dual Screen Digital Camera", "sellPrice": "20.00"}),
+            "2026-01-01", None, None, None, None,
+        ))
+    catalog = CJCatalog(
+        path,
+        embedder=_Embedding(),
+        vector_index=_VectorIndex([VectorHit("camera", 0.99)]),
+        hybrid_enabled=True,
+    )
+    catalog.set_vector_available(True)
+
+    result = await catalog.execute(ProductSearchSpec("zzzxxyyqplm90001", top_k=5))
+
+    assert result["hits"] == []
+    assert result["recall_strategy"] == "cj_snapshot_keyword"

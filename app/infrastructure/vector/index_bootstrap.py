@@ -25,9 +25,13 @@ async def bootstrap_product_index(
     vector_index: ProductVectorIndex,
     embedding_model: str = "",
     embedding_dim: int = 0,
+    *,
+    batch_size: int = _BATCH_SIZE,
 ) -> bool:
     """索引不变时不调用 embedding；失败保留已有索引并返回 False。"""
     try:
+        if batch_size < 1:
+            raise ValueError("商品向量索引 batch_size 必须为正整数")
         products = await product_repo.list_all()
         by_id = {product.product_id: product for product in products}
         if len(by_id) != len(products):
@@ -38,8 +42,8 @@ async def bootstrap_product_index(
         changed = [product for product in products if indexed.get(product.product_id) != _fingerprint(product, embedding_model)]
         deleted = sorted(set(indexed) - set(by_id))
 
-        for start in range(0, len(changed), _BATCH_SIZE):
-            batch = changed[start : start + _BATCH_SIZE]
+        for start in range(0, len(changed), batch_size):
+            batch = changed[start : start + batch_size]
             vectors = await embedder.embed_batch([product.searchable_text() for product in batch])
             if len(vectors) != len(batch) or not vectors or not vectors[0]:
                 raise ValueError("商品 embedding 返回数量或维度异常")

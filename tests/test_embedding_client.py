@@ -120,7 +120,24 @@ class TestEmptyBodyDiagnostics:
 
     async def test_http_error_still_propagates(self, monkeypatch):
         monkeypatch.setattr(mod, "_MAX_BATCH", 10)
+        monkeypatch.setattr(mod, "_MAX_RETRIES", 0)
         _install(monkeypatch, lambda request: httpx.Response(500, content=b"boom"))
 
         with pytest.raises(httpx.HTTPStatusError):
             await OpenAIEmbeddingClient(_settings()).embed_batch(["a"])
+
+    async def test_transient_disconnect_is_retried(self, monkeypatch):
+        monkeypatch.setattr(mod, "_MAX_BATCH", 10)
+        monkeypatch.setattr(mod, "_MAX_RETRIES", 2)
+        attempts = 0
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            nonlocal attempts
+            attempts += 1
+            if attempts == 1:
+                raise httpx.RemoteProtocolError("server disconnected")
+            return httpx.Response(200, json={"data": [{"index": 0, "embedding": [1.0]}]})
+
+        _install(monkeypatch, handler)
+        assert await OpenAIEmbeddingClient(_settings()).embed_batch(["a"]) == [[1.0]]
+        assert attempts == 2

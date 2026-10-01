@@ -23,3 +23,13 @@ def test_does_not_attach_ambiguous_or_non_cj_hits():
     reply = "Portable Dog Water Bottle Outdoor Travel Pet Cup is available."
     assert attach_visible_product_ids(reply, {"recall_strategy": "cj_snapshot_keyword", "hits": hits}) == reply
     assert attach_visible_product_ids(reply, {"recall_strategy": "vector", "hits": hits}) == reply
+
+
+def test_reply_guard_supports_cj_hybrid_results():
+    result = {"recall_strategy": "cj_hybrid_rrf", "hits": [{
+        "product_id": "2602090303381624300",
+        "title": "Portable Outdoor Stainless Steel Water Cup for Small Dog",
+    }]}
+    reply = "推荐 Portable Outdoor Stainless Steel Water Cup for Small Dog。"
+    guarded = attach_visible_product_ids(reply, result)
+    assert "2602090303381624300" in guarded

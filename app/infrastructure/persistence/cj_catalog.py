@@ -7,13 +7,18 @@ from __future__ import annotations
 
 import asyncio
 from contextlib import closing
+from dataclasses import dataclass
 import html
 import json
+import logging
 import re
 import sqlite3
 from pathlib import Path
+from typing import Any
 
 from app.domain.catalog.product_search_spec import ProductSearchSpec
+from app.domain.catalog.ports.retrieval_ports import EmbeddingClient, ProductVectorIndex
+from app.infrastructure.retrieval.bm25 import bm25_rank, reciprocal_rank_fusion
 
 
 _BASE_WORDS = {
@@ -45,6 +50,24 @@ _CATEGORIES = {
 }
 _AMOUNT = re.compile(r"\d+(?:\.\d+)?")
 _HTML_TAG = re.compile(r"<[^>]+>")
+_HYBRID_CANDIDATES = 80
+_CATEGORY_BOOST = 0.005
+logger = logging.getLogger(__name__)
+
+
+@dataclass(frozen=True)
+class CJSearchDocument:
+    """Small immutable projection shared by BM25 and the existing vector index."""
+
+    product_id: str
+    title: str
+    first_category: str
+    second_category: str
+    third_category: str
+    text: str
+
+    def searchable_text(self) -> str:
+        return self.text
 
 
 def _price(raw: object) -> tuple[float, str, str]:
@@ -94,9 +117,23 @@ def _terms(query: str, *, experimental_lexicon: bool = False) -> list[str]:
 class CJCatalog:
     source = "cj"
 
-    def __init__(self, path: Path, *, experimental_lexicon: bool = False):
+    def __init__(
+        self,
+        path: Path,
+        *,
+        experimental_lexicon: bool = False,
+        embedder: EmbeddingClient | None = None,
+        vector_index: ProductVectorIndex | None = None,
+        hybrid_enabled: bool = False,
+    ):
         self.path = path
         self.experimental_lexicon = experimental_lexicon
+        self.embedder = embedder
+        self.vector_index = vector_index
+        self.hybrid_enabled = hybrid_enabled
+        self.vector_available = False
+        self._documents: list[CJSearchDocument] | None = None
+        self._documents_by_id: dict[str, CJSearchDocument] = {}
 
     def _db(self) -> sqlite3.Connection:
         if not self.path.is_file():
@@ -228,9 +265,148 @@ class CJCatalog:
     async def browse(self, query: str = "", category: str = "", page: int = 1, page_size: int = 24) -> dict:
         return await asyncio.to_thread(self._browse, query, category, page, page_size)
 
+    @staticmethod
+    def _index_text(row: sqlite3.Row) -> str:
+        listing = json.loads(row["list_json"])
+        detail = json.loads(row["detail_json"]) if row["detail_json"] else {}
+        values: list[Any] = [
+            listing.get("nameEn"), detail.get("productNameEn"), row["first_category"],
+            row["second_category"], row["third_category"], detail.get("entryNameEn"),
+            detail.get("materialNameEnSet") or detail.get("materialNameEn"),
+            detail.get("packingNameEnSet") or detail.get("packingNameEn"),
+            detail.get("productKeyEnSet") or detail.get("productKeyEn"),
+        ]
+        parts: list[str] = []
+        for value in values:
+            if isinstance(value, list):
+                parts.extend(str(item).strip() for item in value if str(item).strip())
+            elif value is not None and str(value).strip():
+                parts.append(str(value).strip())
+        return " ".join(dict.fromkeys(parts))[:1200]
+
+    def _load_documents(self) -> list[CJSearchDocument]:
+        with closing(self._db()) as db:
+            rows = db.execute(
+                "SELECT pid,first_category,second_category,third_category,list_json,detail_json FROM products",
+            ).fetchall()
+        documents = [
+            CJSearchDocument(
+                product_id=str(row["pid"]),
+                title=str(json.loads(row["list_json"]).get("nameEn") or "CJ 商品"),
+                first_category=str(row["first_category"]),
+                second_category=str(row["second_category"]),
+                third_category=str(row["third_category"]),
+                text=self._index_text(row),
+            )
+            for row in rows
+        ]
+        self._documents = documents
+        self._documents_by_id = {item.product_id: item for item in documents}
+        return documents
+
+    async def list_all(self) -> list[CJSearchDocument]:
+        """Return the stable search projection consumed by index_bootstrap."""
+        if self._documents is None:
+            return await asyncio.to_thread(self._load_documents)
+        return self._documents
+
+    def set_vector_available(self, available: bool) -> None:
+        self.vector_available = bool(available)
+
+    @staticmethod
+    def _category_match(document: CJSearchDocument, category: str | None) -> bool:
+        if not category:
+            return False
+        expected = _CATEGORIES.get(category, (category,))
+        fields = {document.first_category.casefold(), document.second_category.casefold(), document.third_category.casefold()}
+        return any(value.casefold() in fields for value in expected)
+
+    def _rows_by_ids(self, product_ids: list[str]) -> dict[str, sqlite3.Row]:
+        if not product_ids:
+            return {}
+        placeholders = ",".join("?" for _ in product_ids)
+        with closing(self._db()) as db:
+            rows = db.execute(f"SELECT * FROM products WHERE pid IN ({placeholders})", product_ids).fetchall()
+        return {str(row["pid"]): row for row in rows}
+
+    async def _hybrid_search(self, spec: ProductSearchSpec) -> dict:
+        documents = await self.list_all()
+        lexical_task = asyncio.to_thread(bm25_rank, spec.normalized_query, documents)
+
+        async def vector_recall() -> list[tuple[float, CJSearchDocument]] | None:
+            if not self.vector_available or self.embedder is None or self.vector_index is None:
+                return None
+            try:
+                vector = await self.embedder.embed(spec.normalized_query)
+                hits = await self.vector_index.search(vector, top_n=_HYBRID_CANDIDATES)
+                return [
+                    (hit.score, self._documents_by_id[hit.product_id])
+                    for hit in hits
+                    if hit.product_id in self._documents_by_id
+                ]
+            except Exception as error:  # noqa: BLE001 - BM25 remains a valid degraded path.
+                logger.warning("CJ vector recall unavailable; using BM25 only: %s", error)
+                # The lexical side remains useful and the response reports the actual strategy.
+                return None
+
+        lexical_hits, vector_hits = await asyncio.gather(lexical_task, vector_recall())
+        lexical_hits = lexical_hits[:_HYBRID_CANDIDATES]
+        if vector_hits is None:
+            fused = reciprocal_rank_fusion(lexical_hits)
+            strategy = "cj_bm25"
+        else:
+            fused = reciprocal_rank_fusion(lexical_hits, vector_hits)
+            strategy = "cj_hybrid_rrf"
+
+        # Category is evidence for ranking, never a reason to discard a query-relevant item.
+        rescored = [
+            (score + (_CATEGORY_BOOST if self._category_match(document, spec.category) else 0.0), document)
+            for score, document in fused
+        ]
+        rescored.sort(key=lambda item: (-item[0], item[1].product_id))
+        candidate_ids = [document.product_id for _, document in rescored]
+        rows = self._rows_by_ids(candidate_ids)
+        cards: list[dict] = []
+        for score, document in rescored:
+            row = rows.get(document.product_id)
+            if row is None:
+                continue
+            card = self._card(row, score=score)
+            if spec.price_max_major is not None and spec.target_currency == "USD" and spec.budget_basis == "product":
+                if card["price_kind"] != "unknown" and card["price_major"] > spec.price_max_major:
+                    continue
+            cards.append({**card, "skus": card["skus"][:8]})
+            if len(cards) >= spec.top_k:
+                break
+        return {
+            "source": "cj",
+            "hits": cards,
+            "total_candidates": len(rescored),
+            "recall_strategy": strategy,
+            "retrieval_variant": "cj_bm25_vector_rrf_v1",
+            "vector_available": vector_hits is not None,
+            "category_mode": "soft_boost",
+            "rerank_applied": False,
+            "data_scope": "CJ 快照混合检索；USD 列表参考价。库存、目的地配送、运费、税费和最终到手价未实时核验，不能当作已满足的筛选条件。",
+            "filtered_out": [],
+        }
+
     async def execute(self, spec: ProductSearchSpec) -> dict:
         # Unknown shipping, material and currency conversions are reported as
         # unknown by the decision layer; they must not be used as hard filters.
+        exact = spec.normalized_query.strip()
+        direct_identifier = bool(
+            re.fullmatch(r"(?:[0-9]{16,24}|[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12})", exact, flags=re.I)
+            or re.fullmatch(r"CJ[A-Z0-9_-]{6,96}", exact, flags=re.I)
+        )
+        # Opaque model/SKU-like strings have no semantic meaning. An unknown ID
+        # must return no match instead of an unrelated nearest vector neighbor.
+        opaque_identifier = bool(
+            re.fullmatch(r"[A-Za-z][A-Za-z0-9_-]{11,}", exact)
+            and re.search(r"\d", exact)
+        )
+        if self.hybrid_enabled and not (direct_identifier or opaque_identifier):
+            return await self._hybrid_search(spec)
         page = await self.browse(spec.normalized_query, spec.category or "", 1, max(spec.top_k * 4, 20))
         hits = page["products"]
         if spec.price_max_major is not None and spec.target_currency == "USD" and spec.budget_basis == "product":

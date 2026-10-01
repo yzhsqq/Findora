@@ -149,7 +149,16 @@ class Container:
             except Exception as err:  # noqa: BLE001
                 logger.warning("队列消费者组创建失败：%s", err)
         if self.settings.catalog_source == "cj":
-            self.runtime["product_index"] = "unused_for_cj_snapshot"
+            if self.settings.hybrid_recall_enabled:
+                index_ready = await bootstrap_product_index(
+                    self.catalog_search, self.embedder, self.vector_index,
+                    self.settings.embedding_model, self.settings.embedding_dim,
+                    batch_size=1000,
+                )
+                self.catalog_search.set_vector_available(index_ready)
+                self.runtime["product_index"] = "ready" if index_ready else "bm25_only"
+            else:
+                self.runtime["product_index"] = "disabled_for_cj_snapshot"
         else:
             index_ready = await bootstrap_product_index(
                 self.product_repo, self.embedder, self.vector_index,
@@ -193,7 +202,12 @@ async def build_container() -> Container:
         raise RuntimeError("CJ 商品快照不存在，请先运行 scripts/sync_cj_catalog.py")
     product_repo = InMemoryProductRepository([] if settings.catalog_source == "cj" else None)
     bus = TradeEventBus()
-    vector_index = QdrantProductIndex(settings)
+    vector_collection = (
+        f"{settings.qdrant_collection}_cj_snapshot"
+        if settings.catalog_source == "cj"
+        else settings.qdrant_collection
+    )
+    vector_index = QdrantProductIndex(settings, collection=vector_collection)
     reranker = HttpReranker(settings) if settings.reranker_base_url else None
 
     cache = RedisCache(settings.redis_url)
@@ -283,7 +297,9 @@ async def build_container() -> Container:
 
     # ---- Application ----
     catalog_search = (CJCatalog(settings.data_dir / "cj_catalog.sqlite3",
-                                experimental_lexicon=settings.cj_experimental_lexicon)
+                                experimental_lexicon=settings.cj_experimental_lexicon,
+                                embedder=embedder, vector_index=vector_index,
+                                hybrid_enabled=settings.hybrid_recall_enabled)
                       if settings.catalog_source == "cj" else
         CatalogSearchUseCase(
             product_repo, embedder=embedder, vector_index=vector_index, reranker=reranker,
@@ -354,7 +370,9 @@ async def build_container() -> Container:
         trade_store=trade_store,
         trade_db_engine=trade_db_engine,
         runtime={"app_source_sha256": source_fingerprint, "catalog_source": settings.catalog_source,
-                 "cj_experimental_lexicon": settings.cj_experimental_lexicon},
+                 "cj_experimental_lexicon": settings.cj_experimental_lexicon,
+                 "hybrid_recall_enabled": settings.hybrid_recall_enabled,
+                 "product_vector_collection": vector_collection},
         ag_ui_runtime=AGUIRuntime(AGUIJournal(settings.data_dir / "ag_ui_runs.db"), orchestrator, confirmations),
         session_store=session_store,
         identity_policy=identity_policy,
