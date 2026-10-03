@@ -128,7 +128,8 @@ def build_app() -> FastAPI:
     register_buyer_workspace_routes(api, lambda: container().orchestrator)
     from app.presentation.favorites import register_favorite_routes
     from app.infrastructure.buyer_favorites import BuyerFavoriteStore
-    register_favorite_routes(api, lambda: BuyerFavoriteStore(container().settings.data_dir / "buyer_favorites.db"))
+    register_favorite_routes(api, lambda: BuyerFavoriteStore(container().settings.data_dir / "buyer_favorites.db"),
+                             lambda: container().catalog_search)
 
     @api.get("/health")
     async def health() -> dict:

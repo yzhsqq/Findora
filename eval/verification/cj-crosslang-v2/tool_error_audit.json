@@ -1,0 +1,15 @@
+{
+  "findings": [
+    {
+      "suite": "known",
+      "id": "CJ-H003",
+      "attempt": 1,
+      "variant": "baseline",
+      "tool_errors": [
+        "cj_product_detail_tool"
+      ],
+      "trace_file": "eval\\verification\\cj-crosslang-v2\\known\\traces\\CJ-H003.1.baseline.jsonl.gz",
+      "old_valid": true
+    }
+  ]
+}

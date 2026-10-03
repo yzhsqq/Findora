@@ -55,7 +55,7 @@ const approved = (item = card): TradeConfirmation => ({
   },
 });
 const storage = {
-  getItem: (key: string) => (key === "globex.buyer" ? "b1" : null),
+  getItem: (key: string) => (key === "findora.buyer" ? "b1" : null),
   setItem: () => {},
 };
 const response = (data: unknown) =>
@@ -246,7 +246,7 @@ describe("权威确认快照与用户动作", () => {
 });
 
 it("刷新恢复当前会话，并从服务端读取确认；收货快照不写本机历史", async () => {
-  const values = new Map<string, string>([["globex.buyer", "b1"]]);
+  const values = new Map<string, string>([["findora.buyer", "b1"]]);
   const persistent = {
     getItem: (key: string) => values.get(key) ?? null,
     setItem: (key: string, value: string) => {
@@ -273,7 +273,7 @@ it("刷新恢复当前会话，并从服务端读取确认；收货快照不写�
   });
   expect(restored.getSnapshot().sessionId).toBe(first.getSnapshot().sessionId);
   expect(restored.getSnapshot().confirmations).toEqual([]);
-  expect(values.get("globex.agui.sessions.v1")).not.toContain("测试地址");
+  expect(values.get("findora.agui.sessions.v1")).not.toContain("测试地址");
   await restored.refreshConfirmations();
   expect(restored.getSnapshot().confirmations[0].status).toBe("approved");
   restored.reset();

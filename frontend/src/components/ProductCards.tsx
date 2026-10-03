@@ -112,7 +112,7 @@ function ProductCards({
                 {product.title}
               </button>
               <div className="product-subtitle">
-                {primary?.spec || product.highlights[0] || "查看商品详细信息"}
+                {(product.source_platform === "CJdropshipping" ? product.highlights[0] || primary?.spec : primary?.spec || product.highlights[0]) || "查看商品详细信息"}
               </div>
               <div className="product-price-row">
                 <div className="price">

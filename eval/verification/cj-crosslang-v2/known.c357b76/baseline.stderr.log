@@ -1,0 +1,91 @@
+MainAgent 异常
+Traceback (most recent call last):
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\httpx\_transports\default.py", line 271, in __aiter__
+    async for part in self._httpcore_stream:
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\httpcore\_async\connection_pool.py", line 407, in __aiter__
+    raise exc from None
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\httpcore\_async\connection_pool.py", line 403, in __aiter__
+    async for part in self._stream:
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\httpcore\_async\http11.py", line 342, in __aiter__
+    raise exc
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\httpcore\_async\http11.py", line 334, in __aiter__
+    async for chunk in self._connection._receive_response_body(**kwargs):
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\httpcore\_async\http11.py", line 203, in _receive_response_body
+    event = await self._receive_event(timeout=timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\httpcore\_async\http11.py", line 213, in _receive_event
+    with map_exceptions({h11.RemoteProtocolError: RemoteProtocolError}):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Python\Python312\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.RemoteProtocolError: peer closed connection without sending complete message body (incomplete chunked read)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\哈哈\Desktop\跨境电商项目\data\cj_eval\v2_baseline\app\application\agents\orchestrator.py", line 327, in _handle_intent
+    final_text = await self._reply_with_retry(session_id, agent, inputs)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\哈哈\Desktop\跨境电商项目\data\cj_eval\v2_baseline\app\application\agents\orchestrator.py", line 508, in _reply_with_retry
+    return await self._consume_reply(session_id, agent, inputs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\哈哈\Desktop\跨境电商项目\data\cj_eval\v2_baseline\app\application\agents\orchestrator.py", line 539, in _consume_reply
+    async for event in events:
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 287, in reply_stream
+    async for chunk in self._reply(
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 691, in _reply
+    async for item in execute_chain():
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 684, in execute_chain
+    async for item in mw.on_reply(
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\middleware\_tracing\_trace.py", line 144, in on_reply
+    async for item in next_handler(**input_kwargs):
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 678, in next_handler
+    async for item in execute_chain(
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 684, in execute_chain
+    async for item in mw.on_reply(
+  File "C:\Users\哈哈\Desktop\跨境电商项目\data\cj_eval\v2_baseline\app\application\memory\middleware.py", line 28, in on_reply
+    async for event in next_handler(**input_kwargs):yield event
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 678, in next_handler
+    async for item in execute_chain(
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 663, in execute_chain
+    async for item in self._reply_impl(
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 891, in _reply_impl
+    async for evt in self._reasoning(
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 1280, in _reasoning
+    async for item in self._reasoning_impl(tool_choice=tool_choice):
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 1362, in _reasoning_impl
+    async for chunk in res:
+  File "C:\Users\哈哈\Desktop\跨境电商项目\data\cj_eval\v2_baseline\app\infrastructure\llm.py", line 263, in _release_after_stream
+    async for chunk in stream:
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\model\_base.py", line 242, in _stream
+    async for chunk in res:
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\model\_openai_chat\_model.py", line 331, in _parse_stream_response
+    async for chunk in stream:
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\openai\_streaming.py", line 158, in __aiter__
+    async for item in self._iterator:
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\openai\_streaming.py", line 172, in __stream__
+    async for sse in iterator:
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\openai\_streaming.py", line 162, in _iter_events
+    async for sse in self._decoder.aiter_bytes(self.response.aiter_bytes()):
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\openai\_streaming.py", line 319, in aiter_bytes
+    async for chunk in self._aiter_chunks(iterator):
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\openai\_streaming.py", line 330, in _aiter_chunks
+    async for chunk in iterator:
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\httpx\_models.py", line 997, in aiter_bytes
+    async for raw_bytes in self.aiter_raw():
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\httpx\_models.py", line 1055, in aiter_raw
+    async for raw_stream_bytes in self.stream:
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\httpx\_client.py", line 176, in __aiter__
+    async for chunk in self._stream:
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\httpx\_transports\default.py", line 270, in __aiter__
+    with map_httpcore_exceptions():
+         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Python\Python312\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.RemoteProtocolError: peer closed connection without sending complete message body (incomplete chunked read)

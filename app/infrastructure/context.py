@@ -26,6 +26,7 @@ class ShoppingContextSnapshot:
     prompt_deployment_id: str = ""
     capability_digest: str = ""
     prompt_document_json: str = field(default="", repr=False)
+    raw_query: str = ""
 
 
 _current_snapshot: ContextVar[Optional[ShoppingContextSnapshot]] = ContextVar(

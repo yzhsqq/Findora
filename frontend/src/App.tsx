@@ -26,7 +26,7 @@ const STARTERS = [
   "想买日常通勤耳机，帮我理一理选购思路。",
   "预算100元以内，找适合短途出行的背包。",
 ];
-const VIEW_KEY = "globex.workspace.view";
+const VIEW_KEY = "findora.workspace.view";
 function readView(): View {
   try {
     const saved = sessionStorage.getItem(VIEW_KEY);
@@ -320,13 +320,9 @@ export default function App() {
         <button
           className="brand"
           onClick={() => switchView("shopping")}
-          aria-label="Globex 环球好物首页"
+          aria-label="Findora 首页"
         >
-          <Icon name="globe" className="brand-mark" />
-          <span>
-            <span className="brand-name">Globex</span>
-            <span className="brand-subtitle">环球好物</span>
-          </span>
+          <img className="brand-logo" src="/findora-logo.png" alt="Findora" />
         </button>
         <button className="new-chat" onClick={newShopping} disabled={busy}>
           <Icon name="plus" />
@@ -365,18 +361,18 @@ export default function App() {
         )}
         <div className="sidebar-bottom">
           <div className="sidebar-note">
-            <Icon name="globe" className="little-orbit" />
+            <Icon name="spark" className="little-orbit" />
             <p>
-              世界很大，
+              从一个念头出发，
               <br />
-              适合你的，刚刚好。
+              找到心动的答案。
             </p>
           </div>
           <div className="profile">
-            <span className="avatar">旅</span>
+            <span className="avatar">寻</span>
             <span>
-              <span className="profile-name">{import.meta.env.VITE_BUYER_ID || "pao-coder"}</span>
-              <span className="profile-caption">每一次选择，都有新发现</span>
+              <span className="profile-name">访客</span>
+              <span className="profile-caption">发现适合自己的好物</span>
             </span>
             <Icon name="leaf" />
           </div>
@@ -386,7 +382,7 @@ export default function App() {
         <div className="content">
           <header className="topbar">
             <div className="breadcrumb">
-              <span>环球好物</span>
+              <span>Findora</span>
               <span>／</span>
               <span>
                 {view === "catalog" ? "CJ 商品库" : view === "orders" ? "我的订单" : view === "skills" ? "我的 Skill" : view === "preferences" ? "长期偏好" : view === "history"
@@ -400,8 +396,7 @@ export default function App() {
               className="mobile-brand"
               onClick={() => switchView("shopping")}
             >
-              <Icon name="globe" />
-              Globex
+              <img className="mobile-brand-logo" src="/findora-logo.png" alt="Findora" />
             </button>
             <div className="location">
               <Icon name="pin" />
@@ -431,17 +426,17 @@ export default function App() {
           {view === "shopping" && (
             <>
               <section className="hero">
-                <div className="eyebrow">A LITTLE LESS, A LITTLE BETTER</div>
+                <div className="eyebrow">FIND WHAT FEELS RIGHT</div>
                 <h1>
-                  为下一次出发，<em>选得刚刚好。</em>
+                  好东西很多，<em>适合你的更值得发现。</em>
                 </h1>
-                <p>说说你的期待。世界各地的好物，我陪你慢慢选。</p>
+                <p>告诉 Findora 你在找什么，一起缩小范围，找到真正合适的那件。</p>
               </section>
               {!agent.messages.length ? (
                 <section className="welcome-panel">
                   <Icon name="globe" className="welcome-orbit" />
-                  <h2>下一件好物，你想找什么？</h2>
-                  <p>从一个用途、一段旅程，或一个小偏好聊起。</p>
+                  <h2>今天，想发现什么？</h2>
+                  <p>从用途、预算或一个小偏好开始，把选择慢慢变清楚。</p>
                   <div className="welcome-ideas">
                     <button onClick={() => submit(STARTERS[0])}>
                       周末出游，轻便背包
@@ -457,7 +452,7 @@ export default function App() {
                     </button>
                   </div>
                   <span className="welcome-caption">
-                    每一份推荐，都从你的实际需求开始。
+                    从你的需求出发，找到更贴近你的选择。
                   </span>
                 </section>
               ) : (
@@ -703,7 +698,7 @@ export default function App() {
                   <section className="empty-state">
                     <Icon name="chat" />
                     <h2>从第一次选购开始</h2>
-                    <p>你和 Globex 的每次交流，会为下一次选择留下一点线索。</p>
+                    <p>你和 Findora 的每次交流，都会为下一次寻找留下线索。</p>
                     <button onClick={newShopping}>
                       开启新的选购
                       <Icon name="arrow" />
@@ -738,7 +733,7 @@ export default function App() {
               <ShoppingPlans {...planProps} compact />
             </div>}
             <label htmlFor="query" className="sr-only">
-              告诉 Globex 你想寻找的好物
+              告诉 Findora 你想寻找的好物
             </label>
             <SkillQueryInput
               key={agent.sessionId}
@@ -771,9 +766,9 @@ export default function App() {
             </div>
           </form>
           <footer className="preview-footer">
-            <span>Globex 环球好物</span>
+            <span>Findora</span>
             <span>·</span>
-            <span>认真挑选，从容决定</span>
+            <span>发现所爱，选得明白</span>
           </footer>
         </div>
       </div>}

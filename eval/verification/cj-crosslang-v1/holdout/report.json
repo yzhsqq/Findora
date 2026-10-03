@@ -1,0 +1,1899 @@
+{
+  "run_at": "2026-09-30T03:34:05.314642+00:00",
+  "baseline_commit": "30b9a4f",
+  "fix_commit": "693963a78671e928cd398529f890c0f74853d3eb",
+  "frozen": {
+    "protocol_version": "cj-crosslang-v1",
+    "baseline_commit": "30b9a4f",
+    "snapshot_sha256": "f29e0e107143422f80ca6ac2d4c74c88e9b577ec6f9ca3176c05dfd93bd9928d",
+    "dev_cases_sha256": "4c8099edf0c79468c5ed5eef1f62d8cd2cc436d9475797b6a05ad915fcc42d42",
+    "holdout_cases_sha256": "376be8e3de0811a0e331e6da7c48e031149e3739384da231019f23986d1cd7ee",
+    "holdout_case_count": 10,
+    "holdout_policy": "Do not execute or inspect search outcomes until code and parameters are frozen after dev and original-40 validation."
+  },
+  "worktree_sha256": "90634a2dde59830d41e189aab6b4f8eb275cc720dba21ae90b83f52fb9cd71bd",
+  "model": "deepseek-v4-flash",
+  "prompt": {
+    "deployment_id": "pd-d5da924a58574b5f939bb57639bba802",
+    "baseline": "p-a41a4130860e37dc9dbfa93c40e996123ceb9507b054c407d8d2f3de0efd331c",
+    "candidate": null,
+    "candidate_bps": 0,
+    "experiment": "bootstrap",
+    "action": "bootstrap",
+    "created_at": "2026-09-30T02:44:14.393141+00:00",
+    "pinned_version": null,
+    "effective_version": {
+      "version_id": "p-a41a4130860e37dc9dbfa93c40e996123ceb9507b054c407d8d2f3de0efd331c",
+      "content_sha256": "a41a4130860e37dc9dbfa93c40e996123ceb9507b054c407d8d2f3de0efd331c",
+      "yaml_sha256": "8708d01a802629afb22e048363771f8049a7d1f36ca2deedc54caf608e2a6554",
+      "toolset_sha256": "f0e5b1ed0427785960cd96cc7c0ada2272caecbbe2509a57fb2d4f6258f14ebb",
+      "created_at": "2026-09-30T02:44:14.380101+00:00"
+    }
+  },
+  "observations": [
+    {
+      "id": "CJ-H001",
+      "stratum": "attribute",
+      "anchor_id": "2504270351581616600",
+      "baseline": {
+        "component": {
+          "ids": [],
+          "rank": null,
+          "total_candidates": 0
+        },
+        "agent": {
+          "terminal": "RUN_FINISHED",
+          "trace_file": "eval\\verification\\cj-crosslang-v1\\holdout\\traces\\baseline\\CJ-H001.jsonl.gz",
+          "first_rank": null,
+          "searches": [
+            {
+              "query": "记忆棉 U型护颈枕 飞机睡觉 旅行便携",
+              "category": "旅行装备",
+              "ids": [
+                "2410010651411603900",
+                "2412020937191614400",
+                "2508150136111601200",
+                "2406121449441602000",
+                "2506050836171616400"
+              ],
+              "rank": null
+            },
+            {
+              "query": "U型颈枕 U形枕 记忆棉 护颈 飞机 睡眠",
+              "category": "旅行装备",
+              "ids": [],
+              "rank": null
+            },
+            {
+              "query": "neck pillow memory foam U-shape travel airplane sleep cervical",
+              "category": "旅行装备",
+              "ids": [
+                "2410010651411603900",
+                "2412020937191614400",
+                "2508150136111601200",
+                "2406121449441602000",
+                "2506050836171616400"
+              ],
+              "rank": null
+            },
+            {
+              "query": "颈枕 U型枕 记忆棉枕 靠枕",
+              "category": "旅行装备",
+              "ids": [],
+              "rank": null
+            },
+            {
+              "query": "pillow",
+              "category": null,
+              "ids": [
+                "2505160144181602100",
+                "2507040831161621000",
+                "2042456502449774593",
+                "1960972000186908673",
+                "1714510122317664256"
+              ],
+              "rank": null
+            },
+            {
+              "query": "neck",
+              "category": null,
+              "ids": [
+                "2411220311321612300",
+                "2411021820091629600",
+                "1989268822374674433",
+                "2508020611051617000",
+                "1675750115597889536"
+              ],
+              "rank": null
+            },
+            {
+              "query": "cushion 靠垫 抱枕 旅行枕",
+              "category": null,
+              "ids": [
+                "235C5E8B-5E9B-4E98-9597-EA72B720552F",
+                "1769305188013191168",
+                "2506150709491629300",
+                "1736317693059403776",
+                "1376507432263618560"
+              ],
+              "rank": null
+            }
+          ],
+          "any_hit_at_5": false,
+          "answer_mentions_anchor": false,
+          "answer": "我按“记忆棉 U 形护颈枕 / 飞机睡觉用”这个诉求，用多种中英文关键词做了多轮目录检索（记忆棉U型护颈枕、U型枕 护颈、neck pillow memory foam、pillow、neck、cushion 等），结果如下：\n\n**结论：本次未检索到与「记忆棉 U 形护颈枕」相符的确切型号。**\n\n- 检索源：CJ 快照（关键词召回，USD 列表参考价），未传收货国和预算，因此没有做价格/目的地过滤——`filtered_out` 为空，**不存在“有货但被预算或目的国挡住”的情况**。\n- 召回结果与意图不符：中文关键词组合有两轮返回 0 条候选；其余轮次返回的是旅行鞋、休闲凉鞋、手提包/背包、化妆包、婴儿睡袋、宠物车载垫、充气垫等，**没有一件是 U 形护颈枕**。\n- 因此只能说“本次未检索到”，**不能据此断言该商品缺货、不可配送或超预算**，快照里也没有可核验的库存与配送数据。\n\n**可以继续推进的方式（任选）：**\n1. 换更具体的词再搜一次，例如「飞机枕 充气枕」「记忆棉 脖颈枕 慢回弹」「neck pillow 慢回弹」或直接给一个尺寸/材质偏好（如“不要充气款”“要可拆洗套”）；\n2. 如果你已经在页面或别的渠道看到目标商品，把 `product_id` / `sku_id` 给我，我可以直接按 ID 精确查目录并补规格详情；\n3. 稍后重试——当前返回的是快照数据，目录更新后再查可能命中。\n\n补充说明：按你的要求，本轮只做检索与候选展示，未做任何报价、下单或偏好写入。本次给出的是美元列表参考价口径，明确问某件具体商品的运费或到手费用时，我才会去跑物流试算。",
+          "search_calls": 7,
+          "tool_names": [
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool"
+          ],
+          "usage": {
+            "status": "success",
+            "elapsed_ms": 54374.47050001356,
+            "model_calls": 5,
+            "input_tokens": 57326,
+            "output_tokens": 1930,
+            "observed_input_tokens": 57326,
+            "observed_output_tokens": 1930,
+            "unknown_usage_calls": 0,
+            "active_attempts_at_finish": 0,
+            "usage_complete": true,
+            "ttft_p95_ms": 3375.0,
+            "model_elapsed_ms": 34828.000000008615,
+            "tool_calls": 7,
+            "tool_errors": 0,
+            "fallbacks": 0,
+            "cost_usd": null,
+            "unknown_cost_calls": 5
+          }
+        }
+      },
+      "fix": {
+        "component": {
+          "ids": [],
+          "rank": null,
+          "total_candidates": 0
+        },
+        "agent": {
+          "terminal": "RUN_FINISHED",
+          "trace_file": "eval\\verification\\cj-crosslang-v1\\holdout\\traces\\fix\\CJ-H001.jsonl.gz",
+          "first_rank": null,
+          "searches": [
+            {
+              "query": "记忆棉 U形护颈枕 飞机旅行 睡觉",
+              "category": "旅行装备",
+              "ids": [
+                "2410010651411603900",
+                "2412020937191614400",
+                "2508150136111601200",
+                "2406121449441602000",
+                "2506050836171616400"
+              ],
+              "rank": null
+            },
+            {
+              "query": "U型枕 颈枕 记忆棉 飞机 睡眠",
+              "category": "旅行装备",
+              "ids": [],
+              "rank": null
+            },
+            {
+              "query": "neck pillow memory foam travel U-shape airplane",
+              "category": null,
+              "ids": [
+                "2504270351581616600",
+                "1400751666202021888",
+                "1956612313509810177",
+                "CBAAC34D-ABD5-4C3D-8245-B34ADDE3D2D6",
+                "1879454910769369089"
+              ],
+              "rank": 1
+            }
+          ],
+          "any_hit_at_5": true,
+          "answer_mentions_anchor": true,
+          "answer": "已为你检索「记忆棉U形护颈枕（飞机睡觉用）」。这次 CJ 快照库里召回如下（按前端展示顺序，价格均为 **USD 列表参考价**，未含运费/税费，库存与目的国可配送性均未实时核验）：\n\n| # | 商品 | product_id | 价格 | 与需求的匹配度 |\n|---|---|---|---|---|\n| 1 | Soft Memory Foam Travel Neck Pillow U Shape Adjustable Support — 记忆棉、U 形、可调支撑，明确面向机上/车内/办公午睡 | `2504270351581616600` | US$3.52–14.08（区间价，因规格不同） | ⭐ 最贴合：材质（记忆棉）+ 形状（U 形）+ 场景（飞机睡觉）三项都对上 |\n| 2 | Hooded Travel Pillow H Shaped Inflatable Neck Pillow — 带帽、H 形、**充气式**、可折叠 | `1400751666202021888` | US$4.79–9.56 | 场景相符，但为充气款、H 形，不是记忆棉 U 形 |\n| 3 | Bamboo Memory Foam Pillow 2Pcs/1Pcs — 竹纤维记忆棉**床枕**，带可洗枕套 | `1956612313509810177` | US$25.14–45.09 | 记忆棉材质相符，但属平躺床枕，非 U 形护颈款 |\n| 4 | Comfortable U-Shape Travel Pillow — U 形旅行枕 | `CBAAC34D-ABD5-4C3D-8245-B34ADDE3D2D6` | US$1.74 | 形状相符、价格最低，但快照未标注记忆棉材质 |\n| 5 | 75×25×3in Memory Foam Camping Mattress With Pillow — 记忆棉露营垫（附枕） | `1879454910769369089` | US$49.41 | 记忆棉材质相符，但不是护颈枕 |\n\n补充说明：\n- **首推第 1 款**（`2504270351581616600`）：三项关键点全中，且价格区间宽，通常意味着有多个规格（如是否带收纳袋/不同填充密度）可选。\n- 若预算优先、且材质不是硬指标，第 4 款（`CBAAC34D-...`）是 U 形旅行枕里最便宜的一档。\n- 换用中文关键词两种写法召回均为 0 或偏到鞋包类，本批候选来自英文关键词匹配；因此**只能确认这批里有上述型号，不能断言库里没有其他记忆棉U形枕**。\n\n需要我进一步做的话，可以告诉我：\n1. 想指定收货国家（用于后续物流试算）；\n2. 是否需要我按 product_id 拉取某款的**规格详情**（如具体规格、填充密度、尺寸）；\n3. 明确要哪一款后，我可以做该款的**运费试算**。\n\n按你的要求，本轮只做检索展示，未做报价、下单或偏好写入。",
+          "search_calls": 3,
+          "tool_names": [
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool"
+          ],
+          "usage": {
+            "status": "success",
+            "elapsed_ms": 24606.694599991897,
+            "model_calls": 3,
+            "input_tokens": 26628,
+            "output_tokens": 1304,
+            "observed_input_tokens": 26628,
+            "observed_output_tokens": 1304,
+            "unknown_usage_calls": 0,
+            "active_attempts_at_finish": 0,
+            "usage_complete": true,
+            "ttft_p95_ms": 1780.9999999881256,
+            "model_elapsed_ms": 10890.00000001397,
+            "tool_calls": 3,
+            "tool_errors": 0,
+            "fallbacks": 0,
+            "cost_usd": null,
+            "unknown_cost_calls": 3
+          }
+        }
+      }
+    },
+    {
+      "id": "CJ-H002",
+      "stratum": "functional",
+      "anchor_id": "1840648079268532224",
+      "baseline": {
+        "component": {
+          "ids": [
+            "1711607915393593344",
+            "1669574275931578368",
+            "1629148547394318336",
+            "1452893259000057856",
+            "2411050605281608600"
+          ],
+          "rank": null,
+          "total_candidates": 750
+        },
+        "agent": {
+          "terminal": "RUN_FINISHED",
+          "trace_file": "eval\\verification\\cj-crosslang-v1\\holdout\\traces\\baseline\\CJ-H002.jsonl.gz",
+          "first_rank": null,
+          "searches": [
+            {
+              "query": "能喷水除浮毛的猫狗梳毛刷 宠物除毛刷 喷雾",
+              "category": "母婴宠物",
+              "ids": [
+                "1711607915393593344",
+                "2411050605281608600",
+                "2410290703491603000",
+                "2510300729471609000",
+                "2508120729361629600"
+              ],
+              "rank": null
+            },
+            {
+              "query": "宠物梳毛刷 喷雾 喷水 除浮毛 猫咪狗狗 去毛刷",
+              "category": "母婴宠物",
+              "ids": [
+                "1711607915393593344",
+                "2411050605281608600",
+                "2410290703491603000",
+                "2510300729471609000",
+                "2508120729361629600"
+              ],
+              "rank": null
+            },
+            {
+              "query": "pet grooming brush spray water mist cat dog deshedding comb",
+              "category": null,
+              "ids": [
+                "1840648079268532224",
+                "1837678702357270528",
+                "1830880913660989440",
+                "1822919184310226944",
+                "1803019858280861696"
+              ],
+              "rank": 1
+            }
+          ],
+          "any_hit_at_5": true,
+          "answer_mentions_anchor": true,
+          "answer": "已按\"能喷水/喷雾除浮毛\"的方向重新检索，中文关键词那轮命中的是宠物服装（不相关），英文关键词这轮命中了喷雾/蒸汽梳毛刷。以下为本次检索到的候选（按工具返回顺序，价格均为 CJ 快照 USD 列表参考价）：\n\n| # | 商品 | product_id | 参考价 | 与\"喷水除浮毛\"的匹配度 |\n|---|---|---|---|---|\n| 1 | Water Brush For Dog Cat，Mist Brush / Slicker Brush With Spray / Steam Brush For Shedding，适合短毛长毛犬猫 | `1840648079268532224` | US$3.95 | ✅ 标题明确含喷雾喷水（mist/spray/steam）梳毛去浮毛，最贴合 |\n| 2 | Cat Steam Brush For Shedding，Spritz Defur Comb，喷雾蒸汽梳，适合长/短毛猫狗，可按摩清洁 | `1837678702357270528` | US$6.12 | ✅ 标题明确含喷雾/蒸汽（spritz/steam），偏猫用，含按摩清洁 |\n| 3 | Cat Comb Durable Pet Hair Remover Brush，猫舌按摩梳，猫狗通用 | `1830880913660989440` | US$1.97 | ⚠️ 除毛梳，但标题未见喷水/喷雾功能 |\n| 4 | Pet-friendly Eye Grooming Brush，泪痕清洁小梳，猫狗通用 | `1822919184310226944` | US$1.97 | ❌ 眼部泪痕清洁梳，非喷水除浮毛 |\n| 5 | Pet Hair Cleaner Brush，一键退毛按摩梳，长/短毛猫狗 | `1803019858280861696` | US$2.14 | ⚠️ 除毛梳、有退毛按钮，但标题未见喷水/喷雾功能 |\n\n**选购建议（仅基于标题字段）**\n- 若核心诉求就是\"喷水除浮毛\"，第 1、2 款是标题里明确带 spray / mist / steam 的，最对口；第 1 款价格更低且标注短毛长毛犬猫通用，第 2 款偏猫用、功能描述更细（去浮毛+按摩清洁）。\n- 第 3、5 款只是普通除毛/退毛梳，不具备喷水功能，列在这里供你对比；第 4 款是泪痕清洁小梳，与需求不符，可忽略。\n\n**需要说明的数据边界**\n- 以上为 CJ 快照关键词检索结果，库存、目的国可配送性、运费与税费均未实时核验，参考价不等于到手价。\n- 第 1、2 款当前无规格详情可查、无 SKU 数据；若要看具体规格或试算运费，需要你指定商品和目的国我再单独查。\n- 本次两个关键词批次均未出现被硬约束挡掉的商品（filtered_out 为空），即不存在\"有货却被预算/目的国过滤\"的情况。\n\n按你的要求，本轮只做检索展示，未做下单、报价或偏好写入。要不要我针对第 1 或第 2 款拉一下规格详情，或补充更多候选？",
+          "search_calls": 3,
+          "tool_names": [
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool"
+          ],
+          "usage": {
+            "status": "success",
+            "elapsed_ms": 27888.506899995264,
+            "model_calls": 3,
+            "input_tokens": 35518,
+            "output_tokens": 1501,
+            "observed_input_tokens": 35518,
+            "observed_output_tokens": 1501,
+            "unknown_usage_calls": 0,
+            "active_attempts_at_finish": 0,
+            "usage_complete": true,
+            "ttft_p95_ms": 5358.99999999674,
+            "model_elapsed_ms": 16342.99999999348,
+            "tool_calls": 3,
+            "tool_errors": 0,
+            "fallbacks": 0,
+            "cost_usd": null,
+            "unknown_cost_calls": 3
+          }
+        }
+      },
+      "fix": {
+        "component": {
+          "ids": [
+            "1711607915393593344",
+            "1669574275931578368",
+            "1629148547394318336",
+            "1452893259000057856",
+            "2411050605281608600"
+          ],
+          "rank": null,
+          "total_candidates": 750
+        },
+        "agent": {
+          "terminal": "RUN_FINISHED",
+          "trace_file": "eval\\verification\\cj-crosslang-v1\\holdout\\traces\\fix\\CJ-H002.jsonl.gz",
+          "first_rank": null,
+          "searches": [
+            {
+              "query": "宠物梳毛刷 喷水 除浮毛 猫狗 去浮毛 喷雾梳",
+              "category": "母婴宠物",
+              "ids": [
+                "1711607915393593344",
+                "2411050605281608600",
+                "2410290703491603000",
+                "2510300729471609000",
+                "2508120729361629600"
+              ],
+              "rank": null
+            },
+            {
+              "query": "pet grooming brush spray water hair removal comb",
+              "category": "母婴宠物",
+              "ids": [
+                "1822919184310226944",
+                "1840648079268532224",
+                "1837678702357270528",
+                "1830880913660989440",
+                "1803019858280861696"
+              ],
+              "rank": 2
+            },
+            {
+              "query": "宠物 喷雾 梳毛 刷 除毛 清洁",
+              "category": "母婴宠物",
+              "ids": [
+                "2412030536491623300",
+                "457578E3-C651-445B-A190-6C1F69AA0CE0",
+                "2505030219141625700",
+                "2406090618091600900",
+                "1747792995748950016"
+              ],
+              "rank": null
+            }
+          ],
+          "any_hit_at_5": true,
+          "answer_mentions_anchor": true,
+          "answer": "我按“喷水/喷雾除浮毛梳毛刷”这条线重搜了一轮（第一轮召回全是宠物服饰，已作废）。以下候选按检索返回顺序展示，价格是 CJ 快照的美元列表参考价，库存、可配送国家和运费都未实时核验，仅供你看款：\n\n**最贴合“喷水除浮毛”的候选**\n\n1. **Water Brush For Dog Cat Mist Brush（喷雾梳）** — `1840648079268532224`\n   - 参考价：US$3.95\n   - 标题明确写了 Mist Brush / With Spray / Steam Brush For Shedding，猫狗通用，短毛长毛都提到，属于你要的“一边喷水雾一边梳掉浮毛”这一类型。\n   - 快照未提供规格（SKU 明细）与库存数据。\n\n2. **Cat Steam Brush For Shedding（蒸汽喷雾除毛梳）** — `1837678702357270528`\n   - 参考价：US$6.12\n   - 标题含 Steam / Spritz / Spray / Defur Comb，主打猫用除浮毛，同时提到长短毛猫狗，也带按摩清洁定位。\n   - 同样无规格与库存快照数据。\n\n**相邻候选（无喷雾功能，仅除毛梳，供对照）**\n\n3. **Pet-friendly Eye Grooming Brush（眼部清洁梳）** — `1822919184310226944` — US$1.97，定位是泪痕清洁，不是喷水梳。\n4. **Cat Comb 舌形按摩梳** — `1830880913660989440` — US$1.97，纯梳毛，无喷水。\n5. **Pet Hair Cleaner Brush（一键退毛梳）** — `1803019858280861696` — US$2.14，纯除毛，无喷水。\n\n说明几点，方便你自己定夺：\n- 本轮没有价格上限、材质禁忌或收货国约束，所以 `filtered_out` 为空，不存在“被条件挡掉”的商品。\n- 前两款是标题层面最明确的“喷水/喷雾除浮毛”款；第 3–5 款只是普通梳子，我列出来是给你做价格与功能参照，不代表它们能喷水。\n- 这两款的规格（SKU）与库存快照缺失，所以暂时确认不了具体颜色/型号档位，也判断不了发货与配送；这部分需要你选定某一款后我再按需补规格详情或物流试算。\n\n需要的话，告诉我：抓一下其中某一款的规格详情，或者换个说法再搜（比如“蒸汽梳 长毛猫 除浮毛”）。",
+          "search_calls": 3,
+          "tool_names": [
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool"
+          ],
+          "usage": {
+            "status": "success",
+            "elapsed_ms": 33247.11559998104,
+            "model_calls": 3,
+            "input_tokens": 35149,
+            "output_tokens": 1531,
+            "observed_input_tokens": 35149,
+            "observed_output_tokens": 1531,
+            "unknown_usage_calls": 0,
+            "active_attempts_at_finish": 0,
+            "usage_complete": true,
+            "ttft_p95_ms": 3922.000000020489,
+            "model_elapsed_ms": 20220.000000001164,
+            "tool_calls": 3,
+            "tool_errors": 0,
+            "fallbacks": 0,
+            "cost_usd": null,
+            "unknown_cost_calls": 3
+          }
+        }
+      }
+    },
+    {
+      "id": "CJ-H003",
+      "stratum": "object_synonym",
+      "anchor_id": "2000401502466637825",
+      "baseline": {
+        "component": {
+          "ids": [],
+          "rank": null,
+          "total_candidates": 0
+        },
+        "agent": {
+          "terminal": "RUN_FINISHED",
+          "trace_file": "eval\\verification\\cj-crosslang-v1\\holdout\\traces\\baseline\\CJ-H003.jsonl.gz",
+          "first_rank": null,
+          "searches": [
+            {
+              "query": "电动研磨机 咖啡豆 香料 小型 家用电磨",
+              "category": "厨房餐饮",
+              "ids": [],
+              "rank": null
+            },
+            {
+              "query": "电动咖啡豆研磨机",
+              "category": null,
+              "ids": [],
+              "rank": null
+            },
+            {
+              "query": "香料研磨机 电动 小型",
+              "category": null,
+              "ids": [],
+              "rank": null
+            },
+            {
+              "query": "研磨器 咖啡 香料 电动",
+              "category": null,
+              "ids": [],
+              "rank": null
+            }
+          ],
+          "any_hit_at_5": false,
+          "answer_mentions_anchor": false,
+          "answer": "我按「电动研磨机 / 咖啡豆 / 香料 / 小型」做了多轮检索，结果如下：\n\n**本次未检索到匹配商品**\n- 检索范围：CJ 商品快照（关键词匹配）\n- 尝试的检索词：`电动研磨机 咖啡豆 香料 小型 家用电磨`、`电动咖啡豆研磨机`、`香料研磨机 电动 小型`、`研磨器 咖啡 香料 电动`\n- 结果：4 次均为 0 条候选，**且 `filtered_out` 为空**——也就是说不是被价格上限或收货国这类条件挡掉的，而是这一轮关键词没有命中的条目。\n\n所以只能如实说：**本次未检索到确切型号**，我无法给出商品卡或价格。这不代表目录里一定没有该类商品（未命中也可能只是关键词口径问题）。\n\n**可以继续推进的方向（你选一个我就重搜）**\n1. **换关键词口径**：比如只搜「磨豆机」「电动研磨器」「小型料理机 / 绞肉研磨」，或按用途分开搜（只咖啡豆 / 只香料）。\n2. **指定品牌或型号**：如果你有看中的具体款，给我 product_id 或 sku_id，我可以直接按 ID 查目录。\n3. **放宽品类槽位**：目前我试过把它归到「厨房餐饮 / 厨房小电」类目，也可以不加类目再搜一遍。\n\n另外提醒一句：CJ 快照的列表价是 USD 参考价，库存、目的国配送、运费税费都未实时核验；等你确定候选款后，如果你需要，我再单独做物流试算（需要你给出目的国和规格）。要不要我按上面第 1 条换个说法重搜一遍？",
+          "search_calls": 4,
+          "tool_names": [
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool"
+          ],
+          "usage": {
+            "status": "success",
+            "elapsed_ms": 56540.35799999838,
+            "model_calls": 5,
+            "input_tokens": null,
+            "output_tokens": null,
+            "observed_input_tokens": 24075,
+            "observed_output_tokens": 976,
+            "unknown_usage_calls": 2,
+            "active_attempts_at_finish": 0,
+            "usage_complete": false,
+            "ttft_p95_ms": 1766.0000000032596,
+            "model_elapsed_ms": 13688.999999983935,
+            "tool_calls": 4,
+            "tool_errors": 0,
+            "fallbacks": 0,
+            "cost_usd": null,
+            "unknown_cost_calls": 5
+          }
+        }
+      },
+      "fix": {
+        "component": {
+          "ids": [],
+          "rank": null,
+          "total_candidates": 0
+        },
+        "agent": {
+          "terminal": "RUN_FINISHED",
+          "trace_file": "eval\\verification\\cj-crosslang-v1\\holdout\\traces\\fix\\CJ-H003.jsonl.gz",
+          "first_rank": null,
+          "searches": [
+            {
+              "query": "电动研磨机 咖啡豆 香料 研磨",
+              "category": "厨房餐饮",
+              "ids": [],
+              "rank": null
+            },
+            {
+              "query": "电动咖啡研磨机",
+              "category": null,
+              "ids": [],
+              "rank": null
+            },
+            {
+              "query": "研磨机 香料 粉碎机 家用",
+              "category": null,
+              "ids": [],
+              "rank": null
+            },
+            {
+              "query": "electric coffee grinder spice grinder",
+              "category": null,
+              "ids": [
+                "2000401502466637825",
+                "1796840458228862976",
+                "2406150919131616300",
+                "1608330591714422784",
+                "2504170300131618000"
+              ],
+              "rank": 1
+            },
+            {
+              "query": "coffee grinder",
+              "category": null,
+              "ids": [
+                "2000401502466637825",
+                "2406150919131616300",
+                "1836596420439592960",
+                "2049039727648501762",
+                "2045398465321144321"
+              ],
+              "rank": 1
+            },
+            {
+              "query": "electric spice grinder bean nut milling machine",
+              "category": null,
+              "ids": [
+                "2000401502466637825",
+                "1797887952979234816",
+                "1738468600836526080",
+                "5072165D-C048-4DC6-9C79-724A95063041",
+                "1964945319390208002"
+              ],
+              "rank": 1
+            },
+            {
+              "query": "electric grinder kitchen appliance mill",
+              "category": null,
+              "ids": [
+                "2000401502466637825",
+                "2505241122141601300",
+                "1738468600836526080",
+                "1543179507669151744",
+                "C3C7D6B4-5595-45C4-84CB-7D01700DB2F4"
+              ],
+              "rank": 1
+            },
+            {
+              "query": "coffee bean grinder electric stainless steel machine",
+              "category": null,
+              "ids": [
+                "2000401502466637825",
+                "1511909488708825088",
+                "2502151211271613300",
+                "2501020721491621000",
+                "2501150145251618200"
+              ],
+              "rank": 1
+            },
+            {
+              "query": "grinder electric mill spice nut bean",
+              "category": null,
+              "ids": [
+                "2000401502466637825",
+                "2406150919131616300",
+                "1608330591714422784",
+                "2504170300131618000",
+                "1739218930918502400"
+              ],
+              "rank": 1
+            }
+          ],
+          "any_hit_at_5": true,
+          "answer_mentions_anchor": true,
+          "answer": "已按你的需求检索，结论如下（本次仅做检索与候选展示，不做下单/报价/偏好写入）。\n\n## 命中候选（按检索返回顺序）\n\n**1. Electric Coffee Grinder Grinding Milling Nut Bean Spice Blade Blender UK**\n- product_id：`2000401502466637825`\n- 参考价：US$9.92（CJ 列表参考价，非到手价）\n- 匹配点：标题明确为**电动**研磨，覆盖咖啡豆（Bean）、坚果（Nut）、香料（Spice），刀片式结构，属于\"一小台机器通吃咖啡豆+香料\"的类型，价格门槛低\n- 需留意：标题带 \"UK\" 字样，可能对应英规插头/英版规格；该商品卡 `detail_available=false`、`stock_known=false`，即**具体规格与库存尚未核验**，品牌与产地信息也未知\n\n**2. Zinc Alloy Birthday Cake Shape Smoke Eliminator Creative Household Tobacco Spice Grinder**\n- product_id：`2406150919131616300`\n- 参考价：US$3.85\n- 说明：这条**不是电动**的，是锌合金**手动**研磨器，标题描述场景偏向烟草/香料。如果你的\"电动\"是硬条件就不算合适；只作为\"香料研磨\"方向的低价邻近项列出，供你自己定夺\n\n## 检索说明\n- 用中文词（\"电动研磨机/咖啡豆/香料\"）在 CJ 快照里**未召回**结果，改用英文关键词（electric coffee grinder / spice grinder / bean mill 等）后才命中，多个改写词反复检索，稳定命中的电动款只有上面第 1 条。\n- 本条结论来自 CJ 快照：USD 列表参考价、**库存、目的国可配送性、运费税费均未实时核验**，不能当作已满足的筛选条件，也不代表最终到手价。\n- 没有命中确切型号的，只能说\"本次未检索到\"，不代表该品类缺货或不可配送。\n\n## 下一步（你点头我就做）\n1. 需要我拉取 `2000401502466637825` 的**规格详情**（确认插头制式/电压/杯体容量）吗？\n2. 若有明确目的国与预算，可再按条件收窄重搜，或对该款做一次物流试算。\n\n以上并未发生任何交易动作。",
+          "search_calls": 9,
+          "tool_names": [
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool"
+          ],
+          "usage": {
+            "status": "success",
+            "elapsed_ms": 32968.77879998647,
+            "model_calls": 6,
+            "input_tokens": 66289,
+            "output_tokens": 1847,
+            "observed_input_tokens": 66289,
+            "observed_output_tokens": 1847,
+            "unknown_usage_calls": 0,
+            "active_attempts_at_finish": 0,
+            "usage_complete": true,
+            "ttft_p95_ms": 3406.0000000172295,
+            "model_elapsed_ms": 15937.000000005355,
+            "tool_calls": 9,
+            "tool_errors": 0,
+            "fallbacks": 0,
+            "cost_usd": null,
+            "unknown_cost_calls": 6
+          }
+        }
+      }
+    },
+    {
+      "id": "CJ-H004",
+      "stratum": "attribute",
+      "anchor_id": "2506180838541604800",
+      "baseline": {
+        "component": {
+          "ids": [
+            "2505030219141625700",
+            "1719262207193657344",
+            "1711607915393593344",
+            "1669574275931578368",
+            "1669560516924153856"
+          ],
+          "rank": null,
+          "total_candidates": 422
+        },
+        "agent": {
+          "terminal": "RUN_FINISHED",
+          "trace_file": "eval\\verification\\cj-crosslang-v1\\holdout\\traces\\baseline\\CJ-H004.retry1.jsonl.gz",
+          "first_rank": null,
+          "searches": [
+            {
+              "query": "狗 雨衣 防水 带帽 披风 雨天",
+              "category": "母婴宠物",
+              "ids": [
+                "2505030219141625700",
+                "1719262207193657344",
+                "1711607915393593344",
+                "1669574275931578368",
+                "1669560516924153856"
+              ],
+              "rank": null
+            },
+            {
+              "query": "dog raincoat waterproof hooded pet rain jacket cape",
+              "category": "母婴宠物",
+              "ids": [
+                "2506180838541604800",
+                "0A1B5186-71C6-4D79-BD50-D20935EBD8A9",
+                "1371722672244920320",
+                "1744190895710277632",
+                "1608367435831324672"
+              ],
+              "rank": 1
+            }
+          ],
+          "any_hit_at_5": true,
+          "answer_mentions_anchor": true,
+          "answer": "已按「狗用防水带帽披风」检索目录，第一轮中文词召回的多是宠物浴袍/睡衣（不属于雨披），换用英文关键词后命中了对口款。以下按本次结果顺序（最新一批，共 5 个候选）：\n\n**1. Dog Waterproof Hooded Poncho Raincoat** — `2506180838541604800`\n- US$7.46；规格 Blue-XS / S / M / L / XL 同价\n- 标签：Pet Coats & Jackets；库存快照（2026-09-29 采集）显示各码 6,900–9,900 件\n- **最贴合你的需求**：标题即「防水 + 带帽 + 斗篷式雨衣」，XS–XL 尺码齐全，价格也是这批里最划算的对口款。注意：标签只给到\"Cloth\"，材质细节、重量字段为空，具体防水面料等级需看详情页确认。\n\n**2. Winter Pet Dog Clothes Super Warm Jacket Thicker Cotton Coat Waterproof** — `0A1B5186-71C6-4D79-BD50-D20935EBD8A9`\n- US$5.59–10.57（按尺码/配色浮动）；Yellow grey-10/14、Red camouflage 10–20 码\n- 加厚保暖 + 防水，偏**冬季防寒外套**，不是带帽披风款；如果只是小雨天短时出门，保暖性偏冗余。\n\n**3. Waterproof Remote Control Dog Training Device** — `1371722672244920320`\n- US$16.25；无规格、无库存数据\n- 这是遥控止吠训练器，与雨衣无关，属于关键词召回噪声，不建议考虑。\n\n**4. Outdoor Soft Shell Waterproof Windproof Warm Dog Soft Shell Jacket** — `1744190895710277632`\n- US$53.40–89.25（Green-XXS 至 3XL）；库存快照充足\n- 软壳冲锋衣级别，防水防风性能最好，但单价明显高于其他候选，且**未见带帽**描述。\n\n**5. Waterproof Jacket Teddy Clothes Dog Autumn And Winter Clothes** — `1608367435831324672`\n- US$3.16（Pink/Silver，S–XXL 同价）；重量约 0.2kg\n- 全场最低价，但定位是秋冬季小衣服，\"防水\"仅为标题表述，未标带帽，适合预算优先时对比。\n\n选购提示：若你要的就是「雨天遛狗的带帽雨披」，第 1 款对口度最高；只在下雨天短时使用、狗狗不需要保暖时，第 2、4 款偏厚；第 4 款防水最强但价格差一个量级。\n\n几点如实说明：\n- 以上均为 CJ 快照的 USD 列表参考价，你未提供收货国，本次**未做目的国可达性核验**，也未计算运费/税费，所以都不是到手价；如需可指定目的国，我再帮查物流试算。\n- 库存数字来自 2026-09-29 的快照，非实时锁定。\n- 第 1 款库存的 `cj_stock` 为 0、`factory_stock` 有货，属工厂端备货口径，下单前建议以详情页为准。\n\n按你的要求，本轮只做检索展示，未创建订单、未做报价、未写入任何偏好。",
+          "search_calls": 2,
+          "tool_names": [
+            "product_search_tool",
+            "product_search_tool"
+          ],
+          "usage": {
+            "status": "success",
+            "elapsed_ms": 28311.38520000968,
+            "model_calls": 3,
+            "input_tokens": 34191,
+            "output_tokens": 1677,
+            "observed_input_tokens": 34191,
+            "observed_output_tokens": 1677,
+            "unknown_usage_calls": 0,
+            "active_attempts_at_finish": 0,
+            "usage_complete": true,
+            "ttft_p95_ms": 3890.999999974156,
+            "model_elapsed_ms": 13451.999999990221,
+            "tool_calls": 2,
+            "tool_errors": 0,
+            "fallbacks": 0,
+            "cost_usd": null,
+            "unknown_cost_calls": 3
+          },
+          "prior_interrupted_trace": "eval\\verification\\cj-crosslang-v1\\holdout\\traces\\baseline\\CJ-H004.jsonl.gz"
+        }
+      },
+      "fix": {
+        "component": {
+          "ids": [
+            "2045062609671077889",
+            "2045062487935598593",
+            "2045062109725036545",
+            "2506180838541604800",
+            "1744190895710277632"
+          ],
+          "rank": 4,
+          "total_candidates": 675
+        },
+        "agent": {
+          "terminal": "RUN_FINISHED",
+          "trace_file": "eval\\verification\\cj-crosslang-v1\\holdout\\traces\\fix\\CJ-H004.jsonl.gz",
+          "first_rank": 1,
+          "searches": [
+            {
+              "query": "狗狗 雨衣 防水 带帽 披风",
+              "category": "母婴宠物",
+              "ids": [
+                "2506180838541604800",
+                "1744190895710277632",
+                "1608367435831324672",
+                "0A1B5186-71C6-4D79-BD50-D20935EBD8A9",
+                "1390562609694117888"
+              ],
+              "rank": 1
+            }
+          ],
+          "any_hit_at_5": true,
+          "answer_mentions_anchor": true,
+          "answer": "下雨天给狗穿的防水带帽披风，本次在 CJ 快照目录里检索到以下候选（按返回顺序展示，价格均为列表参考价，USD）：\n\n**1. Dog Waterproof Hooded Poncho Raincoat（防水带帽披风）— 最贴合需求**\n- product_id：2506180838541604800\n- 价格：US$7.46（单一价）\n- 规格：Blue-XS / S / M / L / XL，各规格均为 US$7.46\n- 库存：各规格工厂库存 7,000–9,900 件（快照记录，非实时）\n- 材质标签：Cloth｜亮点标签：Pet Apparels / Pet Coats & Jackets\n\n**2. Outdoor Soft Shell Waterproof Windproof Warm Dog Soft Shell Jacket**\n- product_id：1744190895710277632\n- 价格：US$53.40–89.25（区间，按尺寸递增）\n- 规格：Green-XXS / XS / S / M / L / XL / 2XL / 3XL\n- 说明：标题为软壳夹克（防水/防风/保暖），未见\"带帽披风\"式描述，款式与披风不同\n\n**3. Waterproof Jacket Teddy Clothes Dog Autumn And Winter Clothes**\n- product_id：1608367435831324672\n- 价格：US$3.16（单一价）\n- 规格：Pink / Silver 各 S–XXL\n- 重量：0.2 kg｜说明：标题为防水夹克，属秋冬保暖款，非披风\n\n**4. Winter Pet Dog Clothes Super Warm Jacket Thicker Cotton Coat Waterproof**\n- product_id：0A1B5186-71C6-4D79-BD50-D20935EBD8A9\n- 价格：US$5.59–10.57（区间）\n- 规格：Yellow grey-10/14、Red camouflage-Size10/12/14/16/18/20\n- 说明：冬季加厚棉衣（标称防水），保暖导向，非雨披\n\n**5. Dog Car Mats… Waterproof And Dirt-Resistant Car Pet Seat Covers**\n- product_id：1390562609694117888\n- 价格：US$6.30｜无 SKU 数据、库存未知\n- 说明：车载宠物座垫，与\"给狗穿的披风\"品类不符，仅列出供参考\n\n几点如实说明：\n- 只有第 1 款标题明确同时含 waterproof + hooded + poncho；其余为普通防水衣/夹克，是否带帽快照标题未体现，建议看详情再定。\n- 本次未指定收货国，因此未做任何目的地可配送、运费、税费或到手价核验；以上金额只是列表参考价，不代表最终到手价。\n- 快照中部分字段（如重量、产地、品牌）缺失或为空，我不替它补值；宣传亮点与字段冲突时以\"快照数据存在差异\"为准。\n\n如需下一步，我可以：按你的狗只尺寸（XS–XL）缩小候选，或在确定型号与收货国后帮你做物流试算；本轮按要求只做检索展示，未下单、未报价、未写入偏好。",
+          "search_calls": 1,
+          "tool_names": [
+            "product_search_tool"
+          ],
+          "usage": {
+            "status": "success",
+            "elapsed_ms": 18378.32200000412,
+            "model_calls": 2,
+            "input_tokens": 18707,
+            "output_tokens": 983,
+            "observed_input_tokens": 18707,
+            "observed_output_tokens": 983,
+            "unknown_usage_calls": 0,
+            "active_attempts_at_finish": 0,
+            "usage_complete": true,
+            "ttft_p95_ms": 1532.0000000065193,
+            "model_elapsed_ms": 5922.000000020489,
+            "tool_calls": 1,
+            "tool_errors": 0,
+            "fallbacks": 0,
+            "cost_usd": null,
+            "unknown_cost_calls": 2
+          },
+          "prior_interrupted_trace": null
+        }
+      }
+    },
+    {
+      "id": "CJ-H005",
+      "stratum": "mixed_spec",
+      "anchor_id": "1620296122671575040",
+      "baseline": {
+        "component": {
+          "ids": [
+            "B261EB59-04B7-4F3A-BD2B-274DEAD44DD5",
+            "2407300641381600800",
+            "2412280801291601600",
+            "01D9E0E8-84C3-40BF-8A40-20F1BC566A71",
+            "1575805518285910016"
+          ],
+          "rank": null,
+          "total_candidates": 831
+        },
+        "agent": {
+          "terminal": "RUN_FINISHED",
+          "trace_file": "eval\\verification\\cj-crosslang-v1\\holdout\\traces\\baseline\\CJ-H005.jsonl.gz",
+          "first_rank": null,
+          "searches": [
+            {
+              "query": "双头 Type-C 100W 数据线 手机快充",
+              "category": "数码配件",
+              "ids": [
+                "B261EB59-04B7-4F3A-BD2B-274DEAD44DD5",
+                "2407300641381600800",
+                "2412280801291601600",
+                "01D9E0E8-84C3-40BF-8A40-20F1BC566A71",
+                "1575805518285910016"
+              ],
+              "rank": null
+            },
+            {
+              "query": "Type-C to Type-C 数据线 100W 快充 双头",
+              "category": null,
+              "ids": [
+                "1448918713767170048",
+                "B261EB59-04B7-4F3A-BD2B-274DEAD44DD5",
+                "1695628646939107328",
+                "1769567178551988224",
+                "2408181012051616500"
+              ],
+              "rank": null
+            },
+            {
+              "query": "USB C to USB C cable 100W fast charging",
+              "category": null,
+              "ids": [
+                "3104D239-C4B0-4D75-8AA8-1B94E8ADC983",
+                "7884A323-75CD-4153-9D02-D3439DE453F7",
+                "1620296122671575040",
+                "1384428337052651520",
+                "1376364754565730304"
+              ],
+              "rank": 3
+            },
+            {
+              "query": "100W 双头 Type-C 数据线 编织 快充",
+              "category": null,
+              "ids": [
+                "1448918713767170048",
+                "B261EB59-04B7-4F3A-BD2B-274DEAD44DD5",
+                "1695628646939107328",
+                "1769567178551988224",
+                "2408181012051616500"
+              ],
+              "rank": null
+            }
+          ],
+          "any_hit_at_5": true,
+          "answer_mentions_anchor": true,
+          "answer": "已完成检索（CJ 快照关键词召回，共 415 条候选，取 Top 5 展示；列表价为 USD 参考价，库存／目的地配送／运费税费未实时核验）。这是一次纯检索，未做报价、未下单、未写偏好。\n\n**候选清单（按检索返回顺序，序号即前端商品卡顺序）**\n\n1. **3.1A Fast Charging USB Cable** — `3104D239-C4B0-4D75-8AA8-1B94E8ADC983`\n   US$0.49–0.72｜Consumer Electronics / Accessories & Parts, Charger\n   快充数据线，但标题只标 3.1A，**未标明 100W，也未标明是否双头 Type-C**，与你的需求只能算部分吻合。\n\n2. **Super Fast Charging Usb Single Head Mobile Phone Data Cable** — `7884A323-75CD-4153-9D02-D3439DE453F7`\n   US$0.51–1.08｜Phones & Accessories / Cables\n   标题明确是 **Single Head（单头）**，不符合\"双头\"要求，列出仅供对比。\n\n3. **USB Type C To USB C Cable 100W 66W Fast Charging** — `1620296122671575040`\n   US$1.89–2.85｜Phones & Accessories / Cables\n   ✅ **本次最贴合的一条**：标题即 Type-C to Type-C（双头）+ 100W/66W 快充，正对你的手机快充场景。\n\n4. **540 Rotate Luminous Magnetic Cable 3A Fast Charging** — `1384428337052651520`\n   US$1.54–3.33｜Phones & Accessories / Cables\n   磁吸旋转线，3A 规格且接口为 Micro USB/Type-C/Lightning 混配，不是双头 Type-C，且未标 100W。\n\n5. **Braided Nylon Usb Type-C Usb-C Data Cable For Fast Charging And Data Transmission** — `1376364754565730304`\n   US$0.50–0.91｜Consumer Electronics / Accessories & Parts, Digital Cables\n   编织尼龙、Type-C to Type-C 双头线，形态吻合；但**标题未标功率**，是否支持 100W 需以详情页规格为准。\n\n**说明与建议**\n- 我的三轮改写检索中，只有第 3 条在标题层面同时命中\"双头 Type-C + 100W\"。其余候选存在功率或接口形态差异，已如实标注，请自行取舍。\n- 快照目录关键词精度有限，**本次未检索到更多确切标注 100W 的双头 Type-C 型号**；这不代表目录里没有，只是本轮未召回。\n- 若你要确认第 3 条的具体规格（线长、E-Marker 芯片、规格 SKU）或某条线的详情，我可以按需拉取该商品的规格详情；如需评估到某国的配送/到手费用，也可在明确目的国后单独试算（CJ 商品目前只支持查询与试算，不能在此准备站内订单意向）。\n\n需要我进一步核对哪一条的规格详情？",
+          "search_calls": 4,
+          "tool_names": [
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool"
+          ],
+          "usage": {
+            "status": "success",
+            "elapsed_ms": 28529.05529999407,
+            "model_calls": 4,
+            "input_tokens": 41040,
+            "output_tokens": 2002,
+            "observed_input_tokens": 41040,
+            "observed_output_tokens": 2002,
+            "unknown_usage_calls": 0,
+            "active_attempts_at_finish": 0,
+            "usage_complete": true,
+            "ttft_p95_ms": 4343.9999999827705,
+            "model_elapsed_ms": 12375.000000029104,
+            "tool_calls": 4,
+            "tool_errors": 0,
+            "fallbacks": 0,
+            "cost_usd": null,
+            "unknown_cost_calls": 4
+          },
+          "prior_interrupted_trace": null
+        }
+      },
+      "fix": {
+        "component": {
+          "ids": [
+            "B261EB59-04B7-4F3A-BD2B-274DEAD44DD5",
+            "2407300641381600800",
+            "2412280801291601600",
+            "01D9E0E8-84C3-40BF-8A40-20F1BC566A71",
+            "1575805518285910016"
+          ],
+          "rank": null,
+          "total_candidates": 831
+        },
+        "agent": {
+          "terminal": "RUN_FINISHED",
+          "trace_file": "eval\\verification\\cj-crosslang-v1\\holdout\\traces\\fix\\CJ-H005.jsonl.gz",
+          "first_rank": null,
+          "searches": [
+            {
+              "query": "双头 Type-C 100W 快充数据线 手机",
+              "category": "数码配件",
+              "ids": [
+                "B261EB59-04B7-4F3A-BD2B-274DEAD44DD5",
+                "2407300641381600800",
+                "2412280801291601600",
+                "01D9E0E8-84C3-40BF-8A40-20F1BC566A71",
+                "1575805518285910016"
+              ],
+              "rank": null
+            },
+            {
+              "query": "USB C to USB C cable 100W fast charging Type-C data cable",
+              "category": "数码配件",
+              "ids": [
+                "1376364754565730304",
+                "2501040339171613200",
+                "1413723969139380224",
+                "2505080609051610300",
+                "7884A323-75CD-4153-9D02-D3439DE453F7"
+              ],
+              "rank": null
+            },
+            {
+              "query": "Type-C 数据线 快充线 100W 双头",
+              "category": "数码配件",
+              "ids": [
+                "1448918713767170048",
+                "B261EB59-04B7-4F3A-BD2B-274DEAD44DD5",
+                "461C62AD-6DD4-4BB6-A0B4-51EE138480B5",
+                "2407300641381600800",
+                "1405034559745167360"
+              ],
+              "rank": null
+            },
+            {
+              "query": "100W PD USB-C to USB-C cable double ended Type-C nylon braided",
+              "category": null,
+              "ids": [
+                "1376364754565730304",
+                "2502070720551612200",
+                "2504160643581600800",
+                "1433255035013304320",
+                "1381792091964837888"
+              ],
+              "rank": null
+            }
+          ],
+          "any_hit_at_5": false,
+          "answer_mentions_anchor": false,
+          "answer": "已检索完毕。以下是本次从 CJ 快照中召回的相关候选（按检索返回顺序排列，附 product_id 便于你核对）：\n\n**较贴合「双头 Type-C + 100W 及以上」的候选**\n\n1. **6A Double USB Type-C Cable 120W Fast Charge** — `2502070720551612200`\n   US$0.66–0.90｜品类 Consumer Electronics｜标题明确为双头 Type-C、120W 快充，是本次最贴合需求的候选。\n2. **Braided Nylon USB Type-C USB-C Data Cable For Fast Charging And Data Transmission** — `1376364754565730304`\n   US$0.50–0.91｜编织尼龙 C-to-C 线，价格最低，适合先拿样测试。\n3. **New High-density Braided Flash Charging Data Cable Dual Type-c Charger** — `1381792091964837888`\n   US$3.75（定价）｜高密度编织、双 Type-C，单价偏高。\n4. **Digital Display Double Type-c Fast Charging Mobile Phone Data Cable** — `2501040339171613200`\n   US$1.40–1.70｜双 Type-C 带数显，可看实时功率。\n5. **120W Zinc Alloy Fast Charging Four-in-one … Double Typec Bold Silicone Data Cable** — `2505080609051610300`\n   US$1.55–2.99｜双 Type-C + 120W，锌合金+硅胶线身，但为四合一多功能线，结构较复杂。\n\n**相关性偏弱、仅供比对**\n\n- **Nylon Braided Macaron PD20W Fast Charge Data Cable** — `2504160643581600800`（US$0.71–0.84，功率仅 20W 级）\n- **Suitable For Huawei Type-c 5A Super Fast Charging Data Cable** — `1413723969139380224`（US$0.49–0.60，单头 A-to-C 形态可能性大）\n- **Snake Pattern Nylon Circular Braided Data Cable** — `1433255035013304320`（US$0.71–0.98，标题未标明双头/功率）\n\n**需要如实说明的几点**\n\n- 本次为 CJ 快照**关键词召回**，未做重排；快照数据中**库存、可配送目的国、运费与税费均未实时核验**，不能当作已确认的筛选条件。\n- 价格是 **USD 列表参考价**（非到手价，未含运税）。多数候选还标着 `detail_available: false`、无 SKU 明细，规格需逐条到详情页确认。\n- 标题里的「120W」是商品标题描述；本次候选里**没有一条明确标注正好 100W**，上述 120W 双头 C 线在参数上覆盖 100W 需求，但实际是否支持你手机的 100W 协议，建议以商品详情/规格页为准。\n- 商品卡由前端按召回顺序展示，上面编号与我引用的一致。\n\n如果你告诉我**收货国家和目标预算**，我可以再做一轮带约束的检索；若看中某一款，也可以针对它单独查配送/到手费用试算（仅试算，不构成最终支付价）。",
+          "search_calls": 4,
+          "tool_names": [
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool"
+          ],
+          "usage": {
+            "status": "success",
+            "elapsed_ms": 50010.29010000639,
+            "model_calls": 5,
+            "input_tokens": null,
+            "output_tokens": null,
+            "observed_input_tokens": 40938,
+            "observed_output_tokens": 2522,
+            "unknown_usage_calls": 1,
+            "active_attempts_at_finish": 0,
+            "usage_complete": false,
+            "ttft_p95_ms": 5967.999999993481,
+            "model_elapsed_ms": 28436.000000016065,
+            "tool_calls": 4,
+            "tool_errors": 0,
+            "fallbacks": 0,
+            "cost_usd": null,
+            "unknown_cost_calls": 5
+          },
+          "prior_interrupted_trace": null
+        }
+      }
+    },
+    {
+      "id": "CJ-H006",
+      "stratum": "mixed_spec",
+      "anchor_id": "E1CD8B50-C8A4-436F-92AF-1646F08B2645",
+      "baseline": {
+        "component": {
+          "ids": [
+            "E1CD8B50-C8A4-436F-92AF-1646F08B2645",
+            "2410160157391613600",
+            "1783071395044405248",
+            "1379353988356509696",
+            "2410300514231622100"
+          ],
+          "rank": 1,
+          "total_candidates": 811
+        },
+        "agent": {
+          "terminal": "RUN_FINISHED",
+          "trace_file": "eval\\verification\\cj-crosslang-v1\\holdout\\traces\\baseline\\CJ-H006.jsonl.gz",
+          "first_rank": 1,
+          "searches": [
+            {
+              "query": "有线游戏键盘 RGB背光 手机支架",
+              "category": "数码配件",
+              "ids": [
+                "E1CD8B50-C8A4-436F-92AF-1646F08B2645",
+                "2410160157391613600",
+                "1783071395044405248",
+                "1379353988356509696",
+                "2410300514231622100"
+              ],
+              "rank": 1
+            }
+          ],
+          "any_hit_at_5": true,
+          "answer_mentions_anchor": true,
+          "answer": "为你检索到以下候选（CJ 快照关键词检索，共 764 个候选，展示前 5）：\n\n**1. ErgonomicWired Gaming Keyboard with RGB Backlight Phone Holder**\n- product_id：E1CD8B50-C8A4-436F-92AF-1646F08B2645\n- 参考价：US$10.17–14.63（区间价）\n- 品类：Consumer Electronics\n- 匹配点：标题同时命中\"有线游戏键盘 + RGB 背光 + 手机支架\"三项，是本批最贴合你需求的一款\n- 备注：无品牌、无材质标签、无重量数据，快照未提供 SKU 明细\n\n**2. Three-in-one Wireless Bluetooth Touch Pad Wireless Keyboard Leather Sheath Stand**\n- product_id：2410160157391613600\n- 参考价：US$18.24\n- 品类：Computer & Office\n- 差异：**无线蓝牙**键盘，带支架（可放手机/平板）但不是有线款，是皮套支架形态\n\n**3. RGB Keyboard Support Wristband High Rebound Luminous Machinery Keyboard Support**\n- product_id：1783071395044405248\n- 参考价：US$1.55–7.46\n- 品类：Computer & Office\n- 差异：从标题看更像是 RGB 键盘托/腕托支撑件，不是整把键盘\n\n**4. Multimedia Wired Rgb Luminous Subwoofer Computer Notebook Mobile Phone Audio Box**\n- product_id：1379353988356509696\n- 参考价：US$13.64\n- 差异：这是**有线 RGB 音箱**，非键盘\n\n**5. USB Microphone RGB Mobile Phone Computer Live Karaoke E-sports Games Microphone**\n- product_id：2410300514231622100\n- 参考价：US$8.79\n- 差异：这是 **RGB 麦克风**，非键盘\n\n**挑选建议**：只有第 1 款完整满足\"有线 + RGB 背光 + 手机支架\"，建议优先看它；2–5 款为同场景周边的相邻品类，可按需排除。\n\n**数据口径提醒**：以上为 CJ 快照的 USD 列表参考价，库存、目的国可配送性、运费、税费与最终到手价均未实时核验，不能作为已满足的筛选条件。快照未提供第 1 款的 SKU 规格明细，如需具体规格或到手费用，告诉我目的国可进一步试算。\n\n按当前要求，本次仅做检索展示，未执行下单、报价或偏好写入。",
+          "search_calls": 1,
+          "tool_names": [
+            "product_search_tool"
+          ],
+          "usage": {
+            "status": "success",
+            "elapsed_ms": 24880.529999994906,
+            "model_calls": 2,
+            "input_tokens": 16155,
+            "output_tokens": 799,
+            "observed_input_tokens": 16155,
+            "observed_output_tokens": 799,
+            "unknown_usage_calls": 0,
+            "active_attempts_at_finish": 0,
+            "usage_complete": true,
+            "ttft_p95_ms": 1062.000000005355,
+            "model_elapsed_ms": 4984.000000025844,
+            "tool_calls": 1,
+            "tool_errors": 0,
+            "fallbacks": 0,
+            "cost_usd": null,
+            "unknown_cost_calls": 2
+          },
+          "prior_interrupted_trace": null
+        }
+      },
+      "fix": {
+        "component": {
+          "ids": [
+            "E1CD8B50-C8A4-436F-92AF-1646F08B2645",
+            "2410160157391613600",
+            "1783071395044405248",
+            "1379353988356509696",
+            "2410300514231622100"
+          ],
+          "rank": 1,
+          "total_candidates": 811
+        },
+        "agent": {
+          "terminal": "RUN_FINISHED",
+          "trace_file": "eval\\verification\\cj-crosslang-v1\\holdout\\traces\\fix\\CJ-H006.jsonl.gz",
+          "first_rank": 1,
+          "searches": [
+            {
+              "query": "有线游戏键盘 RGB背光 手机支架",
+              "category": "数码配件",
+              "ids": [
+                "E1CD8B50-C8A4-436F-92AF-1646F08B2645",
+                "2410160157391613600",
+                "1783071395044405248",
+                "1379353988356509696",
+                "2410300514231622100"
+              ],
+              "rank": 1
+            },
+            {
+              "query": "wired gaming keyboard RGB backlight phone holder stand",
+              "category": "数码配件",
+              "ids": [
+                "E1CD8B50-C8A4-436F-92AF-1646F08B2645",
+                "2410160157391613600",
+                "2093942570156220418",
+                "2510240305071642700",
+                "7C59DE5B-A511-4920-88A8-C808B21476EE"
+              ],
+              "rank": 1
+            }
+          ],
+          "any_hit_at_5": true,
+          "answer_mentions_anchor": true,
+          "answer": "为你检索了「有线 + RGB 背光 + 手机支架」的游戏键盘，结果如下（CJ 快照关键词召回，USD 列表参考价，库存/配送未实时核验）：\n\n**✅ 匹配需求：**\n1. **ErgonomicWired Gaming Keyboard with RGB Backlight Phone Holder**\n   - product_id：`E1CD8B50-C8A4-436F-92AF-1646F08B2645`\n   - 参考价：US$10.17–14.63（区间价）\n   - 标题同时含「Wired（有线）」「RGB Backlight」「Phone Holder（手机支架）」三项，是本次唯一同时命中的型号\n   - 备注：无品牌信息、无 SKU 规格、库存未知，产地为空\n\n**⚠️ 同批次召回但不满足需求（供参考，请勿误当匹配项）：**\n2. Three-in-one Wireless Bluetooth Touch Pad Wireless Keyboard Leather Sheath Stand… — product_id：`2410160157391613600`，US$18.24；**无线蓝牙**键盘，非有线，且为平板/手机通用保护套式支架款\n3. RGB Keyboard Support Wristband High Rebound Luminous Machinery Keyboard Support — product_id：`1783071395044405248`，US$1.55–7.46；是键盘**手托/支架配件**，本身不是键盘\n4. Multimedia Wired Rgb Luminous Subwoofer… Audio Box — product_id：`1379353988356509696`，US$13.64；音箱，非键盘\n5. USB Microphone RGB… — product_id：`2410300514231622100`，US$8.79；麦克风，非键盘\n\n我换了一版检索词（含英文 \"wired gaming keyboard RGB backlight phone holder\"）复检，结果中同样是第 1 项为唯一精确匹配，未召回其他更贴合的有线 RGB 带支架键盘候选。\n\n需要的话我可以进一步做两件事（本轮未执行）：\n- 调取第 1 项的**规格详情**（确认轴体/接口/支架形式、是否有可选 SKU）；\n- 你给出**目的国**后做**物流试算**，看看运费与已知费用合计。\n\n把目的国或你更看重的点（轴体手感、尺寸、价位段）告诉我，我再帮你收窄候选。",
+          "search_calls": 2,
+          "tool_names": [
+            "product_search_tool",
+            "product_search_tool"
+          ],
+          "usage": {
+            "status": "success",
+            "elapsed_ms": 34194.85670002177,
+            "model_calls": 3,
+            "input_tokens": 26537,
+            "output_tokens": 1278,
+            "observed_input_tokens": 26537,
+            "observed_output_tokens": 1278,
+            "unknown_usage_calls": 0,
+            "active_attempts_at_finish": 0,
+            "usage_complete": true,
+            "ttft_p95_ms": 3359.99999998603,
+            "model_elapsed_ms": 18781.999999977415,
+            "tool_calls": 2,
+            "tool_errors": 0,
+            "fallbacks": 0,
+            "cost_usd": null,
+            "unknown_cost_calls": 3
+          },
+          "prior_interrupted_trace": null
+        }
+      }
+    },
+    {
+      "id": "CJ-H007",
+      "stratum": "functional",
+      "anchor_id": "1707021717920550912",
+      "baseline": {
+        "component": {
+          "ids": [
+            "2045065052201259009",
+            "2045064905648082946",
+            "1707021717920550912",
+            "2101600682429415425",
+            "2100523446852354049"
+          ],
+          "rank": 3,
+          "total_candidates": 291
+        },
+        "agent": {
+          "terminal": "RUN_FINISHED",
+          "trace_file": "eval\\verification\\cj-crosslang-v1\\holdout\\traces\\baseline\\CJ-H007.jsonl.gz",
+          "first_rank": 1,
+          "searches": [
+            {
+              "query": "USB 自动清洗化妆刷 清洗机",
+              "category": "美妆个护",
+              "ids": [
+                "1707021717920550912",
+                "2101600682429415425",
+                "2100523446852354049",
+                "2100161257322807297",
+                "2097522223048400898"
+              ],
+              "rank": 1
+            },
+            {
+              "query": "电动化妆刷清洗器 便携 USB 充电 刷子清洁工具",
+              "category": "美妆个护",
+              "ids": [
+                "1707021717920550912",
+                "2504250838161623400",
+                "1391645965982765056",
+                "2101600682429415425",
+                "2100523446852354049"
+              ],
+              "rank": 1
+            }
+          ],
+          "any_hit_at_5": true,
+          "answer_mentions_anchor": true,
+          "answer": "已按你的需求检索了 CJ 快照目录（关键词：USB 自动清洗化妆刷 / 电动化妆刷清洗器），结果如下。\n\n**最匹配的候选（第 1 个）**\n1. **Electric Makeup Brush Cleaner Machine Portable Automatic USB Cosmetic Brush Cleaner Tools For All Size Beauty Makeup Brushes Set**\n   - product_id：`1707021717920550912`\n   - 列表参考价：**US$1.93**（listing 价，USD）\n   - 库存：快照未提供（stock_known=false），规格/详情未开放（detail_available=false），无可用 SKU\n   - 备注：标题与\"USB 电动自动清洗化妆刷\"高度吻合；但快照给它挂的标签是\"Nail Art & Tools / Nail Art Kits\"（美甲工具），与标题品类存在标注不一致，下单前建议核对实物图与规格。\n\n**同批召回但明显不相关的（供你排除）**\n2. Storage Bag Lipstick Cosmetic Bag Mini Charger Automatic Closing — `2504250838161623400`，US$0.46–2.30（化妆包/收纳，非清洗机）\n3. Original Nail Phototherapy Lamp Charger — `1391645965982765056`，US$3.10（美甲灯充电器）\n4. 3D Rose Square Compact Mirror — `2101600682429415425`，US$1.38（折叠化妆镜）\n5. Rose Shape Compact Mirror — `2100523446852354049`，US$1.04（折叠化妆镜）\n\n**需要说明的两点**\n- 本次只检索到 **1 款** 标题明确是\"电动/USB 自动清洗化妆刷机\"的商品，没有更多同类可比款；其余召回项是镜子和收纳类，不是清洗设备。\n- 快照数据仅含 USD 列表参考价，**库存、目的国可配送性、运费与税费均未实时核验**，因此上面 US$1.93 不能当作最终到手价。\n\n如果这款不符预期，我可以：① 换关键词再搜（如\"brush cleaner spinner\"\"硅胶洗刷器\"\"化妆刷晾干架\"）；② 按你的收货国家做一次 CJ 物流试算（需确认具体规格，快照暂无 SKU）；③ 放宽到\"化妆刷清洗/晾干类周边\"。要哪个方向？",
+          "search_calls": 2,
+          "tool_names": [
+            "product_search_tool",
+            "product_search_tool"
+          ],
+          "usage": {
+            "status": "success",
+            "elapsed_ms": 107777.17929999926,
+            "model_calls": 9,
+            "input_tokens": null,
+            "output_tokens": null,
+            "observed_input_tokens": 28509,
+            "observed_output_tokens": 1008,
+            "unknown_usage_calls": 6,
+            "active_attempts_at_finish": 0,
+            "usage_complete": false,
+            "ttft_p95_ms": 1843.9999999827705,
+            "model_elapsed_ms": 37669.9999999837,
+            "tool_calls": 2,
+            "tool_errors": 0,
+            "fallbacks": 1,
+            "cost_usd": null,
+            "unknown_cost_calls": 9
+          },
+          "prior_interrupted_trace": null
+        }
+      },
+      "fix": {
+        "component": {
+          "ids": [
+            "2045065052201259009",
+            "2045064905648082946",
+            "1707021717920550912",
+            "2101600682429415425",
+            "2100523446852354049"
+          ],
+          "rank": 3,
+          "total_candidates": 291
+        },
+        "agent": {
+          "terminal": "RUN_FINISHED",
+          "trace_file": "eval\\verification\\cj-crosslang-v1\\holdout\\traces\\fix\\CJ-H007.jsonl.gz",
+          "first_rank": 1,
+          "searches": [
+            {
+              "query": "USB 自动清洗化妆刷 机器 电动洗刷器",
+              "category": "美妆个护",
+              "ids": [
+                "1707021717920550912",
+                "2101600682429415425",
+                "2100523446852354049",
+                "2100161257322807297",
+                "2097522223048400898"
+              ],
+              "rank": 1
+            },
+            {
+              "query": "makeup brush cleaner machine electric automatic USB washing dryer",
+              "category": "美妆个护",
+              "ids": [
+                "1707021717920550912",
+                "2EE039A5-9526-4884-BB30-9A6F4384EA6B",
+                "5072165D-C048-4DC6-9C79-724A95063041",
+                "1594197296273698816",
+                "1964945319390208002"
+              ],
+              "rank": 1
+            },
+            {
+              "query": "化妆刷清洗器 电动 自动甩干 USB充电 洗刷神器",
+              "category": "美妆个护",
+              "ids": [
+                "1707021717920550912",
+                "2504250838161623400",
+                "1391645965982765056",
+                "2101600682429415425",
+                "2100523446852354049"
+              ],
+              "rank": 1
+            }
+          ],
+          "any_hit_at_5": true,
+          "answer_mentions_anchor": true,
+          "answer": "已按你的需求检索「USB 自动清洗化妆刷的机器」，以下是本次候选（CJ 快照关键词召回，USD 列表参考价）：\n\n| 序号 | 商品 | product_id | 参考价 | 说明 |\n|---|---|---|---|---|\n| 1 | Electric Makeup Brush Cleaner Machine Portable Automatic USB Cosmetic Brush Cleaner Tools For All Size Beauty Makeup Brushes Set | `1707021717920550912` | US$1.93 | 标题完全对口（电动/自动/USB/适配各尺寸刷具）；快照无规格、无详情数据 |\n| 2 | Makeup brush cleaner electric | `2EE039A5-9526-4884-BB30-9A6F4384EA6B` | US$13.40 | 电动化妆刷清洗器，标题较简；快照无规格、无详情数据 |\n\n同一批召回里还有口红收纳包、可折叠化妆镜等，与本需求不相关；另有一批 USB 剃须/理毛器，是带电美容小电器的相邻品类，不是洗刷机，未列入上表。\n\n几点如实说明：\n- 以上价格是 CJ 快照的**列表参考价**，不是到手价；库存、是否可发你的目的国、运费与税费均未实时核验，`stock_known=false`，因此我不能说这两款「有货可发」。\n- 两款商品卡都没有返回 SKU 规格和详情（detail_available=false），所以无法在此给出颜色/规格选项；序号 1 的 US$1.93 与同类机器的常见价位差异较大，建议以商品详情页实际报价为准。\n- 本次只做检索与展示，未做物流试算、未准备任何订单意向。\n\n需要的话，告诉我目的国，我可以对这两款做一次 **CJ 物流试算**（看运费与费用完整性），或按 product_id 拉取具体规格详情。",
+          "search_calls": 3,
+          "tool_names": [
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool"
+          ],
+          "usage": {
+            "status": "success",
+            "elapsed_ms": 24505.525599990506,
+            "model_calls": 3,
+            "input_tokens": 29984,
+            "output_tokens": 1195,
+            "observed_input_tokens": 29984,
+            "observed_output_tokens": 1195,
+            "unknown_usage_calls": 0,
+            "active_attempts_at_finish": 0,
+            "usage_complete": true,
+            "ttft_p95_ms": 2905.9999999881256,
+            "model_elapsed_ms": 8842.99999999348,
+            "tool_calls": 3,
+            "tool_errors": 0,
+            "fallbacks": 0,
+            "cost_usd": null,
+            "unknown_cost_calls": 3
+          },
+          "prior_interrupted_trace": null
+        }
+      }
+    },
+    {
+      "id": "CJ-H008",
+      "stratum": "multi_attribute",
+      "anchor_id": "2045391075766996993",
+      "baseline": {
+        "component": {
+          "ids": [],
+          "rank": null,
+          "total_candidates": 0
+        },
+        "agent": {
+          "terminal": "RUN_FINISHED",
+          "trace_file": "eval\\verification\\cj-crosslang-v1\\holdout\\traces\\baseline\\CJ-H008.jsonl.gz",
+          "first_rank": null,
+          "searches": [
+            {
+              "query": "玄关换鞋 三层鞋架凳 带软垫 带抽屉",
+              "category": "家居生活",
+              "ids": [],
+              "rank": null
+            },
+            {
+              "query": "换鞋凳 鞋架凳 三层 软垫 抽屉",
+              "category": "家居生活",
+              "ids": [],
+              "rank": null
+            },
+            {
+              "query": "鞋架凳",
+              "category": "家居生活",
+              "ids": [],
+              "rank": null
+            },
+            {
+              "query": "鞋架",
+              "category": "家居生活",
+              "ids": [],
+              "rank": null
+            },
+            {
+              "query": "收纳凳 玄关凳 板凳",
+              "category": "家居生活",
+              "ids": [
+                "2508201238151608800",
+                "2508150153331629500",
+                "2508130240191619400",
+                "2508130219411601800",
+                "2508120227591618400"
+              ],
+              "rank": null
+            },
+            {
+              "query": "shoe rack bench entryway 3 tier cushion drawer",
+              "category": "家居生活",
+              "ids": [
+                "2045391075766996993",
+                "2045326891671404546",
+                "2045398966303645698",
+                "2042456502449774593",
+                "2508150153331629500"
+              ],
+              "rank": 1
+            },
+            {
+              "query": "shoe cabinet shoe stool entryway",
+              "category": "家居生活",
+              "ids": [
+                "2045326891671404546",
+                "2045391075766996993",
+                "2045064532782845953",
+                "2045398966303645698",
+                "2042463439643910146"
+              ],
+              "rank": 2
+            },
+            {
+              "query": "shoe bench padded cushion drawer 3 tier entryway",
+              "category": "家居生活",
+              "ids": [
+                "2045391075766996993",
+                "2045326891671404546",
+                "2045398966303645698",
+                "2042456502449774593",
+                "2042463439643910146"
+              ],
+              "rank": 1
+            }
+          ],
+          "any_hit_at_5": true,
+          "answer_mentions_anchor": true,
+          "answer": "已按“玄关换鞋凳：三层鞋架 + 软垫 + 抽屉”检索了当前 CJ 快照目录，找到 1 款高度吻合的候选，另有 2 款同场景但缺关键配置/用途不同，一并列出供你判断（按检索返回顺序）：\n\n**1. 三层鞋架凳（软垫 + 抽屉）— 最贴合**\n- product_id：`2045391075766996993`\n- 标题：Storage Bench, Shoe Bench, Entryway Bench With Padded Cushion, Drawer And Open Compartments, 3 Tier Shoe Rack Bench\n- 参考价：US$77.50（列表价，非到手价）\n- 可选规格：Gray（sku_id `CJFU28415700001`）\n- 快照重量：21.546 kg；材质标签为 Others（未细分类）\n- 匹配点：三层鞋架 + 软垫坐面 + 抽屉 + 开放格，与你的需求（三层、软垫、抽屉）逐项对应，是本次候选里唯一同时满足三点的。\n\n**2. 玄关储物凳（钢架 + 合成皮革）— 有坐面，但非三层抽屉款**\n- product_id：`2045398966303645698`\n- 参考价：US$58.39；规格 Green（sku_id `CJFU28417050001`）\n- 标题只提到钢架、合成皮革、承重 600 lb，**未提到抽屉或三层鞋架**，如果抽屉是硬需求，这款不满足。\n\n**3. 三抽小柜（两件套）— 属收纳柜，不是鞋凳**\n- product_id：`2045326891671404546`\n- 参考价：US$127.14；规格 Black（sku_id `CJFU28406260001`）\n- 有 3 个抽屉，可放玄关，但没有坐面/软垫，不属于换鞋凳。\n\n同批还返回了秋千椅、玄关条案等，与“换鞋鞋架凳”不符，未列入。\n\n需要说明的快照口径：以上均为 CJ 快照的 **USD 列表参考价**，库存、目的国可配送性、运费与税费均未实时核验，因此不等于最终到手价；品牌、产地、材质细分在快照中缺失，不作推断。本轮仅做检索展示，未进行交易、报价或偏好写入。\n\n如果你告诉我收货国家和大致预算，我可以按目的国再筛一轮；也可以对第 1 款拉取更详细的规格信息供你确认。",
+          "search_calls": 8,
+          "tool_names": [
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool"
+          ],
+          "usage": {
+            "status": "success",
+            "elapsed_ms": 33944.70709998859,
+            "model_calls": 6,
+            "input_tokens": 67766,
+            "output_tokens": 1935,
+            "observed_input_tokens": 67766,
+            "observed_output_tokens": 1935,
+            "unknown_usage_calls": 0,
+            "active_attempts_at_finish": 0,
+            "usage_complete": true,
+            "ttft_p95_ms": 3312.999999994645,
+            "model_elapsed_ms": 14454.000000056112,
+            "tool_calls": 8,
+            "tool_errors": 0,
+            "fallbacks": 0,
+            "cost_usd": null,
+            "unknown_cost_calls": 6
+          },
+          "prior_interrupted_trace": null
+        }
+      },
+      "fix": {
+        "component": {
+          "ids": [],
+          "rank": null,
+          "total_candidates": 0
+        },
+        "agent": {
+          "terminal": "RUN_FINISHED",
+          "trace_file": "eval\\verification\\cj-crosslang-v1\\holdout\\traces\\fix\\CJ-H008.jsonl.gz",
+          "first_rank": null,
+          "searches": [
+            {
+              "query": "玄关换鞋凳 三层鞋架 带软垫坐垫 带抽屉 收纳",
+              "category": null,
+              "ids": [
+                "2508201238151608800",
+                "2508150153331629500",
+                "2508130240191619400",
+                "2508130219411601800",
+                "2508120227591618400"
+              ],
+              "rank": null
+            },
+            {
+              "query": "shoe rack bench with cushion seat and drawer 3-tier entryway storage organizer",
+              "category": null,
+              "ids": [
+                "2045391075766996993",
+                "2042456502449774593",
+                "2049023478307803138",
+                "1780798841348952064",
+                "1390562609694117888"
+              ],
+              "rank": 1
+            },
+            {
+              "query": "换鞋凳 鞋架 坐垫 抽屉 三层 玄关",
+              "category": null,
+              "ids": [],
+              "rank": null
+            },
+            {
+              "query": "shoe bench storage bench entryway padded cushion drawer open compartments 3 tier shoe rack",
+              "category": null,
+              "ids": [
+                "2045391075766996993",
+                "2045326891671404546",
+                "2045398966303645698",
+                "2049007958665777154",
+                "2045064653591384065"
+              ],
+              "rank": 1
+            }
+          ],
+          "any_hit_at_5": true,
+          "answer_mentions_anchor": true,
+          "answer": "已完成检索（CJ 快照关键词检索，共命中候选池），为你筛出与「玄关换鞋用、带软垫、带抽屉、三层鞋架凳」最贴合的候选。按检索返回顺序如下：\n\n**1. Storage Bench / Shoe Bench / Entryway Bench** — 最贴合\n- product_id：`2045391075766996993`\n- 参考价：US$77.50（列表参考价，USD）\n- 规格：CJFU28415700001（Gray 灰）\n- 结构化属性：category = Home, Garden & Furniture;weight_kg = 21.546；material_tags = Others\n- 匹配点：标题明确包含 Padded Cushion（软垫）+ Drawer（抽屉）+ 3 Tier Shoe Rack Bench（三层鞋架凳），并含 Open Compartments 开放式隔层，与你的三点要求一致。\n- 提示：重量约 21.5kg，属较重家具件，搬运/上楼请自行评估。\n\n**2. Storage Bench For Entryway（钢架 + 合成皮革）** — 部分相关\n- product_id：`2045398966303645698`\n- 参考价：US$58.39\n- 规格：CJFU28417050001（Green 绿）\n- 结构化属性：weight_kg = 14.333；material_tags = Others\n- 匹配点：确为玄关收纳凳，钢架承重（标题称 600 lb）；但标题未体现抽屉与三层鞋架结构，软垫情况也未在快照字段中明确，是否满足你的三点要求需看详情页确认。\n\n**同批次其余候选（与鞋架凳需求不符，仅供你判断）**\n- `2045326891671404546` 三抽屉小斗柜两件套 US$127.14（是抽屉柜，非换鞋凳）\n- `2049007958665777154` 胡桃木床头柜（含开放层板+抽屉）US$121.93\n- `2045064653591384065` 带软垫凳梳妆台 US$169.17\n\n需要说明的数据口径：\n- 以上为 **CJ 快照的 USD 列表参考价**，库存（stock_known 均为 false）、目的国配送可达性、运费、税费与最终到手价均未实时核验，也和刚才批次一样没有随带任何「超预算/不可达」的过滤结果（filtered_out 为空），因此不构成\"已满足配送或预算条件\"的结论。\n- 未提供品牌与产地字段，故不做推断。\n\n如果你告诉我收货国家和期望预算，我可以再按硬约束重搜一轮；若要针对第 1 款确认规格细节或试算物流费用，也可以接着说（当前你只要求检索展示，我未做报价或下单动作）。",
+          "search_calls": 4,
+          "tool_names": [
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool"
+          ],
+          "usage": {
+            "status": "success",
+            "elapsed_ms": 29472.631499986164,
+            "model_calls": 4,
+            "input_tokens": 44440,
+            "output_tokens": 1757,
+            "observed_input_tokens": 44440,
+            "observed_output_tokens": 1757,
+            "unknown_usage_calls": 0,
+            "active_attempts_at_finish": 0,
+            "usage_complete": true,
+            "ttft_p95_ms": 3172.000000020489,
+            "model_elapsed_ms": 11484.000000025844,
+            "tool_calls": 4,
+            "tool_errors": 0,
+            "fallbacks": 0,
+            "cost_usd": null,
+            "unknown_cost_calls": 4
+          },
+          "prior_interrupted_trace": null
+        }
+      }
+    },
+    {
+      "id": "CJ-H009",
+      "stratum": "multi_attribute",
+      "anchor_id": "2408040216121601000",
+      "baseline": {
+        "component": {
+          "ids": [
+            "2507040831161621000",
+            "2505160457141629100",
+            "B97F72F9-DA4D-4DF0-A343-1E8ACE2C1E54",
+            "46BF0E71-3A41-45B1-B6B7-2AEF4AE151DA",
+            "2504071556161606100"
+          ],
+          "rank": null,
+          "total_candidates": 1101
+        },
+        "agent": {
+          "terminal": "RUN_FINISHED",
+          "trace_file": "eval\\verification\\cj-crosslang-v1\\holdout\\traces\\baseline\\CJ-H009.jsonl.gz",
+          "first_rank": null,
+          "searches": [
+            {
+              "query": "旅行包 出差 防水 干湿分离 鞋仓",
+              "category": "旅行装备",
+              "ids": [
+                "2508150136111601200",
+                "2406121449441602000",
+                "2407250921181622700",
+                "1369840813554667520",
+                "08E33F3F-21A8-4121-BEB3-FFE1A4CDBCCA"
+              ],
+              "rank": null
+            },
+            {
+              "query": "干湿分离 运动健身包 独立鞋仓 防水 大容量",
+              "category": "旅行装备",
+              "ids": [
+                "893E1809-57CE-428D-8FAF-CD5619F3D28C",
+                "1568108965530587136",
+                "2406180837151620500",
+                "2406080938141622300",
+                "2406080914281604800"
+              ],
+              "rank": null
+            },
+            {
+              "query": "business travel duffel bag shoe compartment wet dry separation waterproof",
+              "category": null,
+              "ids": [
+                "2408040216121601000",
+                "1619525655895486464",
+                "1422513896153026560",
+                "1531568394615664640",
+                "B8D783D2-C0BE-44FB-88B4-AC9BD612AE96"
+              ],
+              "rank": 1
+            }
+          ],
+          "any_hit_at_5": true,
+          "answer_mentions_anchor": true,
+          "answer": "已按你的需求检索了三条不同改写路线（中文品类词、健身包/干湿分离词、英文长描述），下面是候选清单。说明：本批来自 CJ 快照关键词匹配，价格是 **USD 列表参考价**，库存、可配送国家、运费与税费均未实时核验，因此不能视为\"已满足防水/可配送\"的确认结论。\n\n**最贴合\"出差 + 鞋仓 + 干湿分离 + 防水\"的候选**（英文描述路线，第 3 批）：\n\n1. **High Quality Waterproof Suit Bag For Men Large Capacity Travel Bag With Shoe Compartment Dry And Wet Separation Travel Organizer**\n   - product_id：`2408040216121601000`｜US$26.91｜品类：Men's Luggage & Bags\n   - 标题同时出现 waterproof + shoe compartment + dry and wet separation，是本次唯一四项关键词全覆盖的款，最接近你的诉求。\n\n2. **Luggage Bags For Women Handbag Oxford Men's Fitness Gym Shoulder Bag Waterproof Sports Travel Backpack With Shoes Compartment**\n   - product_id：`1619525655895486464`｜US$4.19–5.03｜Luggage & Travel Bags\n   - 标题含 waterproof + shoes compartment；未明确写干湿分离分区，需确认内部隔层结构。\n\n3. **Leather Man Folding Business Travel Bag With Shoe Pocket**\n   - product_id：`1531568394615664640`｜US$74.07｜Crossbody Bags\n   - 商务皮质、有独立鞋袋，但标题未提防水与干湿分离。\n\n4. **Genuine Leather Men's Business Travel Handbag Top Layer Cowhide One-shoulder Travel Bag Duffel Bag**\n   - product_id：`1422513896153026560`｜US$59.71｜Briefcases\n   - 出差商务向（头层牛皮、行李袋型），标题未体现鞋仓/防水/干湿分离。\n\n5. 另有一条 `B8D783D2-C0BE-44FB-88B4-AC9BD612AE96`（US$6.67）为笔记本包类，与旅行包诉求不符，列此仅供你排除。\n\n**另一条路线的补充候选**（健身/运动包词条，部分含防水卖点，未见明确鞋仓/干湿分离描述）：\n\n- `1568108965530587136` Fitness Sports Travel Bag Waterproof Duffel Weekender（US$4.05–5.14）\n- `2406080938141622300` Sports Bag Women's Workout Waterproof Breathable（US$7.32）\n- `893E1809-57CE-428D-8FAF-CD5619F3D28C` Sports training gym bag（US$5.07）\n\n**取用提示**\n- 快照中各商品的 `material_tags`、`weight_kg`、`ships_to` 字段为空，标题里写的\"防水\"属于供应商描述，我无法据此断言材质与工艺达标；确认真实规格需按 product_id 拉取规格详情。\n- 我对第 1 批（\"旅行包 出差 防水 干湿分离 鞋仓\"）的召回结果多为鞍形包/透明袋/学生书包，匹配度低，故未列入清单，并未作任何缺货或超预算判断。\n- 本次未做价格上限过滤，也没有可配送国家结论。\n\n如果你指定其中某个 product_id，我可以继续拉取它的规格详情，或在你说清收货国家和规格后试算 CJ 物流费用；如需下单，请告诉我具体型号、规格与收货信息。",
+          "search_calls": 3,
+          "tool_names": [
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool"
+          ],
+          "usage": {
+            "status": "success",
+            "elapsed_ms": 32007.43290001992,
+            "model_calls": 3,
+            "input_tokens": 27687,
+            "output_tokens": 1845,
+            "observed_input_tokens": 27687,
+            "observed_output_tokens": 1845,
+            "unknown_usage_calls": 0,
+            "active_attempts_at_finish": 0,
+            "usage_complete": true,
+            "ttft_p95_ms": 4750.0,
+            "model_elapsed_ms": 11922.00000002049,
+            "tool_calls": 3,
+            "tool_errors": 0,
+            "fallbacks": 0,
+            "cost_usd": null,
+            "unknown_cost_calls": 3
+          },
+          "prior_interrupted_trace": null
+        }
+      },
+      "fix": {
+        "component": {
+          "ids": [
+            "1824032070243864576",
+            "2406121449441602000",
+            "2501160802521604500",
+            "2406190815171626100",
+            "1850461206495514624"
+          ],
+          "rank": null,
+          "total_candidates": 1295
+        },
+        "agent": {
+          "terminal": "RUN_FINISHED",
+          "trace_file": "eval\\verification\\cj-crosslang-v1\\holdout\\traces\\fix\\CJ-H009.jsonl.gz",
+          "first_rank": null,
+          "searches": [
+            {
+              "query": "出差 旅行包 防水 干湿分离 带鞋仓 独立鞋位",
+              "category": "旅行装备",
+              "ids": [
+                "2406121449441602000",
+                "2501160802521604500",
+                "2406190815171626100",
+                "1850461206495514624",
+                "1568108965530587136"
+              ],
+              "rank": null
+            },
+            {
+              "query": "干湿分离 鞋仓 健身包 旅行包 防水 大容量 出差",
+              "category": "旅行装备",
+              "ids": [
+                "2406121449441602000",
+                "2501160802521604500",
+                "2406190815171626100",
+                "1850461206495514624",
+                "1568108965530587136"
+              ],
+              "rank": null
+            }
+          ],
+          "any_hit_at_5": false,
+          "answer_mentions_anchor": false,
+          "answer": "已为你检索「出差用 · 能放鞋 · 干湿分离 · 防水旅行包」，以下是本次返回的候选（按检索返回顺序展示，均来自 CJ 快照关键词召回，共 721 个候选池中取前 5 条）：\n\n| 序号 | 商品 | product_id | 参考价 | 结构字段 |\n|---|---|---|---|---|\n| 1 | Multi-functional Transparent Travel Waterproof Portable Aviation Plastic Bag | `2406121449441602000` | US$1.08–2.72（区间价） | 无 SKU、无材质标签 |\n| 2 | Ins Backpack Fashion Multifunctional Large Capacity Waterproof Travel Handbag | `2501160802521604500` | US$7.13 | 无 SKU、无材质标签 |\n| 3 | Waterproof Polyester Fabrics Gym Bag Portable Travel Handbag | `2406190815171626100` | US$10.12 | 无 SKU、无材质标签 |\n| 4 | New Folding Cosmetic Bag Large Capacity Waterproof Travel Storage Washing Bag | `1850461206495514624` | US$4.71 | 无 SKU、无材质标签 |\n| 5 | Fitness Sports Travel Bag Waterproof Duffel Weekender Bag Swim Gym Shoulder Bag | `1568108965530587136` | US$4.05–5.14（区间价） | 无 SKU、无材质标签 |\n\n选购说明（只引用结构化字段，不替商品脑补卖点）：\n- 从标题看，第 3、5 条最贴近你的\"出差旅行包\"场景（Gym/Duffel/Weekender，且标 waterproof），第 1 条更像收纳/航空分装袋，第 4 条是化妆洗漱收纳袋，与旅行主包定位有差异。\n- 关于你最看重的**放鞋 + 干湿分离**：本次返回的商品卡里 `material_tags`、`skus`、`highlights` 均未给出鞋仓、干湿分离隔层这类结构化信息，快照层无法确认这几款是否满足，需要进一步查单个商品的规格详情才能判断。\n- 价格是 USD 列表参考价；库存、目的国可配送性、运费税费和最终到手价均未实时核验，不能当作已满足的筛选条件。其中 1、5 为区间价，非单一确定价。\n\n下一步我可以帮你做（你选一个即可）：\n1. 指定某个 product_id，我去拉它的真实规格详情，确认是否有独立鞋仓/干湿分离隔层；\n2. 告诉我预算和收货国家，我按硬约束重新过滤一轮（含被过滤掉的候选我会如实列出原因）；\n3. 若你要的是\"到手费用\"口径，需你明确指定商品与规格，我再做物流试算。\n\n按当前规则，本轮仅做检索展示，未执行下单、报价或偏好写入。",
+          "search_calls": 2,
+          "tool_names": [
+            "product_search_tool",
+            "product_search_tool"
+          ],
+          "usage": {
+            "status": "success",
+            "elapsed_ms": 25673.31290000584,
+            "model_calls": 3,
+            "input_tokens": 26504,
+            "output_tokens": 1399,
+            "observed_input_tokens": 26504,
+            "observed_output_tokens": 1399,
+            "unknown_usage_calls": 0,
+            "active_attempts_at_finish": 0,
+            "usage_complete": true,
+            "ttft_p95_ms": 2358.9999999967404,
+            "model_elapsed_ms": 9358.99999999674,
+            "tool_calls": 2,
+            "tool_errors": 0,
+            "fallbacks": 0,
+            "cost_usd": null,
+            "unknown_cost_calls": 3
+          },
+          "prior_interrupted_trace": null
+        }
+      }
+    },
+    {
+      "id": "CJ-H010",
+      "stratum": "multi_attribute",
+      "anchor_id": "2504100230321610200",
+      "baseline": {
+        "component": {
+          "ids": [
+            "2505030219141625700",
+            "1719262207193657344",
+            "1711607915393593344",
+            "1669574275931578368",
+            "1669560516924153856"
+          ],
+          "rank": null,
+          "total_candidates": 422
+        },
+        "agent": {
+          "terminal": "RUN_FINISHED",
+          "trace_file": "eval\\verification\\cj-crosslang-v1\\holdout\\traces\\baseline\\CJ-H010.jsonl.gz",
+          "first_rank": null,
+          "searches": [
+            {
+              "query": "遛狗便携水杯 水粮两用 同时装水与狗粮",
+              "category": "户外运动",
+              "ids": [
+                "1397059922478370816",
+                "1558373238525407232"
+              ],
+              "rank": null
+            },
+            {
+              "query": "狗狗外出水粮一体杯 便携饮水器 带狗粮仓",
+              "category": null,
+              "ids": [
+                "2505030219141625700",
+                "1719262207193657344",
+                "1711607915393593344",
+                "1669574275931578368",
+                "1669560516924153856"
+              ],
+              "rank": null
+            },
+            {
+              "query": "宠物外出饮水杯 水杯 狗粮仓 一体",
+              "category": "母婴宠物",
+              "ids": [
+                "2505030219141625700",
+                "1719262207193657344",
+                "1711607915393593344",
+                "1611983170965090304",
+                "1576125363036631040"
+              ],
+              "rank": null
+            },
+            {
+              "query": "pet water bottle dog food container travel",
+              "category": null,
+              "ids": [
+                "2504100230321610200",
+                "F4784EF1-D030-441B-8E33-67D590DE35FF",
+                "2602090303381624300",
+                "2408300217501608200",
+                "2407140655211602100"
+              ],
+              "rank": 1
+            },
+            {
+              "query": "狗水壶 便携 户外 饮水器",
+              "category": "户外运动",
+              "ids": [
+                "1397059922478370816",
+                "2508210325521619600",
+                "2086703455414374401",
+                "2086653160247414785",
+                "2086355607972917250"
+              ],
+              "rank": null
+            },
+            {
+              "query": "travel water bottle",
+              "category": null,
+              "ids": [
+                "F4784EF1-D030-441B-8E33-67D590DE35FF",
+                "2602090303381624300",
+                "2408300217501608200",
+                "2407140655211602100",
+                "1654057903558504448"
+              ],
+              "rank": null
+            },
+            {
+              "query": "2 in 1 dog water bottle with food container leakproof outdoor walking",
+              "category": null,
+              "ids": [
+                "2504100230321610200",
+                "F4784EF1-D030-441B-8E33-67D590DE35FF",
+                "2602090303381624300",
+                "2408300217501608200",
+                "2407140655211602100"
+              ],
+              "rank": 1
+            },
+            {
+              "query": "宠物水粮杯 双仓 遛狗 饮水喂食器",
+              "category": "母婴宠物",
+              "ids": [
+                "2505030219141625700",
+                "1719262207193657344",
+                "1711607915393593344",
+                "1611983170965090304",
+                "1576125363036631040"
+              ],
+              "rank": null
+            }
+          ],
+          "any_hit_at_5": true,
+          "answer_mentions_anchor": true,
+          "answer": "为你检索了几组关键词（中英文混搜），CJ 快照里确实有一批\"宠物外出饮水\"类商品，其中带狗粮仓的 2 合 1 款型最贴合你的需求。以下按检索返回顺序展示（价格为 CJ 快照 USD 列表参考价，库存/配送/运费均未实时核验）：\n\n**最贴合\"水+粮二合一\"的两款**\n\n1. **2 In 1 Portable Dog Water Bottle（带 Food Container）** — `2504100230321610200`\n   US$2.21–2.77（区间价）\n   标题明确是 \"2 In 1 … Leak-proof Puppy Drinking Bowl **With Food Container**\"，即饮水碗+储粮仓一体，大小型犬猫通用，是本次最直接命中你需求的一款。\n\n2. **2 In 1 Travel Dog Water Bottle Pet Water Dispenser Feeder** — `2408300217501608200`\n   US$1.93\n   同为 2 合 1 外出饮水喂食器，价格最低，但标题未特别强调储粮仓容量，具体结构需进一步确认。\n\n**便携饮水类（可能仅储水，粮仓需核实）**\n\n3. **Pet Outdoor Foldable Bottle Dog Travel Water Bottle** — `F4784EF1-D030-441B-8E33-67D590DE35FF`\n   US$5.60–11.07（区间价，跨度较大，可能对应不同容量规格）\n\n4. **Creative Portable Outdoor Pet Stainless Steel Water Cup** — `2602090303381624300`\n   US$1.05–14.84（区间价跨度很大，说明规格差异明显，不锈钢杯体是它的卖点）\n\n5. **Dog Water Cup Portable Pet Supplies（户外饮水碗/水壶）** — `2407140655211602100`\n   US$2.46–2.99\n\n6. **New Portable Pet Dog Water Bottle Soft Silicone Leaf Design** — `1654057903558504448`\n   US$4.13–11.75，硅胶叶片造型，偏向饮水碗设计。\n\n**几点如实说明**\n\n- 这几款都是 CJ 快照商品，列表价是按 USD 记录的**参考区间价**，不是到手价；快照不核验库存、目的国可达性与运费，所以现在无法确认能否发到你那里、到手多少钱。\n- 上述商品除第 1、3 款外都标记 `detail_available=false`（详情不可取），因此没有 SKU 明细可看；第 1 款也属于快照列表条目，规格细节仍需拉详情才能确认。\n- 如果你要\"水和粮必须分仓且都够一顿的量\"，第 1 款最符合；如果只看便携饮水、粮另装，第 3～6 款都可以考虑。\n\n需要我进一步做哪一步？比如：拉某一款的规格详情、对指定款和目的国试算运费，或再换关键词（如\"大容量\"\"保温\"\"带挂扣\"）重搜。",
+          "search_calls": 8,
+          "tool_names": [
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool"
+          ],
+          "usage": {
+            "status": "success",
+            "elapsed_ms": 31131.474900001194,
+            "model_calls": 4,
+            "input_tokens": 69990,
+            "output_tokens": 2130,
+            "observed_input_tokens": 69990,
+            "observed_output_tokens": 2130,
+            "unknown_usage_calls": 0,
+            "active_attempts_at_finish": 0,
+            "usage_complete": true,
+            "ttft_p95_ms": 2469.0000000118744,
+            "model_elapsed_ms": 13126.000000018394,
+            "tool_calls": 8,
+            "tool_errors": 0,
+            "fallbacks": 0,
+            "cost_usd": null,
+            "unknown_cost_calls": 4
+          },
+          "prior_interrupted_trace": null
+        }
+      },
+      "fix": {
+        "component": {
+          "ids": [
+            "2505030219141625700",
+            "1719262207193657344",
+            "1711607915393593344",
+            "1669574275931578368",
+            "1669560516924153856"
+          ],
+          "rank": null,
+          "total_candidates": 422
+        },
+        "agent": {
+          "terminal": "RUN_FINISHED",
+          "trace_file": "eval\\verification\\cj-crosslang-v1\\holdout\\traces\\fix\\CJ-H010.jsonl.gz",
+          "first_rank": null,
+          "searches": [
+            {
+              "query": "遛狗便携水杯 同时装水 装狗粮 二合一",
+              "category": "户外运动",
+              "ids": [
+                "1397059922478370816",
+                "1558373238525407232"
+              ],
+              "rank": null
+            },
+            {
+              "query": "宠物便携水壶 户外饮水器 狗粮储存",
+              "category": "户外运动",
+              "ids": [
+                "1397059922478370816",
+                "2508210325521619600",
+                "2086703455414374401",
+                "2086653160247414785",
+                "2086355607972917250"
+              ],
+              "rank": null
+            },
+            {
+              "query": "dog water bottle food container travel",
+              "category": null,
+              "ids": [
+                "2504100230321610200",
+                "F4784EF1-D030-441B-8E33-67D590DE35FF",
+                "2602090303381624300",
+                "2408300217501608200",
+                "2407140655211602100"
+              ],
+              "rank": 1
+            }
+          ],
+          "any_hit_at_5": true,
+          "answer_mentions_anchor": true,
+          "answer": "帮你按\"遛狗时能同时装水+装狗粮\"的方向检索了。中文关键词没打中，换成英文关键词后召回准确，以下是匹配度最高的候选（按检索返回顺序展示）：\n\n| # | 商品 | 参考价（USD） | product_id | 说明 |\n|---|---|---|---|---|\n| 1 | 2 In 1 Portable Dog Water Bottle For Small Big Dogs Cat Outdoor Leak-proof Puppy Drinking Bowl **With Food Container** | US$2.21–2.77 | `2504100230321610200` | 标题明确是\"二合一 + 带食物仓\"，与\"同时装水装粮\"最贴合 |\n| 2 | Pet Outdoor Foldable Bottle Dog Travel Water Bottle Dog Water Dispenser | US$5.60–11.07 | `F4784EF1-D030-441B-8E33-67D590DE35FF` | 折叠式便携水壶，偏纯饮水，未标注储粮仓 |\n| 3 | Creative Portable Outdoor Pet Stainless Steel Water Cup Small Dog Water Bottle | US$1.05–14.84 | `2602090303381624300` | 不锈钢便携水杯，价格区间跨度大，未标注储粮仓 |\n| 4 | 2 In 1 Travel Dog Water Bottle Pet Water Dispenser Feeder Drinking Feeder Dog Outing Water Feeder | US$1.93 | `2408300217501608200` | 标题为\"二合一旅行款\"，第二个功能大概率是零食/粮仓 |\n| 5 | Dog Water Cup Portable Pet Supplies For Water Bottle Dog Drinking Bowl Cup | US$2.46–2.99 | `2407140655211602100` | 纯饮水杯，未见储粮设计 |\n\n**选购建议方向**：如果你的核心诉求是\"一趟遛狗同时带水+带粮\"，优先看 **1 号** `2504100230321610200`，标题里的\"2 In 1 + With Food Container\"是这几款里唯一把储粮功能写明的；4 号 `2408300217501608200` 同为二合一但描述较简，可以作为备选对比。\n\n**需要说明的数据口径**：\n- 以上均为 **CJ 快照的 USD 列表参考价**，库里这几款目前没有返回可用 SKU 明细（`detail_available=false`），所以容量、材质、是否真的带独立粮仓，无法从结构化字段核实——标题描述与实际规格请以详情确认为准。\n- 库存、可配送国家、运费和最终到手价均未实时核验，`ships_to` 为空，因此**不能据此判断能否发到你所在的国家**。如果你告诉我收货国，或指定某一款想看具体规格/配送试算，我可以再进一步查。",
+          "search_calls": 3,
+          "tool_names": [
+            "product_search_tool",
+            "product_search_tool",
+            "product_search_tool"
+          ],
+          "usage": {
+            "status": "success",
+            "elapsed_ms": 26102.73959999904,
+            "model_calls": 3,
+            "input_tokens": 29251,
+            "output_tokens": 1416,
+            "observed_input_tokens": 29251,
+            "observed_output_tokens": 1416,
+            "unknown_usage_calls": 0,
+            "active_attempts_at_finish": 0,
+            "usage_complete": true,
+            "ttft_p95_ms": 4280.999999988126,
+            "model_elapsed_ms": 9966.999999975087,
+            "tool_calls": 3,
+            "tool_errors": 0,
+            "fallbacks": 0,
+            "cost_usd": null,
+            "unknown_cost_calls": 3
+          },
+          "prior_interrupted_trace": null
+        }
+      }
+    }
+  ],
+  "metrics": {
+    "baseline": {
+      "n": 10,
+      "component_hit_at_1": 1,
+      "component_hit_at_3": 2,
+      "component_hit_at_5": 2,
+      "component_mrr": 0.1333,
+      "agent_first_hit_at_1": 2,
+      "agent_first_hit_at_3": 2,
+      "agent_first_hit_at_5": 2,
+      "agent_first_mrr": 0.2,
+      "agent_any_hit_at_5": 8,
+      "answer_mentions_anchor": 8,
+      "model_calls": 44,
+      "usage_complete": false,
+      "unknown_usage_calls": 8,
+      "input_tokens": null,
+      "output_tokens": null,
+      "observed_input_tokens": 402257,
+      "observed_output_tokens": 15803,
+      "search_calls": 42
+    },
+    "fix": {
+      "n": 10,
+      "component_hit_at_1": 1,
+      "component_hit_at_3": 2,
+      "component_hit_at_5": 3,
+      "component_mrr": 0.1583,
+      "agent_first_hit_at_1": 3,
+      "agent_first_hit_at_3": 3,
+      "agent_first_hit_at_5": 3,
+      "agent_first_mrr": 0.3,
+      "agent_any_hit_at_5": 8,
+      "answer_mentions_anchor": 8,
+      "model_calls": 35,
+      "usage_complete": false,
+      "unknown_usage_calls": 1,
+      "input_tokens": null,
+      "output_tokens": null,
+      "observed_input_tokens": 344427,
+      "observed_output_tokens": 15232,
+      "search_calls": 34
+    }
+  }
+}

@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import asyncio
 from contextlib import closing
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import html
 import json
 import logging
@@ -18,7 +18,8 @@ from typing import Any
 
 from app.domain.catalog.product_search_spec import ProductSearchSpec
 from app.domain.catalog.ports.retrieval_ports import EmbeddingClient, ProductVectorIndex
-from app.infrastructure.retrieval.bm25 import bm25_rank, reciprocal_rank_fusion
+from app.infrastructure.context import ShoppingContext
+from app.infrastructure.persistence.cj_localization import CJLocalization
 
 
 _BASE_WORDS = {
@@ -53,6 +54,10 @@ _HTML_TAG = re.compile(r"<[^>]+>")
 _HYBRID_CANDIDATES = 80
 _CATEGORY_BOOST = 0.005
 logger = logging.getLogger(__name__)
+
+
+class CJSearchUnavailable(ValueError):
+    """Search infrastructure failed; it must not look like an empty catalog."""
 
 
 @dataclass(frozen=True)
@@ -125,12 +130,14 @@ class CJCatalog:
         embedder: EmbeddingClient | None = None,
         vector_index: ProductVectorIndex | None = None,
         hybrid_enabled: bool = False,
+        localization: CJLocalization | None = None,
     ):
         self.path = path
         self.experimental_lexicon = experimental_lexicon
         self.embedder = embedder
         self.vector_index = vector_index
         self.hybrid_enabled = hybrid_enabled
+        self.localization = localization
         self.vector_available = False
         self._documents: list[CJSearchDocument] | None = None
         self._documents_by_id: dict[str, CJSearchDocument] = {}
@@ -178,7 +185,9 @@ class CJCatalog:
                        if stock and "cj" in stock and "factory" in stock else {}),
                 })
         image = detail.get("bigImage") or listing.get("bigImage")
-        material = _labels(detail.get("materialNameEnSet") or detail.get("materialNameEn"))
+        material = _labels(detail.get("materialNameSet") or detail.get("materialName"))
+        if not material or not any(re.search(r"[\u3400-\u9fff]", label) for label in material):
+            material = _labels(detail.get("materialNameEnSet") or detail.get("materialNameEn"))
         warehouses = [str(item.get("countryCode")) for item in inventory.get("inventories") or []
                       if isinstance(item, dict) and item.get("countryCode") and _positive_count(item.get("cjInventoryNum"))]
         factory_countries = [str(item.get("countryCode")) for item in inventory.get("inventories") or []
@@ -220,6 +229,9 @@ class CJCatalog:
         clauses: list[str] = []
         args: list[str] = []
         categories = _CATEGORIES.get(category, (category,)) if category else ()
+        if (query.strip() and re.search(r"[\u3400-\u9fff]", query) and not (direct_id or direct_sku)
+                and self.localization is not None and self.localization.available()):
+            return self._browse_localized(query, categories, page, page_size)
         if categories and not (direct_id or direct_sku):
             clauses.append("first_category IN (" + ",".join("?" for _ in categories) + ")")
             args.extend(categories)
@@ -228,9 +240,10 @@ class CJCatalog:
                            "WHERE json_extract(v.value, '$.vid') = ? COLLATE NOCASE))")
             args.extend((direct_id, direct_id))
         elif direct_sku:
-            clauses.append("EXISTS (SELECT 1 FROM json_each(products.detail_json, '$.variants') v "
-                           "WHERE lower(json_extract(v.value, '$.variantSku')) = lower(?))")
-            args.append(direct_sku)
+            clauses.append("(lower(json_extract(list_json, '$.sku')) = lower(?) OR "
+                           "EXISTS (SELECT 1 FROM json_each(products.detail_json, '$.variants') v "
+                           "WHERE lower(json_extract(v.value, '$.variantSku')) = lower(?)))")
+            args.extend((direct_sku, direct_sku))
         elif terms:
             clauses.append("(" + " OR ".join("lower(json_extract(list_json, '$.nameEn')) LIKE ?" for _ in terms) + ")")
             args.extend(f"%{term}%" for term in terms)
@@ -259,11 +272,45 @@ class CJCatalog:
             "detail_count": detailed, "inventory_count": inventory,
             "page": page, "page_size": page_size,
             "categories": list(dict.fromkeys(name for names in _CATEGORIES.values() for name in names)),
-            "products": [self._card(row) for row in rows],
+            "products": self._localized_cards(rows),
+        }
+
+    def _localized_cards(self, rows: list[sqlite3.Row]) -> list[dict]:
+        localized = self.localization.lookup_many([str(row["pid"]) for row in rows]) if self.localization else {}
+        return [CJLocalization.apply_card(row, self._card(row), localized.get(str(row["pid"]))) for row in rows]
+
+    def _browse_localized(self, query: str, categories: tuple[str, ...], page: int, page_size: int) -> dict:
+        assert self.localization is not None
+        ranked_ids = self.localization.search(query, categories)
+        selected = ranked_ids[(page - 1) * page_size:page * page_size]
+        found = self._rows_by_ids(selected)
+        rows = [found[pid] for pid in selected if pid in found]
+        with closing(self._db()) as db:
+            all_count = db.execute("SELECT count(*) FROM products").fetchone()[0]
+            detailed = db.execute("SELECT count(*) FROM products WHERE detail_json IS NOT NULL").fetchone()[0]
+            inventory = db.execute("SELECT count(*) FROM products WHERE inventory_json IS NOT NULL").fetchone()[0]
+        return {
+            "source": "cj", "total": len(ranked_ids), "all_count": all_count,
+            "detail_count": detailed, "inventory_count": inventory,
+            "page": page, "page_size": page_size,
+            "categories": list(dict.fromkeys(name for names in _CATEGORIES.values() for name in names)),
+            "products": self._localized_cards(rows),
         }
 
     async def browse(self, query: str = "", category: str = "", page: int = 1, page_size: int = 24) -> dict:
         return await asyncio.to_thread(self._browse, query, category, page, page_size)
+
+    async def localize_saved_cards(self, cards: list[dict]) -> list[dict]:
+        if self.localization is None or not cards:
+            return cards
+        def project() -> list[dict]:
+            pids = [str(card.get("product_id")) for card in cards
+                    if card.get("source_platform") == "CJdropshipping" and card.get("product_id")]
+            rows = self._rows_by_ids(pids)
+            translated = self.localization.lookup_many(pids)
+            return [CJLocalization.apply_card(rows[card["product_id"]], card, translated.get(card["product_id"]))
+                    if card.get("product_id") in rows else card for card in cards]
+        return await asyncio.to_thread(project)
 
     @staticmethod
     def _index_text(row: sqlite3.Row) -> str:
@@ -330,33 +377,34 @@ class CJCatalog:
         return {str(row["pid"]): row for row in rows}
 
     async def _hybrid_search(self, spec: ProductSearchSpec) -> dict:
-        documents = await self.list_all()
-        lexical_task = asyncio.to_thread(bm25_rank, spec.normalized_query, documents)
+        if not self.vector_available or self.embedder is None or self.vector_index is None:
+            raise CJSearchUnavailable("CJ 商品检索暂不可用，请稍后重试")
+        await self.list_all()
+        snapshot = ShoppingContext.current()
+        raw_query = spec.raw_query.strip() or (snapshot.raw_query.strip() if snapshot else "") or spec.normalized_query.strip()
+        normalized_query = spec.normalized_query.strip()
+        # Keep the complete Agent rewrite in dense recall. BM25 receives only
+        # its ASCII keywords, even when the rewrite also contains Chinese.
+        english_query = " ".join(re.findall(
+            r"[A-Za-z0-9]+(?:[-_.][A-Za-z0-9]+)*", normalized_query,
+        ))[:240]
+        dense_texts = [raw_query]
+        if normalized_query and normalized_query.casefold() != raw_query.casefold():
+            dense_texts.append(normalized_query)
+        try:
+            vectors = await asyncio.wait_for(self.embedder.embed_batch(dense_texts), timeout=7.0)
+            fused_hits = await asyncio.wait_for(
+                self.vector_index.hybrid_search(vectors, english_query, top_n=_HYBRID_CANDIDATES * 2),
+                timeout=3.0,
+            )
+        except Exception as error:  # noqa: BLE001 - report infrastructure failure, not an empty hit list.
+            logger.warning("CJ Qdrant hybrid search unavailable: %s", error)
+            raise CJSearchUnavailable("CJ 商品检索暂不可用，请稍后重试") from error
 
-        async def vector_recall() -> list[tuple[float, CJSearchDocument]] | None:
-            if not self.vector_available or self.embedder is None or self.vector_index is None:
-                return None
-            try:
-                vector = await self.embedder.embed(spec.normalized_query)
-                hits = await self.vector_index.search(vector, top_n=_HYBRID_CANDIDATES)
-                return [
-                    (hit.score, self._documents_by_id[hit.product_id])
-                    for hit in hits
-                    if hit.product_id in self._documents_by_id
-                ]
-            except Exception as error:  # noqa: BLE001 - BM25 remains a valid degraded path.
-                logger.warning("CJ vector recall unavailable; using BM25 only: %s", error)
-                # The lexical side remains useful and the response reports the actual strategy.
-                return None
-
-        lexical_hits, vector_hits = await asyncio.gather(lexical_task, vector_recall())
-        lexical_hits = lexical_hits[:_HYBRID_CANDIDATES]
-        if vector_hits is None:
-            fused = reciprocal_rank_fusion(lexical_hits)
-            strategy = "cj_bm25"
-        else:
-            fused = reciprocal_rank_fusion(lexical_hits, vector_hits)
-            strategy = "cj_hybrid_rrf"
+        fused = [
+            (hit.score, self._documents_by_id[hit.product_id])
+            for hit in fused_hits if hit.product_id in self._documents_by_id
+        ]
 
         # Category is evidence for ranking, never a reason to discard a query-relevant item.
         rescored = [
@@ -366,12 +414,13 @@ class CJCatalog:
         rescored.sort(key=lambda item: (-item[0], item[1].product_id))
         candidate_ids = [document.product_id for _, document in rescored]
         rows = self._rows_by_ids(candidate_ids)
+        localized = self.localization.lookup_many(candidate_ids) if self.localization else {}
         cards: list[dict] = []
         for score, document in rescored:
             row = rows.get(document.product_id)
             if row is None:
                 continue
-            card = self._card(row, score=score)
+            card = CJLocalization.apply_card(row, self._card(row, score=score), localized.get(document.product_id))
             if spec.price_max_major is not None and spec.target_currency == "USD" and spec.budget_basis == "product":
                 if card["price_kind"] != "unknown" and card["price_major"] > spec.price_max_major:
                     continue
@@ -382,10 +431,11 @@ class CJCatalog:
             "source": "cj",
             "hits": cards,
             "total_candidates": len(rescored),
-            "recall_strategy": strategy,
-            "retrieval_variant": "cj_bm25_vector_rrf_v1",
-            "vector_available": vector_hits is not None,
+            "recall_strategy": "cj_qdrant_rrf" if english_query else "cj_qdrant_dense",
+            "retrieval_variant": "cj_qdrant_dense_bm25_rrf_v2",
+            "vector_available": True,
             "category_mode": "soft_boost",
+            "query_variants": {"dense": dense_texts, "bm25": english_query},
             "rerank_applied": False,
             "data_scope": "CJ 快照混合检索；USD 列表参考价。库存、目的地配送、运费、税费和最终到手价未实时核验，不能当作已满足的筛选条件。",
             "filtered_out": [],
@@ -406,7 +456,20 @@ class CJCatalog:
             and re.search(r"\d", exact)
         )
         if self.hybrid_enabled and not (direct_identifier or opaque_identifier):
-            return await self._hybrid_search(spec)
+            try:
+                return await self._hybrid_search(spec)
+            except CJSearchUnavailable:
+                # Only an actual product ID/SKU can be recovered by exact lookup.
+                # A free-text outage must remain an error, never a false "no products".
+                embedded_id = re.search(
+                    r"(?<![A-Za-z0-9])(?:[0-9]{16,24}|[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}|CJ[A-Z0-9_-]{6,96})(?![A-Za-z0-9])",
+                    spec.raw_query or spec.normalized_query, flags=re.I,
+                )
+                if embedded_id is None:
+                    raise
+                fallback = await self.execute(replace(spec, normalized_query=embedded_id.group(), category=None))
+                fallback["degraded_from"] = "cj_qdrant_unavailable"
+                return fallback
         page = await self.browse(spec.normalized_query, spec.category or "", 1, max(spec.top_k * 4, 20))
         hits = page["products"]
         if spec.price_max_major is not None and spec.target_currency == "USD" and spec.budget_basis == "product":

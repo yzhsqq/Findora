@@ -1,0 +1,282 @@
+{
+  "snapshot_sha256": "f29e0e107143422f80ca6ac2d4c74c88e9b577ec6f9ca3176c05dfd93bd9928d",
+  "baseline_commit": "30b9a4f7e22cfe42c234ba0dc0449d717e870aac",
+  "rule": "first miss: category-off rescue, ideal-title rescue, ideal top50 ranking, otherwise retrieval; final ID omission with first hit: answer",
+  "rows": [
+    {
+      "suite": "known",
+      "id": "CJ-H001",
+      "anchor_id": "2504270351581616600",
+      "first_fault": "category",
+      "first_query": "memory foam U-shaped neck pillow travel sleep",
+      "first_category": "旅行装备",
+      "first_actual_rank": null,
+      "any_hit5": true,
+      "final_anchor_id_present": true,
+      "query_category_off": {
+        "query": "memory foam U-shaped neck pillow travel sleep",
+        "category": null,
+        "top_k": 5,
+        "anchor_rank": 1,
+        "candidate_ids": [
+          "2504270351581616600",
+          "1400751666202021888",
+          "1956612313509810177",
+          "2507210652271603000",
+          "1376507432263618560"
+        ],
+        "total_candidates": 559
+      },
+      "query_category_on": {
+        "query": "memory foam U-shaped neck pillow travel sleep",
+        "category": "旅行装备",
+        "top_k": 5,
+        "anchor_rank": null,
+        "candidate_ids": [
+          "2410010651411603900",
+          "2412020937191614400",
+          "2508150136111601200",
+          "2406121449441602000",
+          "1610531297213034496"
+        ],
+        "total_candidates": 132
+      },
+      "ideal_title_query": "Memory Foam Travel Neck Pillow U Shape",
+      "ideal_off_top5": {
+        "query": "Memory Foam Travel Neck Pillow U Shape",
+        "category": null,
+        "top_k": 5,
+        "anchor_rank": 1,
+        "candidate_ids": [
+          "2504270351581616600",
+          "1400751666202021888",
+          "1956612313509810177",
+          "CBAAC34D-ABD5-4C3D-8245-B34ADDE3D2D6",
+          "1879454910769369089"
+        ],
+        "total_candidates": 530
+      },
+      "ideal_off_top50": null
+    },
+    {
+      "suite": "known",
+      "id": "CJ-H003",
+      "anchor_id": "2000401502466637825",
+      "first_fault": "category",
+      "first_query": "electric coffee bean and spice grinder small",
+      "first_category": "厨房餐饮",
+      "first_actual_rank": null,
+      "any_hit5": true,
+      "final_anchor_id_present": true,
+      "query_category_off": {
+        "query": "electric coffee bean and spice grinder small",
+        "category": null,
+        "top_k": 5,
+        "anchor_rank": 1,
+        "candidate_ids": [
+          "2000401502466637825",
+          "1796840458228862976",
+          "1740566998783897600",
+          "1739218930918502400",
+          "1797887952979234816"
+        ],
+        "total_candidates": 2758
+      },
+      "query_category_on": {
+        "query": "electric coffee bean and spice grinder small",
+        "category": "厨房餐饮",
+        "top_k": 5,
+        "anchor_rank": null,
+        "candidate_ids": [
+          "1796840458228862976",
+          "1797887952979234816",
+          "2406150919131616300",
+          "2406220933331603300",
+          "1702538704222834688"
+        ],
+        "total_candidates": 440
+      },
+      "ideal_title_query": "Electric Coffee Grinder Bean Spice",
+      "ideal_off_top5": {
+        "query": "Electric Coffee Grinder Bean Spice",
+        "category": null,
+        "top_k": 5,
+        "anchor_rank": 1,
+        "candidate_ids": [
+          "2000401502466637825",
+          "1796840458228862976",
+          "2406150919131616300",
+          "1608330591714422784",
+          "2504170300131618000"
+        ],
+        "total_candidates": 154
+      },
+      "ideal_off_top50": null
+    },
+    {
+      "suite": "holdout",
+      "id": "CJ-V2H003",
+      "anchor_id": "2602090303381624300",
+      "first_fault": "answer",
+      "first_query": "dog outdoor portable water bottle stainless steel",
+      "first_category": "母婴宠物",
+      "first_actual_rank": 1,
+      "any_hit5": true,
+      "final_anchor_id_present": false,
+      "query_category_off": {
+        "query": "dog outdoor portable water bottle stainless steel",
+        "category": null,
+        "top_k": 5,
+        "anchor_rank": 1,
+        "candidate_ids": [
+          "2602090303381624300",
+          "2504100230321610200",
+          "2408300217501608200",
+          "2407140655211602100",
+          "1654057903558504448"
+        ],
+        "total_candidates": 1745
+      },
+      "query_category_on": {
+        "query": "dog outdoor portable water bottle stainless steel",
+        "category": "母婴宠物",
+        "top_k": 5,
+        "anchor_rank": 1,
+        "candidate_ids": [
+          "2602090303381624300",
+          "2504100230321610200",
+          "2408300217501608200",
+          "2407140655211602100",
+          "1654057903558504448"
+        ],
+        "total_candidates": 568
+      },
+      "ideal_title_query": "Portable Outdoor Stainless Steel Water Cup Small Dog",
+      "ideal_off_top5": {
+        "query": "Portable Outdoor Stainless Steel Water Cup Small Dog",
+        "category": null,
+        "top_k": 5,
+        "anchor_rank": 1,
+        "candidate_ids": [
+          "2602090303381624300",
+          "2504100230321610200",
+          "2097267882200457217",
+          "1392067844971302912",
+          "2408300217501608200"
+        ],
+        "total_candidates": 1997
+      },
+      "ideal_off_top50": null
+    },
+    {
+      "suite": "holdout",
+      "id": "CJ-V2H004",
+      "anchor_id": "1400751666202021888",
+      "first_fault": "category",
+      "first_query": "foldable H-shaped inflatable neck pillow travel nap",
+      "first_category": "旅行装备",
+      "first_actual_rank": null,
+      "any_hit5": true,
+      "final_anchor_id_present": true,
+      "query_category_off": {
+        "query": "foldable H-shaped inflatable neck pillow travel nap",
+        "category": null,
+        "top_k": 5,
+        "anchor_rank": 1,
+        "candidate_ids": [
+          "1400751666202021888",
+          "1376507432263618560",
+          "2086332154158952449",
+          "2086025984208461826",
+          "1769305188013191168"
+        ],
+        "total_candidates": 607
+      },
+      "query_category_on": {
+        "query": "foldable H-shaped inflatable neck pillow travel nap",
+        "category": "旅行装备",
+        "top_k": 5,
+        "anchor_rank": null,
+        "candidate_ids": [
+          "1816366468645670912",
+          "1371703315292884992",
+          "D48478AD-25F2-467B-816D-F05F9A894E3F",
+          "1527483304503685120",
+          "2406110723151610700"
+        ],
+        "total_candidates": 136
+      },
+      "ideal_title_query": "H Shaped Inflatable Neck Pillow Folding Airplane",
+      "ideal_off_top5": {
+        "query": "H Shaped Inflatable Neck Pillow Folding Airplane",
+        "category": null,
+        "top_k": 5,
+        "anchor_rank": 1,
+        "candidate_ids": [
+          "1400751666202021888",
+          "1376507432263618560",
+          "1769305188013191168",
+          "1387250747900563456",
+          "1960972000186908673"
+        ],
+        "total_candidates": 387
+      },
+      "ideal_off_top50": null
+    },
+    {
+      "suite": "holdout",
+      "id": "CJ-V2H007",
+      "anchor_id": "1605844768632877056",
+      "first_fault": "category",
+      "first_query": "small kitchen spoon scale digital weighing dry and wet ingredients",
+      "first_category": "厨房餐饮",
+      "first_actual_rank": null,
+      "any_hit5": true,
+      "final_anchor_id_present": true,
+      "query_category_off": {
+        "query": "small kitchen spoon scale digital weighing dry and wet ingredients",
+        "category": null,
+        "top_k": 5,
+        "anchor_rank": 1,
+        "candidate_ids": [
+          "1605844768632877056",
+          "1777659846167371776",
+          "1427805511327289344",
+          "1385884986942558208",
+          "2504220724481623400"
+        ],
+        "total_candidates": 2853
+      },
+      "query_category_on": {
+        "query": "small kitchen spoon scale digital weighing dry and wet ingredients",
+        "category": "厨房餐饮",
+        "top_k": 5,
+        "anchor_rank": null,
+        "candidate_ids": [
+          "1427805511327289344",
+          "1385884986942558208",
+          "2504220724481623400",
+          "2503271025041612400",
+          "2411130520401602500"
+        ],
+        "total_candidates": 482
+      },
+      "ideal_title_query": "Kitchen Scale Measuring Spoon Dry And Wet Ingredients",
+      "ideal_off_top5": {
+        "query": "Kitchen Scale Measuring Spoon Dry And Wet Ingredients",
+        "category": null,
+        "top_k": 5,
+        "anchor_rank": 1,
+        "candidate_ids": [
+          "1605844768632877056",
+          "1385884986942558208",
+          "2033809139225382913",
+          "2411130520401602500",
+          "2606230442321619500"
+        ],
+        "total_candidates": 2565
+      },
+      "ideal_off_top50": null
+    }
+  ]
+}

@@ -65,17 +65,17 @@ export default function CjCatalogPage({ request, favoriteIds, comparedIds, onFav
     <div className="cj-controls">
       <form onSubmit={search} className="cj-search">
         <label htmlFor="cj-search-input">找点感兴趣的</label>
-        <div><input id="cj-search-input" value={draft} onChange={e => setDraft(e.target.value)} maxLength={120} placeholder="搜索标题、商品 ID 或 CJ SKU" /><button type="submit">搜索 <span aria-hidden="true">↗</span></button></div>
+        <div><input id="cj-search-input" value={draft} onChange={e => setDraft(e.target.value)} maxLength={120} placeholder="搜索中文商品名、属性、商品 ID 或 CJ SKU" /><button type="submit">搜索 <span aria-hidden="true">↗</span></button></div>
       </form>
       <div className="cj-quick-search" aria-label="热门搜索">
         <span>快速发现</span>
-        {["backpack", "headphones", "home storage"].map(term => <button key={term} type="button" onClick={() => { setDraft(term); setQuery(term); setPage(1); }}>{term}</button>)}
+        {["帽子", "手机壳", "婴儿睡袋"].map(term => <button key={term} type="button" onClick={() => { setDraft(term); setQuery(term); setPage(1); }}>{term}</button>)}
       </div>
       <div className="cj-categories" aria-label="商品品类">
         {CATEGORIES.map((item, i) => <button key={item} type="button" className={category === item ? "active" : ""} onClick={() => { setCategory(item); setPage(1); }}>{LABELS[i]}</button>)}
       </div>
     </div>
-    <div className="cj-list-heading" id="catalog-results"><div><span>EXPLORE / 商品目录</span><h2>{query ? `“${query}”的搜索结果` : category ? LABELS[CATEGORIES.indexOf(category)] : "逛逛全部商品"}</h2></div><span>共 {snapshot?.total.toLocaleString("zh-CN") ?? "—"} 件 · 标题关键词或编号匹配</span></div>
+    <div className="cj-list-heading" id="catalog-results"><div><span>EXPLORE / 商品目录</span><h2>{query ? `“${query}”的搜索结果` : category ? LABELS[CATEGORIES.indexOf(category)] : "逛逛全部商品"}</h2></div><span>共 {snapshot?.total.toLocaleString("zh-CN") ?? "—"} 件 · 商品名称、属性或编号匹配</span></div>
     {error && <p className="cj-error" role="alert">{error}</p>}
     {busy && <p className="cj-loading" role="status">正在读取 CJ 商品快照…</p>}
     {!busy && !error && snapshot && (snapshot.products.length ? <>

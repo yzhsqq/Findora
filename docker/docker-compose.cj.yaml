@@ -1,0 +1,53 @@
+# Add CJ snapshot search to the local Docker Compose stack.
+# Run with: docker compose --env-file .env -f docker/docker-compose.yaml -f docker/docker-compose.cj.yaml up -d --build app
+services:
+  app:
+    environment:
+      CATALOG_SOURCE: cj
+      HYBRID_RECALL_ENABLED: "1"
+      QDRANT_COLLECTION: ${QDRANT_COLLECTION:-globex_products_cj_hybrid}
+      EMBEDDING_BASE_URL: ${EMBEDDING_BASE_URL:?EMBEDDING_BASE_URL is required}
+      EMBEDDING_API_KEY: ${EMBEDDING_API_KEY:?EMBEDDING_API_KEY is required}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-text-embedding-v4}
+      QUEUE_ENABLED: "0"
+      REDIS_URL: ""
+      SEMANTIC_CACHE_ENABLED: "0"
+    volumes:
+      # Run the current working-tree source over the built image. Local
+      # acceptance only, for machines that cannot pull base images to rebuild;
+      # drop this once `up -d --build` works. No runtime deps changed with the
+      # localization work, so the image venv is still correct.
+      - type: bind
+        source: ../app
+        target: /app/app
+        read_only: true
+      - type: bind
+        source: ../data/cj_catalog.sqlite3
+        target: /app/data/cj_catalog.sqlite3
+        read_only: true
+      # Chinese projection of the snapshot above. Read-only: the app opens it
+      # with mode=ro and falls back to English listings if the file is absent.
+      - type: bind
+        source: ../data/cj_localization.sqlite3
+        target: /app/data/cj_localization.sqlite3
+        read_only: true
+
+  # Serve the locally verified `npm run build` output. This avoids pulling npm
+  # packages again during a local release; rebuild frontend/dist after edits.
+  frontend_prebuilt:
+    image: nginx:stable-alpine
+    ports:
+      - "5173:80"
+    volumes:
+      - type: bind
+        source: ../frontend/dist
+        target: /usr/share/nginx/html
+        read_only: true
+      - type: bind
+        source: ../frontend/nginx.conf
+        target: /etc/nginx/conf.d/default.conf
+        read_only: true
+    depends_on:
+      app:
+        condition: service_started
+    restart: unless-stopped

@@ -8,11 +8,15 @@ class FavoriteWrite(BaseModel):
     model_config=ConfigDict(extra='forbid')
     product: dict=Field()
 
-def register_favorite_routes(api,get_store):
+def register_favorite_routes(api,get_store,get_catalog=None):
+    async def display_cards(products):
+        catalog = get_catalog() if get_catalog is not None else None
+        return await catalog.localize_saved_cards(products) if hasattr(catalog, 'localize_saved_cards') else products
+
     @api.get('/commerce/favorites')
     async def favorites(request:Request,buyer_id:str=Query(min_length=1)):
         buyer=await require_buyer(request,buyer_id)
-        return {'products':await get_store().list(buyer)}
+        return {'products':await display_cards(await get_store().list(buyer))}
 
     @api.put('/commerce/favorites/{product_id}')
     async def save_favorite(product_id:str,body:FavoriteWrite,request:Request,buyer_id:str=Query(min_length=1)):
@@ -22,7 +26,7 @@ def register_favorite_routes(api,get_store):
         store=get_store()
         try:await store.save(buyer,body.product)
         except ValueError as error:raise HTTPException(422,str(error)) from error
-        return {'products':await store.list(buyer)}
+        return {'products':await display_cards(await store.list(buyer))}
 
     @api.delete('/commerce/favorites/{product_id}')
     async def delete_favorite(product_id:str,request:Request,buyer_id:str=Query(min_length=1)):

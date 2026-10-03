@@ -11,16 +11,21 @@ from app.infrastructure.persistence.cj_catalog import CJCatalog
 
 
 class _Embedding(EmbeddingClient):
+    def __init__(self):
+        self.texts = []
+
     async def embed(self, text: str) -> list[float]:
         return [1.0, 0.0]
 
     async def embed_batch(self, texts: list[str]) -> list[list[float]]:
+        self.texts.extend(texts)
         return [[1.0, 0.0] for _ in texts]
 
 
 class _VectorIndex(ProductVectorIndex):
     def __init__(self, hits: list[VectorHit]):
         self.hits = hits
+        self.hybrid_calls = []
 
     async def product_fingerprints(self) -> dict[str, str]:
         return {}
@@ -35,6 +40,10 @@ class _VectorIndex(ProductVectorIndex):
         return None
 
     async def search(self, embedding: list[float], top_n: int) -> list[VectorHit]:
+        return self.hits[:top_n]
+
+    async def hybrid_search(self, dense_queries: list[list[float]], english_query: str, top_n: int) -> list[VectorHit]:
+        self.hybrid_calls.append((dense_queries, english_query, top_n))
         return self.hits[:top_n]
 
 
@@ -147,26 +156,43 @@ async def test_cj_hybrid_uses_vector_for_cross_language_recall_and_category_is_s
                 json.dumps({"nameEn": title, "sellPrice": "5.00"}),
                 "2026-01-01", None, None, None, None,
             ))
+    embedder = _Embedding()
+    index = _VectorIndex([VectorHit("dog-cup", 0.95)])
     catalog = CJCatalog(
         path,
-        embedder=_Embedding(),
-        vector_index=_VectorIndex([VectorHit("dog-cup", 0.95)]),
+        embedder=embedder,
+        vector_index=index,
         hybrid_enabled=True,
     )
     catalog.set_vector_available(True)
 
     result = await catalog.execute(ProductSearchSpec(
-        "给小狗户外喝水的不锈钢便携水杯", category="旅行装备", top_k=5,
+        "portable stainless steel dog water cup", raw_query="给小狗户外喝水的不锈钢便携水杯",
+        category="旅行装备", top_k=5,
     ))
 
-    assert result["recall_strategy"] == "cj_hybrid_rrf"
+    assert result["recall_strategy"] == "cj_qdrant_rrf"
     assert result["category_mode"] == "soft_boost"
     assert result["vector_available"] is True
     assert result["hits"][0]["product_id"] == "dog-cup"
+    assert embedder.texts == ["给小狗户外喝水的不锈钢便携水杯", "portable stainless steel dog water cup"]
+    assert index.hybrid_calls[0][1] == "portable stainless steel dog water cup"
+    assert result["query_variants"]["bm25"] == "portable stainless steel dog water cup"
+
+    mixed = await catalog.execute(ProductSearchSpec(
+        "Type-C 千兆网卡", raw_query="没有网口的笔记本用 Type-C 接千兆有线网络", top_k=5,
+    ))
+    assert embedder.texts[-2:] == ["没有网口的笔记本用 Type-C 接千兆有线网络", "Type-C 千兆网卡"]
+    assert len(index.hybrid_calls[-1][0]) == 2
+    assert index.hybrid_calls[-1][1] == "Type-C"
+    assert mixed["query_variants"] == {
+        "dense": ["没有网口的笔记本用 Type-C 接千兆有线网络", "Type-C 千兆网卡"],
+        "bm25": "Type-C",
+    }
 
 
 @pytest.mark.asyncio
-async def test_cj_hybrid_falls_back_to_bm25_without_hard_category_filter(tmp_path):
+async def test_cj_hybrid_outage_is_not_reported_as_empty_catalog(tmp_path):
     path = tmp_path / "cj_catalog.sqlite3"
     with sqlite3.connect(path) as db:
         db.execute("""CREATE TABLE products(pid TEXT PRIMARY KEY,first_category TEXT,second_category TEXT,
@@ -179,13 +205,35 @@ async def test_cj_hybrid_falls_back_to_bm25_without_hard_category_filter(tmp_pat
         ))
     catalog = CJCatalog(path, hybrid_enabled=True)
 
-    result = await catalog.execute(ProductSearchSpec(
-        "waterproof digital camera", category="旅行装备", top_k=5,
-    ))
+    with pytest.raises(ValueError, match="检索暂不可用"):
+        await catalog.execute(ProductSearchSpec(
+            "waterproof digital camera", category="旅行装备", top_k=5,
+        ))
 
-    assert result["recall_strategy"] == "cj_bm25"
-    assert result["vector_available"] is False
-    assert result["hits"][0]["product_id"] == "camera"
+
+@pytest.mark.asyncio
+async def test_cj_hybrid_failure_can_recover_explicit_id_from_raw_query(tmp_path):
+    path = tmp_path / "cj_catalog.sqlite3"
+    product_id = "2507170748351600700"
+    with sqlite3.connect(path) as db:
+        db.execute("""CREATE TABLE products(pid TEXT PRIMARY KEY,first_category TEXT,second_category TEXT,
+            third_category TEXT,list_json TEXT,list_fetched_at TEXT,detail_json TEXT,detail_fetched_at TEXT,
+            inventory_json TEXT,inventory_fetched_at TEXT)""")
+        db.execute("INSERT INTO products VALUES(?,?,?,?,?,?,?,?,?,?)", (
+            product_id, "Pet Supplies", "Dog", "Cups",
+            json.dumps({"nameEn": "Dog Water Cup", "sellPrice": "5.00"}),
+            "2026-01-01", None, None, None, None,
+        ))
+
+    class FailingIndex(_VectorIndex):
+        async def hybrid_search(self, dense_queries, english_query, top_n):
+            raise RuntimeError("Qdrant unavailable")
+
+    catalog = CJCatalog(path, embedder=_Embedding(), vector_index=FailingIndex([]), hybrid_enabled=True)
+    catalog.set_vector_available(True)
+    result = await catalog.execute(ProductSearchSpec("dog cup", raw_query=f"请查询商品 {product_id}"))
+    assert result["hits"][0]["product_id"] == product_id
+    assert result["degraded_from"] == "cj_qdrant_unavailable"
 
 
 @pytest.mark.asyncio

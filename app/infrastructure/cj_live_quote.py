@@ -7,8 +7,11 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
+import shutil
 import sqlite3
 import time
+from tempfile import NamedTemporaryFile
 from contextlib import contextmanager
 from datetime import datetime, timezone
 from decimal import Decimal, InvalidOperation
@@ -18,6 +21,7 @@ import httpx
 from dotenv import dotenv_values
 
 from app.infrastructure.persistence.cj_catalog import CJCatalog
+from app.infrastructure.persistence.cj_localization import CJLocalization
 from app.infrastructure.settings import PROJECT_ROOT
 
 
@@ -70,8 +74,30 @@ def _origin_evidence(inventory_json: str | None, variant_id: str, country: str) 
 class CJLiveQuoteService:
     """One API worker, serial CJ calls, with a persistent pilot point ceiling."""
 
-    def __init__(self, db_path: Path, *, daily_point_limit: int = 1000):
+    @classmethod
+    def from_snapshot(cls, snapshot_path: Path, working_path: Path,
+                      localization: CJLocalization | None = None) -> "CJLiveQuoteService":
+        """Keep the frozen catalog read-only while persisting live details and quotes."""
+        source_stat = snapshot_path.stat()
+        signature = f"{source_stat.st_size}:{source_stat.st_mtime_ns}"
+        marker_path = working_path.with_name(working_path.name + ".source")
+        previous = marker_path.read_text() if marker_path.is_file() else None
+        if not working_path.is_file() or previous != signature:
+            working_path.parent.mkdir(parents=True, exist_ok=True)
+            with NamedTemporaryFile(dir=working_path.parent, prefix="cj-live-", delete=False) as staging:
+                staged_path = Path(staging.name)
+            try:
+                shutil.copy2(snapshot_path, staged_path)
+                os.replace(staged_path, working_path)
+                marker_path.write_text(signature)
+            finally:
+                staged_path.unlink(missing_ok=True)
+        return cls(working_path, localization=localization)
+
+    def __init__(self, db_path: Path, *, daily_point_limit: int = 1000,
+                 localization: CJLocalization | None = None):
         self.db_path = db_path
+        self.localization = localization
         self.daily_point_limit = daily_point_limit
         self._lock = asyncio.Lock()
         self._next_call_at = 0.0
@@ -141,7 +167,9 @@ class CJLiveQuoteService:
         try:
             if self._token and time.monotonic() < self._token_cached_until:
                 return client, self._token
-            key = dotenv_values(PROJECT_ROOT / ".env").get("CJdropshipping_key")
+            key = os.getenv("CJdropshipping_key", "").strip() or dotenv_values(
+                PROJECT_ROOT / ".env"
+            ).get("CJdropshipping_key")
             if not key:
                 raise CJQuoteError("CJ API Key 未配置")
             self._pace()
@@ -207,7 +235,9 @@ class CJLiveQuoteService:
                     row = self._ensure_detail(db, client, token, row, refresh=False)
                 finally:
                     client.close()
-            return CJCatalog._card(row)
+            card = CJCatalog._card(row)
+            localized = self.localization.lookup_many([product_id]).get(product_id) if self.localization else None
+            return CJLocalization.apply_card(row, card, localized)
 
     async def detail(self, product_id: str) -> dict:
         async with self._lock:

@@ -2,6 +2,7 @@
 from types import SimpleNamespace
 
 import pytest
+from qdrant_client import models
 
 from app.domain.catalog.money import Money
 from app.domain.catalog.ports.retrieval_ports import EmbeddingClient
@@ -104,4 +105,32 @@ async def test_dimension_change_does_not_destroy_existing_collection(tmp_path):
     before = await index.product_fingerprints()
     assert not await bootstrap_product_index(repo, CountingEmbeddingClient(dimensions=3), index, "model-b")
     assert await index.product_fingerprints() == before
+    await index.close()
+
+
+@pytest.mark.asyncio
+async def test_existing_named_dense_and_bm25_collection_reuses_vectors(tmp_path):
+    product = _product("P1", "旅行背包")
+    repo = InMemoryProductRepository([product])
+    index = _index(tmp_path)
+    await index._client.create_collection(
+        collection_name="products",
+        vectors_config={"dense": models.VectorParams(size=2, distance=models.Distance.COSINE)},
+        sparse_vectors_config={"bm25": models.SparseVectorParams(modifier=models.Modifier.IDF)},
+    )
+    embedder = CountingEmbeddingClient()
+    assert await bootstrap_product_index(repo, embedder, index, "model-a", 2)
+    assert len(embedder.texts) == 1
+    assert [hit.product_id for hit in await index.search(await embedder.embed(product.searchable_text()), 5)] == ["P1"]
+    await index.close()
+
+    index = _index(tmp_path)
+    no_embed = CountingEmbeddingClient(fail=True)
+    assert await bootstrap_product_index(repo, no_embed, index, "model-a", 2)
+    assert no_embed.texts == []
+    await index.close()
+
+    # 直接检索的调用方不会先运行启动建库流程，索引仍须识别命名向量。
+    index = _index(tmp_path)
+    assert [hit.product_id for hit in await index.search([float(len(product.searchable_text())), 1.0], 5)] == ["P1"]
     await index.close()

@@ -20,6 +20,11 @@ eval/category-recall-report-*.md
 /pi/
 node_modules/
 
+# Local Codex settings, package cache, and evaluation server output.
+/.codex/
+/.npm-cache/
+/eval/verification/*-server.*.log
+
 # 课程仓库内容（根目录）：只保留在本地 main 分支，不入工程仓库
 /*.md
 !/README.md

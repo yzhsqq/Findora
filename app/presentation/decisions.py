@@ -37,6 +37,7 @@ def register_decision_routes(api: FastAPI, get_search: Callable, get_evidence_st
         try:
             spec = ProductSearchSpec(
                 normalized_query=body.query,
+                raw_query=body.query,
                 category=body.category or None,
                 ship_to=body.ship_to.upper() if body.ship_to else None,
                 top_k=5,

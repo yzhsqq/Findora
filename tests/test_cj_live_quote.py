@@ -1,5 +1,6 @@
 """Quote math, source labels and cache behavior without spending CJ points."""
 import json
+import os
 from datetime import datetime, timezone
 
 import httpx
@@ -32,6 +33,37 @@ def _snapshot(path):
         db.execute("UPDATE products SET detail_json=?,detail_fetched_at=?,inventory_json=?,inventory_fetched_at=? WHERE pid=?",
                    (json.dumps(detail), now, json.dumps(stock), now, "1234567890123456"))
     db.close()
+
+
+def test_live_quote_uses_writable_copy_without_changing_snapshot(tmp_path):
+    snapshot = tmp_path / "snapshot.sqlite3"
+    working = tmp_path / "live.sqlite3"
+    _snapshot(snapshot)
+    service = CJLiveQuoteService.from_snapshot(snapshot, working)
+    assert service.db_path == working
+    with service._db() as db:
+        with db:
+            db.execute("INSERT INTO cj_pilot_calls(called_at,endpoint,points,result_code) "
+                       "VALUES('2026-10-02','test',0,'ok')")
+    db = open_db(snapshot)
+    try:
+        assert db.execute("SELECT name FROM sqlite_master WHERE name='cj_pilot_calls'").fetchone() is None
+    finally:
+        db.close()
+    assert CJLiveQuoteService.from_snapshot(snapshot, working).db_path == working
+    db = open_db(working)
+    try:
+        assert db.execute("SELECT COUNT(*) FROM cj_pilot_calls").fetchone()[0] == 1
+    finally:
+        db.close()
+    source_stat = snapshot.stat()
+    os.utime(snapshot, ns=(source_stat.st_atime_ns, source_stat.st_mtime_ns + 1_000_000_000))
+    CJLiveQuoteService.from_snapshot(snapshot, working)
+    db = open_db(working)
+    try:
+        assert db.execute("SELECT name FROM sqlite_master WHERE name='cj_pilot_calls'").fetchone() is None
+    finally:
+        db.close()
 
 
 @pytest.mark.asyncio
@@ -127,6 +159,7 @@ async def test_factory_inventory_quote_does_not_claim_cj_warehouse(tmp_path, mon
 def test_auth_falls_back_to_official_mirror_and_reuses_token(tmp_path, monkeypatch):
     service = CJLiveQuoteService(tmp_path / "cj.sqlite3")
     calls = []
+    monkeypatch.delenv("CJdropshipping_key", raising=False)
 
     class Client:
         def __init__(self, *, base_url, timeout):
@@ -158,3 +191,32 @@ def test_auth_falls_back_to_official_mirror_and_reuses_token(tmp_path, monkeypat
         (quote_module.API_BASE, "/authentication/getAccessToken"),
         (quote_module.API_MIRROR, "/authentication/getAccessToken"),
     ]
+
+
+def test_auth_prefers_container_environment_over_dotenv(tmp_path, monkeypatch):
+    service = CJLiveQuoteService(tmp_path / "cj.sqlite3")
+
+    class Client:
+        def __init__(self, *, base_url, timeout):
+            pass
+
+        def post(self, endpoint, *, json):
+            assert endpoint == "/authentication/getAccessToken"
+            assert json == {"apiKey": "container-key"}
+
+            class Response:
+                def json(self):
+                    return {"result": True, "data": {"accessToken": "test-token"}}
+
+            return Response()
+
+        def close(self):
+            pass
+
+    monkeypatch.setenv("CJdropshipping_key", "container-key")
+    monkeypatch.setattr(quote_module, "dotenv_values", lambda _: {"CJdropshipping_key": "file-key"})
+    monkeypatch.setattr(quote_module.httpx, "Client", Client)
+    monkeypatch.setattr(service, "_pace", lambda: None)
+    client, token = service._client()
+    client.close()
+    assert token == "test-token"

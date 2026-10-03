@@ -1,0 +1,100 @@
+{
+  "compared_at": "2026-09-30T12:32:56.709754+00:00",
+  "split": "all",
+  "snapshot_sha256": "f29e0e107143422f80ca6ac2d4c74c88e9b577ec6f9ca3176c05dfd93bd9928d",
+  "cases_sha256": "17c34a4569dceb68a7b941b05b451e36e0f743db80a4895b52571aa6033de2e6",
+  "case_count": 40,
+  "code_sha256_before": "22fada41dcfcaf4d9515be0b107a1d70d3a56a39c36b8b27f0aaa5f309fc38ef",
+  "code_sha256_after": "2979fff612199742c6122a35d1a3154b5329b0ceee4c21c951c492c698c169f5",
+  "known_item_hit_at_5": {
+    "before": 0.8611,
+    "after": 0.8611,
+    "before_count": 31,
+    "after_count": 31,
+    "denominator": 36
+  },
+  "empty_accuracy": {
+    "before": 0.75,
+    "after": 0.75,
+    "denominator": 4
+  },
+  "case_failures": {
+    "before": 6,
+    "after": 6,
+    "denominator": 40
+  },
+  "failure_types_before": {
+    "candidate_but_anchor_missing": 3,
+    "no_candidates": 2,
+    "unexpected_candidates": 1
+  },
+  "failure_types_after": {
+    "candidate_but_anchor_missing": 3,
+    "no_candidates": 2,
+    "unexpected_candidates": 1
+  },
+  "by_kind_before": {
+    "empty": {
+      "count": 4,
+      "pass_count": 3,
+      "pass_rate": 0.75
+    },
+    "exact": {
+      "count": 4,
+      "pass_count": 4,
+      "pass_rate": 1.0
+    },
+    "lexical": {
+      "count": 24,
+      "pass_count": 24,
+      "pass_rate": 1.0
+    },
+    "paraphrase": {
+      "count": 8,
+      "pass_count": 3,
+      "pass_rate": 0.375
+    }
+  },
+  "by_kind_after": {
+    "empty": {
+      "count": 4,
+      "pass_count": 3,
+      "pass_rate": 0.75
+    },
+    "exact": {
+      "count": 4,
+      "pass_count": 4,
+      "pass_rate": 1.0
+    },
+    "lexical": {
+      "count": 24,
+      "pass_count": 24,
+      "pass_rate": 1.0
+    },
+    "paraphrase": {
+      "count": 8,
+      "pass_count": 3,
+      "pass_rate": 0.375
+    }
+  },
+  "cost_before": {
+    "cj_points": 0,
+    "llm_tokens": 0,
+    "scope": "offline_sqlite_retrieval_only"
+  },
+  "cost_after": {
+    "cj_points": 0,
+    "llm_tokens": 0,
+    "scope": "offline_sqlite_retrieval_only"
+  },
+  "local_latency_ms": {
+    "before_p50": 962.28,
+    "after_p50": 1058.78,
+    "before_p95": 1537.25,
+    "after_p95": 1564.38,
+    "interpretation": "Single sequential runs on a shared local machine; no causal performance claim."
+  },
+  "changed_cases": [],
+  "improved_ids": [],
+  "regressed_ids": []
+}

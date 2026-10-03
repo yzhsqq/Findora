@@ -1,0 +1,177 @@
+MainAgent 异常
+Traceback (most recent call last):
+  File "C:\Users\哈哈\Desktop\跨境电商项目\data\cj_eval\v2_baseline\app\application\agents\orchestrator.py", line 327, in _handle_intent
+    final_text = await self._reply_with_retry(session_id, agent, inputs)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\哈哈\Desktop\跨境电商项目\data\cj_eval\v2_baseline\app\application\agents\orchestrator.py", line 508, in _reply_with_retry
+    return await self._consume_reply(session_id, agent, inputs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\哈哈\Desktop\跨境电商项目\data\cj_eval\v2_baseline\app\application\agents\orchestrator.py", line 539, in _consume_reply
+    async for event in events:
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 287, in reply_stream
+    async for chunk in self._reply(
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 691, in _reply
+    async for item in execute_chain():
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 684, in execute_chain
+    async for item in mw.on_reply(
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\middleware\_tracing\_trace.py", line 144, in on_reply
+    async for item in next_handler(**input_kwargs):
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 678, in next_handler
+    async for item in execute_chain(
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 684, in execute_chain
+    async for item in mw.on_reply(
+  File "C:\Users\哈哈\Desktop\跨境电商项目\data\cj_eval\v2_baseline\app\application\memory\middleware.py", line 28, in on_reply
+    async for event in next_handler(**input_kwargs):yield event
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 678, in next_handler
+    async for item in execute_chain(
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 663, in execute_chain
+    async for item in self._reply_impl(
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 883, in _reply_impl
+    await self.compress_context()
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 403, in compress_context
+    await execute_chain()
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 397, in execute_chain
+    await mw.on_compress_context(
+  File "C:\Users\哈哈\Desktop\跨境电商项目\data\cj_eval\v2_baseline\app\infrastructure\context_compaction.py", line 27, in on_compress_context
+    before = await agent.model.count_tokens(**prepared)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\model\_base.py", line 429, in count_tokens
+    cnt += int(len(acc_text.encode("utf-8")) / 4 + 0.5)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'utf-8' codec can't encode character '\udc80' in position 4525: surrogates not allowed
+AG-UI 执行失败：run=run-e8ffd6c52e09409393aaeb3d30682652
+Traceback (most recent call last):
+  File "C:\Users\哈哈\Desktop\跨境电商项目\data\cj_eval\v2_baseline\app\presentation\ag_ui.py", line 88, in produce
+    result = await orchestrator.handle_intent(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\哈哈\Desktop\跨境电商项目\data\cj_eval\v2_baseline\app\application\agents\orchestrator.py", line 213, in handle_intent
+    result = await self._handle_intent(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\哈哈\Desktop\跨境电商项目\data\cj_eval\v2_baseline\app\application\agents\orchestrator.py", line 374, in _handle_intent
+    persisted = await self._sessions.persist(session_id)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\哈哈\Desktop\跨境电商项目\data\cj_eval\v2_baseline\app\application\agents\main_agent.py", line 243, in persist
+    saved = await self._session_store.save_claim(claim, agent.state.model_dump_json())
+                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\pydantic\main.py", line 542, in model_dump_json
+    return self.__pydantic_serializer__.to_json(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.PydanticSerializationError: Error serializing to JSON: UnicodeEncodeError: 'utf-8' codec can't encode character '\udc80' in position 33: surrogates not allowed
+MainAgent 异常
+Traceback (most recent call last):
+  File "C:\Users\哈哈\Desktop\跨境电商项目\data\cj_eval\v2_baseline\app\application\agents\orchestrator.py", line 327, in _handle_intent
+    final_text = await self._reply_with_retry(session_id, agent, inputs)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\哈哈\Desktop\跨境电商项目\data\cj_eval\v2_baseline\app\application\agents\orchestrator.py", line 508, in _reply_with_retry
+    return await self._consume_reply(session_id, agent, inputs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\哈哈\Desktop\跨境电商项目\data\cj_eval\v2_baseline\app\application\agents\orchestrator.py", line 539, in _consume_reply
+    async for event in events:
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 287, in reply_stream
+    async for chunk in self._reply(
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 691, in _reply
+    async for item in execute_chain():
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 684, in execute_chain
+    async for item in mw.on_reply(
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\middleware\_tracing\_trace.py", line 144, in on_reply
+    async for item in next_handler(**input_kwargs):
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 678, in next_handler
+    async for item in execute_chain(
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 684, in execute_chain
+    async for item in mw.on_reply(
+  File "C:\Users\哈哈\Desktop\跨境电商项目\data\cj_eval\v2_baseline\app\application\memory\middleware.py", line 28, in on_reply
+    async for event in next_handler(**input_kwargs):yield event
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 678, in next_handler
+    async for item in execute_chain(
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 663, in execute_chain
+    async for item in self._reply_impl(
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 883, in _reply_impl
+    await self.compress_context()
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 403, in compress_context
+    await execute_chain()
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 397, in execute_chain
+    await mw.on_compress_context(
+  File "C:\Users\哈哈\Desktop\跨境电商项目\data\cj_eval\v2_baseline\app\infrastructure\context_compaction.py", line 27, in on_compress_context
+    before = await agent.model.count_tokens(**prepared)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\model\_base.py", line 429, in count_tokens
+    cnt += int(len(acc_text.encode("utf-8")) / 4 + 0.5)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'utf-8' codec can't encode character '\udc80' in position 4525: surrogates not allowed
+AG-UI 执行失败：run=run-9d8c4dfaa34944b2876ce99cd96bad82
+Traceback (most recent call last):
+  File "C:\Users\哈哈\Desktop\跨境电商项目\data\cj_eval\v2_baseline\app\presentation\ag_ui.py", line 88, in produce
+    result = await orchestrator.handle_intent(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\哈哈\Desktop\跨境电商项目\data\cj_eval\v2_baseline\app\application\agents\orchestrator.py", line 213, in handle_intent
+    result = await self._handle_intent(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\哈哈\Desktop\跨境电商项目\data\cj_eval\v2_baseline\app\application\agents\orchestrator.py", line 374, in _handle_intent
+    persisted = await self._sessions.persist(session_id)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\哈哈\Desktop\跨境电商项目\data\cj_eval\v2_baseline\app\application\agents\main_agent.py", line 243, in persist
+    saved = await self._session_store.save_claim(claim, agent.state.model_dump_json())
+                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\pydantic\main.py", line 542, in model_dump_json
+    return self.__pydantic_serializer__.to_json(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.PydanticSerializationError: Error serializing to JSON: UnicodeEncodeError: 'utf-8' codec can't encode character '\udc80' in position 33: surrogates not allowed
+MainAgent 异常
+Traceback (most recent call last):
+  File "C:\Users\哈哈\Desktop\跨境电商项目\data\cj_eval\v2_baseline\app\application\agents\orchestrator.py", line 327, in _handle_intent
+    final_text = await self._reply_with_retry(session_id, agent, inputs)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\哈哈\Desktop\跨境电商项目\data\cj_eval\v2_baseline\app\application\agents\orchestrator.py", line 508, in _reply_with_retry
+    return await self._consume_reply(session_id, agent, inputs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\哈哈\Desktop\跨境电商项目\data\cj_eval\v2_baseline\app\application\agents\orchestrator.py", line 539, in _consume_reply
+    async for event in events:
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 287, in reply_stream
+    async for chunk in self._reply(
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 691, in _reply
+    async for item in execute_chain():
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 684, in execute_chain
+    async for item in mw.on_reply(
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\middleware\_tracing\_trace.py", line 144, in on_reply
+    async for item in next_handler(**input_kwargs):
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 678, in next_handler
+    async for item in execute_chain(
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 684, in execute_chain
+    async for item in mw.on_reply(
+  File "C:\Users\哈哈\Desktop\跨境电商项目\data\cj_eval\v2_baseline\app\application\memory\middleware.py", line 28, in on_reply
+    async for event in next_handler(**input_kwargs):yield event
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 678, in next_handler
+    async for item in execute_chain(
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 663, in execute_chain
+    async for item in self._reply_impl(
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 883, in _reply_impl
+    await self.compress_context()
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 403, in compress_context
+    await execute_chain()
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\agent\_agent.py", line 397, in execute_chain
+    await mw.on_compress_context(
+  File "C:\Users\哈哈\Desktop\跨境电商项目\data\cj_eval\v2_baseline\app\infrastructure\context_compaction.py", line 27, in on_compress_context
+    before = await agent.model.count_tokens(**prepared)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\agentscope\model\_base.py", line 429, in count_tokens
+    cnt += int(len(acc_text.encode("utf-8")) / 4 + 0.5)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'utf-8' codec can't encode character '\udc80' in position 4525: surrogates not allowed
+AG-UI 执行失败：run=run-f4e1c7a7f78248daab2d43ad14a317be
+Traceback (most recent call last):
+  File "C:\Users\哈哈\Desktop\跨境电商项目\data\cj_eval\v2_baseline\app\presentation\ag_ui.py", line 88, in produce
+    result = await orchestrator.handle_intent(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\哈哈\Desktop\跨境电商项目\data\cj_eval\v2_baseline\app\application\agents\orchestrator.py", line 213, in handle_intent
+    result = await self._handle_intent(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\哈哈\Desktop\跨境电商项目\data\cj_eval\v2_baseline\app\application\agents\orchestrator.py", line 374, in _handle_intent
+    persisted = await self._sessions.persist(session_id)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\哈哈\Desktop\跨境电商项目\data\cj_eval\v2_baseline\app\application\agents\main_agent.py", line 243, in persist
+    saved = await self._session_store.save_claim(claim, agent.state.model_dump_json())
+                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\哈哈\Desktop\跨境电商项目\.venv\Lib\site-packages\pydantic\main.py", line 542, in model_dump_json
+    return self.__pydantic_serializer__.to_json(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.PydanticSerializationError: Error serializing to JSON: UnicodeEncodeError: 'utf-8' codec can't encode character '\udc80' in position 33: surrogates not allowed

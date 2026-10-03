@@ -27,7 +27,13 @@ python scripts/sync_cj_catalog.py --phase stock --max-stock 500 --max-points 500
 
 在 `.env` 增加 `CATALOG_SOURCE=cj` 并重启 API。网页会显示「CJ 商品库」入口，商品卡和 Agent 检索均从 `data/cj_catalog.sqlite3` 读取；原有冻结模拟目录不会混入当前检索。可以用 `GET /commerce/catalog?page=1&page_size=24&query=backpack` 验证。已取得详情的商品也可用完整 CJ SKU 精确搜索；只有列表、尚未取得规格详情的商品没有可检索的 SKU。
 
-CJ 模式当前使用 SQLite 标题关键词检索，**不会在服务启动或每次搜索时对 1 万件商品向量化**。这是为了先让真实数据源可浏览，并避免把未核实的物流与库存当作交易事实；后续若要接入向量检索，应在语义字段变化时做增量索引。
+CJ 模式的商品目录使用本地 SQLite；启用 `HYBRID_RECALL_ENABLED=1` 时，Agent 在启动阶段按检索文本指纹同步 CJ 专用 Qdrant 集合，普通搜索不会批量重新向量化。
+
+## 中文目录与中文直接搜索
+
+先采集主快照，再运行 `python scripts/localize_cj_catalog.py`。脚本使用 `.env` 中的 `LLM_BASE_URL`、`LLM_API_KEY`、`LLM_MODEL` 离线生成中文标题、简短描述、分类和搜索叫法，结果写入 `data/cj_localization.sqlite3`。中断时保留 `.build` 文件，下次运行续接；全部完成后才切换正式文件。CJ 原始 `cj_catalog.sqlite3` 不会被改写。
+
+目录中文查询直接读取本地派生库的 FTS5 字符二元组索引，商品 ID、CJ 列表 SKU、规格 SKU 和规格 ID 仍走主快照精确查询。目录、Agent 商品卡及按需详情读取同一中文展示投影；Agent 的 Qdrant dense/BM25 检索文本保持原样。主快照更新后重新运行中文化脚本，只处理来源文本指纹变化的商品。若派生库不存在，目录回退到原有英文展示与关键词查询。
 
 采集程序可继续向同一个 SQLite 快照写入新详情；网页下一次请求即可读到最新已提交记录。列表价是 USD 参考价或区间；未查到详情的商品没有可售 SKU，库存快照也不等于实时可售。CJ 商品当前只支持浏览、收藏、比较、咨询和按需物流试算，不支持站内下单意向。
 

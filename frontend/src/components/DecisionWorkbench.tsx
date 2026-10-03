@@ -129,7 +129,7 @@ export default function DecisionWorkbench({ report, busy, previewBusy, previewEr
   };
   return <section className="decision-workbench" aria-labelledby="decision-title">
     <div className="decision-head">
-      <div><span className="decision-kicker">GLOBEX / DECISION NOTE 02</span><h2 id="decision-title">这份选择，<em>有据可查。</em></h2></div>
+      <div><span className="decision-kicker">FINDORA / DECISION NOTE 02</span><h2 id="decision-title">这份选择，<em>有据可查。</em></h2></div>
       <div className="decision-head-meta"><span>{report.catalog_source === "cj" ? "CJ 商品快照" : "商品目录快照"}</span><span>生成于 {timeLabel(report.generated_at)}</span></div>
     </div>
     <div className="decision-layout">

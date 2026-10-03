@@ -1,0 +1,3908 @@
+{
+  "suite": "holdout",
+  "started_at": "2026-09-30T11:55:44.306794+00:00",
+  "seed": 20260931,
+  "order": {
+    "CJ-V2H001": [
+      "baseline",
+      "candidate"
+    ],
+    "CJ-V2H002": [
+      "baseline",
+      "candidate"
+    ],
+    "CJ-V2H003": [
+      "candidate",
+      "baseline"
+    ],
+    "CJ-V2H004": [
+      "baseline",
+      "candidate"
+    ],
+    "CJ-V2H005": [
+      "baseline",
+      "candidate"
+    ],
+    "CJ-V2H006": [
+      "baseline",
+      "candidate"
+    ],
+    "CJ-V2H007": [
+      "candidate",
+      "baseline"
+    ],
+    "CJ-V2H008": [
+      "candidate",
+      "baseline"
+    ],
+    "CJ-V2H009": [
+      "baseline",
+      "candidate"
+    ],
+    "CJ-V2H010": [
+      "baseline",
+      "candidate"
+    ]
+  },
+  "frozen": {
+    "protocol_version": "cj-crosslang-v2",
+    "origin_v1_fix_commit": "693963a78671e928cd398529f890c0f74853d3eb",
+    "snapshot_sha256": "f29e0e107143422f80ca6ac2d4c74c88e9b577ec6f9ca3176c05dfd93bd9928d",
+    "known_cases_sha256": "376be8e3de0811a0e331e6da7c48e031149e3739384da231019f23986d1cd7ee",
+    "holdout_cases_sha256": "1f276de9bb837619fadeefd61d570aaba04fd36a0258d28e42da38afde5e895a",
+    "holdout_case_count": 10,
+    "status": "sealed_unrun"
+  },
+  "manifests": {
+    "baseline": {
+      "commit": "30b9a4f7e22cfe42c234ba0dc0449d717e870aac",
+      "branch": "",
+      "prompt_sha256": "8708d01a802629afb22e048363771f8049a7d1f36ca2deedc54caf608e2a6554",
+      "catalog_sha256": "f29e0e107143422f80ca6ac2d4c74c88e9b577ec6f9ca3176c05dfd93bd9928d",
+      "data_dir": "C:\\Users\\哈哈\\Desktop\\跨境电商项目\\data\\cj_eval\\v2_runs\\baseline"
+    },
+    "candidate": {
+      "commit": "101f319924b20d795a8987da195fb16e4a2925d6",
+      "branch": "codex/cj-query-rewrite-v2",
+      "prompt_sha256": "adaddcf55f36b576a6547f77074aaf93eae42985c97f4a02cd16e0b7816456c8",
+      "catalog_sha256": "f29e0e107143422f80ca6ac2d4c74c88e9b577ec6f9ca3176c05dfd93bd9928d",
+      "data_dir": "C:\\Users\\哈哈\\Desktop\\跨境电商项目\\data\\cj_eval\\v2_runs\\candidate2"
+    }
+  },
+  "attempts": [
+    {
+      "id": "CJ-V2H001",
+      "attempt": 1,
+      "variant": "baseline",
+      "raw_query": "出门背宝宝用的纯棉前后两用肩带",
+      "anchor_id": "2505140542021607400",
+      "status": "ok",
+      "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H001.1.baseline.jsonl.gz",
+      "terminal": "RUN_FINISHED",
+      "usage": {
+        "status": "success",
+        "elapsed_ms": 34102.36689998419,
+        "model_calls": 3,
+        "input_tokens": 35702,
+        "output_tokens": 2168,
+        "observed_input_tokens": 35702,
+        "observed_output_tokens": 2168,
+        "unknown_usage_calls": 0,
+        "active_attempts_at_finish": 0,
+        "usage_complete": true,
+        "ttft_p95_ms": 5062.000000005355,
+        "model_elapsed_ms": 13656.00000001723,
+        "tool_calls": 3,
+        "tool_errors": 0,
+        "fallbacks": 0,
+        "cost_usd": null,
+        "unknown_cost_calls": 3
+      },
+      "model_fallbacks": [],
+      "elapsed_ms": 34115.35,
+      "event_counts": {
+        "RUN_STARTED": 1,
+        "STATE_SNAPSHOT": 12,
+        "TOOL_CALL_START": 3,
+        "TOOL_CALL_ARGS": 114,
+        "TOOL_CALL_END": 3,
+        "TOOL_CALL_RESULT": 3,
+        "TEXT_MESSAGE_START": 1,
+        "TEXT_MESSAGE_CONTENT": 652,
+        "TEXT_MESSAGE_END": 1,
+        "MESSAGES_SNAPSHOT": 1,
+        "RUN_FINISHED": 1
+      },
+      "searches": [
+        {
+          "raw_query": "出门背宝宝用的纯棉前后两用肩带",
+          "normalized_query": "婴儿背带 纯棉 前后两用 肩带 背宝宝",
+          "raw_category": "母婴用品",
+          "effective_category": "母婴宠物",
+          "candidate_ids": [
+            "2503070304061603500",
+            "2501240516281613600",
+            "2501100154481611700",
+            "2501010246591624600",
+            "2412050227251603200"
+          ],
+          "anchor_rank": null,
+          "result_complete": true
+        },
+        {
+          "raw_query": "出门背宝宝用的纯棉前后两用肩带",
+          "normalized_query": "baby carrier 婴儿背巾 背带 前后两用 棉",
+          "raw_category": null,
+          "effective_category": "母婴宠物",
+          "candidate_ids": [
+            "FB2753BA-9041-4D5A-A554-1967E1106BB6",
+            "6417F683-F198-45E7-8025-0DEAFE92033A",
+            "4887879B-1947-4166-ABFB-AE1C8E223685",
+            "2505140542021607400",
+            "2502010846351614600"
+          ],
+          "anchor_rank": 4,
+          "result_complete": true
+        },
+        {
+          "raw_query": "出门背宝宝用的纯棉前后两用肩带",
+          "normalized_query": "婴儿背带 肩带 背娃神器 婴儿腰凳 纯棉",
+          "raw_category": null,
+          "effective_category": "母婴宠物",
+          "candidate_ids": [
+            "2503070304061603500",
+            "2501240516281613600",
+            "2501100154481611700",
+            "2501010246591624600",
+            "2412050227251603200"
+          ],
+          "anchor_rank": null,
+          "result_complete": true
+        }
+      ],
+      "cj_tool_calls": [],
+      "tool_errors": [],
+      "first_hit5": false,
+      "any_hit5": true,
+      "final_anchor": true,
+      "final_answer": "## 检索结果：「纯棉 · 前后两用肩带」婴儿背带\n\n第二轮换成英文/同义词关键词后命中了一批真正的背带类候选（CJ 快照关键词匹配，按工具返回顺序，共 5 个）：\n\n1. **Baby Carrier Strap Baby Shoulder Front And Back Cotton** — `2505140542021607400` — **US$9.44–9.93**\n   标题同时含 \"Shoulder / Front And Back / Cotton\"，与\"前后两用肩带 + 棉\"最贴合。\n   ⚠️ 该条详情不可用，规格（SKU）字段为空，因此**无法从结构化字段确认是纯棉、也无法确认前后两用的具体形态**，只能引用标题。\n\n2. **Baby carrier** — `FB2753BA-9041-4D5A-A554-1967E1106BB6` — **US$9.20**\n   有 4 个颜色规格：Apphire blue / Rose Red / Purple / Blue print（默认 Apphire blue）；重量 0.8 kg；材质标签为 \"fabric\"（**未标明纯棉**）。快照显示工厂库存约 1 万件级别，库存核查时间 2026-09-29，是唯一有库存数据的候选。\n\n3. **Baby sling solid color baby carrier** — `6417F683-F198-45E7-8025-0DEAFE92033A` — **US$6.09**\n   无规格、无详情、无材质标签，是否为肩带式/前后两用未标注。\n\n4. **Multifunctional coax sleeper baby carrier** — `4887879B-1947-4166-ABFB-AE1C8E223685` — **US$22.94**\n   多功能款，无规格详情，材质未知。\n\n5. **Four-season Cotton Cross X Baby Carrier** — `2502010846351614600` — **US$11.44**\n   标题含 Cotton、四季款、交叉 X 型；无规格详情，结构字段中没有棉材质标签。\n\n### 需要说明的几点\n- 另一次中文关键词检索返回的是婴儿**服装**（连体衣、毛衣套装等），与背带需求不符，未列入候选。\n- 以上均为 CJ 快照的 **USD 列表参考价**，库存、目的国可配送性、运费、税费和最终到手价都未实时核验，**不能作为到手价**。\n- 只有标题/标签能证明材质时我才写\"棉\"；第 2 条的材质标签只是 \"fabric\"，不能推断为纯棉。\n\n### 可选的下一步\n- 想要确认某一款的**纯棉成分与前后两用规格**，告诉我它的 product_id，我可以拉取该商品的 CJ 规格详情；\n- 若已确定款式并告知收货国家，我可以做一次物流费用试算（仅为已知费用合计，不代表最终支付价）。\n\n本轮只做检索展示，未做报价、下单或偏好写入。",
+      "valid": true,
+      "started_at": "2026-09-30T11:56:59.684367+00:00",
+      "ended_at": "2026-09-30T11:57:34.495475+00:00"
+    },
+    {
+      "id": "CJ-V2H001",
+      "attempt": 1,
+      "variant": "candidate",
+      "raw_query": "出门背宝宝用的纯棉前后两用肩带",
+      "anchor_id": "2505140542021607400",
+      "status": "ok",
+      "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H001.1.candidate.jsonl.gz",
+      "terminal": "RUN_FINISHED",
+      "usage": {
+        "status": "success",
+        "elapsed_ms": 21526.91290000803,
+        "model_calls": 2,
+        "input_tokens": 16622,
+        "output_tokens": 943,
+        "observed_input_tokens": 16622,
+        "observed_output_tokens": 943,
+        "unknown_usage_calls": 0,
+        "active_attempts_at_finish": 0,
+        "usage_complete": true,
+        "ttft_p95_ms": 1233.9999999967404,
+        "model_elapsed_ms": 7483.99999999674,
+        "tool_calls": 1,
+        "tool_errors": 0,
+        "fallbacks": 0,
+        "cost_usd": null,
+        "unknown_cost_calls": 2
+      },
+      "model_fallbacks": [],
+      "elapsed_ms": 21535.12,
+      "event_counts": {
+        "RUN_STARTED": 1,
+        "STATE_SNAPSHOT": 6,
+        "TOOL_CALL_START": 1,
+        "TOOL_CALL_ARGS": 33,
+        "TOOL_CALL_END": 1,
+        "TOOL_CALL_RESULT": 1,
+        "TEXT_MESSAGE_START": 1,
+        "TEXT_MESSAGE_CONTENT": 501,
+        "TEXT_MESSAGE_END": 1,
+        "MESSAGES_SNAPSHOT": 1,
+        "RUN_FINISHED": 1
+      },
+      "searches": [
+        {
+          "raw_query": "出门背宝宝用的纯棉前后两用肩带",
+          "normalized_query": "baby carrier cotton front back",
+          "raw_category": "母婴用品",
+          "effective_category": "母婴宠物",
+          "candidate_ids": [
+            "2505140542021607400",
+            "2502010846351614600",
+            "1440567249101524992",
+            "1621757324790607872",
+            "2409300256321606500"
+          ],
+          "anchor_rank": 1,
+          "result_complete": true
+        }
+      ],
+      "cj_tool_calls": [],
+      "tool_errors": [],
+      "first_hit5": true,
+      "any_hit5": true,
+      "final_anchor": true,
+      "final_answer": "为你检索到以下候选（按检索返回顺序，均为 CJ 快照列表参考价，USD）：\n\n| # | 商品 | product_id | 参考价 | 说明 |\n|---|---|---|---|---|\n| 1 | Baby Carrier Strap Baby Shoulder Front And Back Cotton | 2505140542021607400 | US$9.44–9.93 | 标题直接含 \"Front And Back\" 前后两用 + Cotton，最贴合你的需求 |\n| 2 | Four-season Cotton Cross X Baby Carrier | 2502010846351614600 | US$11.44 | 棉质、交叉 X 型设计，四季款；标题未写明前后两用 |\n| 3 | Baby Breathable And Cool Lumbar Stool Carrier Front Hugging Multifunctional | 1440567249101524992 | US$9.19 | 透气腰凳式、前抱多功能，非纯棉定位 |\n| 4 | Baby Newborn Clothes Suede Half Back Pure Cotton Monk Clothes | 1621757324790607872 | US$2.06 | 这是新生儿半背和尚服（衣物），不是背带，仅因关键词召回，建议排除 |\n| 5 | Baby Strap Simple Baby Horizontally Holding Style Front And Back Two Use | 2409300256321606500 | US$6.63–7.63 | 前后两用，但为横抱式简易背带，标题未标棉质 |\n\n推荐思路：**第 1 款**同时命中\"前后两用 + Cotton\"，最符合你的诉求；若你更看重四季通用和交叉承托，可看第 2 款。\n\n需要提醒的两点（如实说明，非工具故障）：\n- 这些商品卡的 `material_tags` 字段为空，所以\"纯棉\"目前只来自商品标题，快照里没有可用的结构化材质属性可核验，我无法断言材质一定是纯棉。\n- 本次为列表快照检索，**库存、是否可配送到你的国家、运费与税费均未实时核验**，价格仅为列表参考价（含区间价，非最终到手价）。你只要求检索展示，我没有做物流试算，也没有准备任何订单。\n\n需要的话，告诉我目的国和想要的第几款，我可以再帮你拉取该商品的具体规格详情或做物流试算。",
+      "valid": true,
+      "started_at": "2026-09-30T11:57:34.499477+00:00",
+      "ended_at": "2026-09-30T11:57:56.700653+00:00"
+    },
+    {
+      "id": "CJ-V2H002",
+      "attempt": 1,
+      "variant": "baseline",
+      "raw_query": "做演示时既能当激光笔又能当无线鼠标的遥控器",
+      "anchor_id": "1676057944049332224",
+      "status": "ok",
+      "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H002.1.baseline.jsonl.gz",
+      "terminal": "RUN_FINISHED",
+      "usage": {
+        "status": "success",
+        "elapsed_ms": 18739.265600015642,
+        "model_calls": 2,
+        "input_tokens": 16105,
+        "output_tokens": 803,
+        "observed_input_tokens": 16105,
+        "observed_output_tokens": 803,
+        "unknown_usage_calls": 0,
+        "active_attempts_at_finish": 0,
+        "usage_complete": true,
+        "ttft_p95_ms": 1766.0000000032596,
+        "model_elapsed_ms": 6344.000000011874,
+        "tool_calls": 1,
+        "tool_errors": 0,
+        "fallbacks": 0,
+        "cost_usd": null,
+        "unknown_cost_calls": 2
+      },
+      "model_fallbacks": [],
+      "elapsed_ms": 18755.35,
+      "event_counts": {
+        "RUN_STARTED": 1,
+        "STATE_SNAPSHOT": 6,
+        "TOOL_CALL_START": 1,
+        "TOOL_CALL_ARGS": 43,
+        "TOOL_CALL_END": 1,
+        "TOOL_CALL_RESULT": 1,
+        "TEXT_MESSAGE_START": 1,
+        "TEXT_MESSAGE_CONTENT": 541,
+        "TEXT_MESSAGE_END": 1,
+        "MESSAGES_SNAPSHOT": 1,
+        "RUN_FINISHED": 1
+      },
+      "searches": [
+        {
+          "raw_query": "做演示时既能当激光笔又能当无线鼠标的遥控器",
+          "normalized_query": "演示遥控器 激光笔 无线鼠标 二合一 演示器",
+          "raw_category": "数码配件",
+          "effective_category": "数码配件",
+          "candidate_ids": [
+            "1676057944049332224",
+            "1382559743557636096",
+            "1474316891509100544",
+            "361DD967-3213-4F1B-84C0-045AFEF8ADB4",
+            "1401810436990570496"
+          ],
+          "anchor_rank": 1,
+          "result_complete": true
+        }
+      ],
+      "cj_tool_calls": [],
+      "tool_errors": [],
+      "first_hit5": true,
+      "any_hit5": true,
+      "final_anchor": true,
+      "final_answer": "已为你检索到以下候选（CJ 快照关键词匹配，列表参考价，均为 USD；库存、可配送国家、运费与税费未实时核验，仅供挑选参考）：\n\n1. **Smartphone Remote Control Multi-function Laser Pen Wireless Mouse** — US$39.90\n   product_id: `1676057944049332224`\n   与本需求最贴的一条：标题即写明「多功能激光笔 + 无线鼠标」的遥控器形态，适合演示场景一机两用。品牌/材质/重量等结构化字段为空，快照未提供更多细节。\n\n2. **Handwriting Second-generation Pen-shaped Flying Squirrel Mouse Pen Wireless Gaming Optical Pen** — US$6.62\n   product_id: `1382559743557636096`\n   笔形无线光电鼠标，便携性接近演示遥控的握持感，但快照标题与高亮字段均未标明激光笔功能，只能算「笔形鼠标」方向的备选。\n\n3. **S1 Mini Wireless ... With Mouse Typadnd** — US$13.63\n   product_id: `1474316891509100544`\n   快照归类为手持游戏/掌机类，与演示遥控的用途差异较大，仅作列示。\n\n4. **Led super large shiny mouse pad** — US$2.97–6.02\n   product_id: `361DD967-3213-4F1B-84C0-045AFEF8ADB4`\n5. **Large Mouse Pad, Gaming, Colorful Seaming, Waterproof Cloth** — US$5.24–8.87\n   product_id: `1401810436990570496`\n\n第 4、5 条是鼠标垫，属于本次关键词带出的无关结果，可直接忽略。\n\n**小结与建议**\n- 真正同时满足「激光笔 + 无线鼠标」二合一演示遥控的，目前只有第 1 条（US$39.90）；其余候选与需求存在明显差异，是否接受由你定夺。\n- 说明一下数据边界：本次为 CJ 快照关键词召回，**未**做实时库存、目的国可达性与运费核验，因此上面价格只是列表参考价，不等于最终到手价，也不代表可配送。\n- 本次检索未出现被硬约束拦下的候选（filtered_out 为空），也没有对价格或目的国做过滤。\n\n如果你告诉我收货国家和预算，我可以再做一轮更贴合的检索；若要确认某条的规格细节或配送费用，也可以按具体商品进一步查。",
+      "valid": true,
+      "started_at": "2026-09-30T11:57:56.711884+00:00",
+      "ended_at": "2026-09-30T11:58:15.470256+00:00"
+    },
+    {
+      "id": "CJ-V2H002",
+      "attempt": 1,
+      "variant": "candidate",
+      "raw_query": "做演示时既能当激光笔又能当无线鼠标的遥控器",
+      "anchor_id": "1676057944049332224",
+      "status": "ok",
+      "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H002.1.candidate.jsonl.gz",
+      "terminal": "RUN_FINISHED",
+      "usage": {
+        "status": "success",
+        "elapsed_ms": 21344.75519999978,
+        "model_calls": 2,
+        "input_tokens": 16668,
+        "output_tokens": 1048,
+        "observed_input_tokens": 16668,
+        "observed_output_tokens": 1048,
+        "unknown_usage_calls": 0,
+        "active_attempts_at_finish": 0,
+        "usage_complete": true,
+        "ttft_p95_ms": 1625.0,
+        "model_elapsed_ms": 5842.999999993481,
+        "tool_calls": 1,
+        "tool_errors": 0,
+        "fallbacks": 0,
+        "cost_usd": null,
+        "unknown_cost_calls": 2
+      },
+      "model_fallbacks": [],
+      "elapsed_ms": 21356.47,
+      "event_counts": {
+        "RUN_STARTED": 1,
+        "STATE_SNAPSHOT": 6,
+        "TOOL_CALL_START": 1,
+        "TOOL_CALL_ARGS": 37,
+        "TOOL_CALL_END": 1,
+        "TOOL_CALL_RESULT": 1,
+        "TEXT_MESSAGE_START": 1,
+        "TEXT_MESSAGE_CONTENT": 624,
+        "TEXT_MESSAGE_END": 1,
+        "MESSAGES_SNAPSHOT": 1,
+        "RUN_FINISHED": 1
+      },
+      "searches": [
+        {
+          "raw_query": "做演示时既能当激光笔又能当无线鼠标的遥控器",
+          "normalized_query": "presentation clicker laser pointer wireless mouse remote",
+          "raw_category": "数码配件",
+          "effective_category": "数码配件",
+          "candidate_ids": [
+            "1676057944049332224",
+            "C3D7768B-5393-4BA4-B502-5A9E59E8301C",
+            "527B67AC-835B-4E1E-9169-88A19A8CCAAE",
+            "0C5FFC3C-886A-445E-836C-403563643F1B",
+            "1529009428740190208"
+          ],
+          "anchor_rank": 1,
+          "result_complete": true
+        }
+      ],
+      "cj_tool_calls": [],
+      "tool_errors": [],
+      "first_hit5": true,
+      "any_hit5": true,
+      "final_anchor": true,
+      "final_answer": "已按你的需求做了检索（演示用「激光笔 + 无线鼠标」一体的遥控器）。以下是本次召回候选，按返回顺序展示，价格来自 CJ 快照的**列表参考价（USD）**，库存、可配送国家、运费税费均未实时核验。\n\n| # | 商品 | product_id | 参考价 | 与需求吻合度 |\n|---|------|-----------|--------|-------------|\n| 1 | Smartphone Remote Control Multi-function Laser Pen Wireless Mouse | `1676057944049332224` | US$39.90 | 标题直接写明 Laser Pen + Wireless Mouse，最贴合「激光笔兼无线鼠标」 |\n| 2 | Docooler Mini 2.4GHz Wireless QWERTY Keyboard Air Mouse Handheld Remote Control 6-axis Gyroscope（Mini PC / TV Box） | `C3D7768B-5393-4BA4-B502-5A9E59E8301C` | US$8.33 | 体感空鼠+键盘遥控，**标题未提激光笔**，偏 TV Box/PC 场景 |\n| 3 | G20 flying mouse 2.4G wireless voice remote control | `527B67AC-835B-4E1E-9169-88A19A8CCAAE` | US$3.08–4.89 | 飞鼠遥控，**未见激光笔描述** |\n| 4 | MX3 / MX3-L Backlit Air Mouse T3 Smart Voice Remote（Android TV Box） | `0C5FFC3C-886A-445E-836C-403563643F1B` | US$3.79–6.30 | 空鼠+键盘遥控，**未见激光笔描述**，偏机顶盒 |\n| 5 | Rechargeable Powerpoint Presentation Remote Control Pen | `1529009428740190208` | US$8.34 | 明确是 PPT 演示遥控笔，但标题未确认是否带鼠标功能 |\n\n几点如实说明：\n- 本次检索无被硬约束挡掉的候选（filtered_out 为空），以上即召回结果。\n- 只有 **1 号** 的标题同时覆盖「激光笔」与「无线鼠标」；2–4 号是体感空鼠/多媒体遥控，通常用于电视盒子或 HTPC，**未必带激光笔**；5 号是演示笔，**是否兼具鼠标功能标题未体现**。\n- 快照未提供材质、重量、品牌、产地，也不含 SKU；因此无法从数据层面进一步确认真激光/鼠标按键细节。\n- 若你想看某款的真实规格明细（例如接口、按键、是否含激光），我可以按 product_id 拉取详情；本次仅做检索展示，未下单、未做运费试算。\n\n如果你愿意补充目的国或预算，我可以据此再收窄一轮候选。",
+      "valid": true,
+      "started_at": "2026-09-30T11:58:15.475257+00:00",
+      "ended_at": "2026-09-30T11:58:36.834453+00:00"
+    },
+    {
+      "id": "CJ-V2H003",
+      "attempt": 1,
+      "variant": "candidate",
+      "raw_query": "给小狗户外喝水的不锈钢便携水杯",
+      "anchor_id": "2602090303381624300",
+      "status": "ok",
+      "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H003.1.candidate.jsonl.gz",
+      "terminal": "RUN_FINISHED",
+      "usage": {
+        "status": "success",
+        "elapsed_ms": 23657.77559997514,
+        "model_calls": 2,
+        "input_tokens": 16481,
+        "output_tokens": 745,
+        "observed_input_tokens": 16481,
+        "observed_output_tokens": 745,
+        "unknown_usage_calls": 0,
+        "active_attempts_at_finish": 0,
+        "usage_complete": true,
+        "ttft_p95_ms": 1265.9999999741558,
+        "model_elapsed_ms": 4873.999999981606,
+        "tool_calls": 1,
+        "tool_errors": 0,
+        "fallbacks": 0,
+        "cost_usd": null,
+        "unknown_cost_calls": 2
+      },
+      "model_fallbacks": [],
+      "elapsed_ms": 23668.37,
+      "event_counts": {
+        "RUN_STARTED": 1,
+        "STATE_SNAPSHOT": 6,
+        "TOOL_CALL_START": 1,
+        "TOOL_CALL_ARGS": 35,
+        "TOOL_CALL_END": 1,
+        "TOOL_CALL_RESULT": 1,
+        "TEXT_MESSAGE_START": 1,
+        "TEXT_MESSAGE_CONTENT": 514,
+        "TEXT_MESSAGE_END": 1,
+        "MESSAGES_SNAPSHOT": 1,
+        "RUN_FINISHED": 1
+      },
+      "searches": [
+        {
+          "raw_query": "给小狗户外喝水的不锈钢便携水杯",
+          "normalized_query": "dog outdoor portable water bottle stainless steel",
+          "raw_category": "宠物用品",
+          "effective_category": "母婴宠物",
+          "candidate_ids": [
+            "2602090303381624300",
+            "2504100230321610200",
+            "2408300217501608200",
+            "2407140655211602100",
+            "1654057903558504448"
+          ],
+          "anchor_rank": 1,
+          "result_complete": true
+        }
+      ],
+      "cj_tool_calls": [],
+      "tool_errors": [],
+      "first_hit5": true,
+      "any_hit5": true,
+      "final_anchor": false,
+      "final_answer": "给你找到 5 个狗狗户外便携饮水杯候选（CJ 目录快照，USD 参考价，按检索顺序展示）：\n\n| # | 商品 | 参考价 | 备注 |\n|---|---|---|---|\n| 1 | Creative Portable Outdoor Pet Stainless Steel Water Cup Small Dog Water Bottle Convenient Dog Drink Dispenser Puppy Travel Portable Water Bowl | US$1.05–14.84（区间价） | 标题明确写 **不锈钢**，最贴合\"不锈钢\"诉求；价格区间跨度大，具体规格与对应价快照里未给 |\n| 2 | 2 In 1 Portable Dog Water Bottle For Small Big Dogs Cat Outdoor Leak-proof Puppy Drinking Bowl With Food Container | US$2.21–2.77 | 二合一（水+粮仓），防漏，大中小型犬通用；未标材质 |\n| 3 | 2 In 1 Travel Dog Water Bottle Pet Water Dispenser Feeder Drinking Feeder Dog Outing Water Feeder Pets Outdoor Portable Cup | US$1.93 | 单一标价，二合一饮水器；未标材质 |\n| 4 | Dog Water Cup Portable Pet Supplies For Water Bottle Dog Drinking Bowl Cup Outdoor Travel Dogs Cats Water Dispenser Feeder | US$2.46–2.99 | 犬猫通用户外饮水杯；未标材质 |\n| 5 | New Portable Pet Dog Water Bottle Soft Silicone Leaf Design For Dog Pets Outdoor Travel Drinking Bowls Water Dispenser | US$4.13–11.75 | 标题写 **软硅胶** 叶片设计，非不锈钢，供对比参考 |\n\n几点如实说明：\n- 只有第 1 款标题明确是 stainless steel；其余几款快照的商品卡里 **材质字段为空**，我不能替它们断定是不锈钢，需要你按标题/后续详情页核对。\n- 快照的库存、可配送国家、运费与税费均未实时核验，以上价格只是列表参考价，不是到手价，也不代表已确认可发。\n- 第 1 款是区间价（US$1.05–14.84），不同容量/规格价格差异大；若要看某款的真实规格与对应价格，告诉我 product_id，我可以拉详情。\n\n想更聚焦的话，可以告诉我：预算上限、狗狗体型（小型/中大型）、以及是否必须要\"水粮二合一\"，我再帮你缩范围。",
+      "valid": true,
+      "started_at": "2026-09-30T11:58:36.847464+00:00",
+      "ended_at": "2026-09-30T11:59:00.517892+00:00"
+    },
+    {
+      "id": "CJ-V2H003",
+      "attempt": 1,
+      "variant": "baseline",
+      "raw_query": "给小狗户外喝水的不锈钢便携水杯",
+      "anchor_id": "2602090303381624300",
+      "status": "ok",
+      "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H003.1.baseline.jsonl.gz",
+      "terminal": "RUN_FINISHED",
+      "usage": {
+        "status": "success",
+        "elapsed_ms": 32775.79590000096,
+        "model_calls": 4,
+        "input_tokens": 49807,
+        "output_tokens": 2321,
+        "observed_input_tokens": 49807,
+        "observed_output_tokens": 2321,
+        "unknown_usage_calls": 0,
+        "active_attempts_at_finish": 0,
+        "usage_complete": true,
+        "ttft_p95_ms": 3375.0,
+        "model_elapsed_ms": 17138.999999995576,
+        "tool_calls": 4,
+        "tool_errors": 0,
+        "fallbacks": 0,
+        "cost_usd": null,
+        "unknown_cost_calls": 4
+      },
+      "model_fallbacks": [],
+      "elapsed_ms": 32788.13,
+      "event_counts": {
+        "RUN_STARTED": 1,
+        "STATE_SNAPSHOT": 15,
+        "TOOL_CALL_START": 4,
+        "TOOL_CALL_ARGS": 147,
+        "TOOL_CALL_END": 4,
+        "TOOL_CALL_RESULT": 4,
+        "TEXT_MESSAGE_START": 1,
+        "TEXT_MESSAGE_CONTENT": 676,
+        "TEXT_MESSAGE_END": 1,
+        "MESSAGES_SNAPSHOT": 1,
+        "RUN_FINISHED": 1
+      },
+      "searches": [
+        {
+          "raw_query": "给小狗户外喝水的不锈钢便携水杯",
+          "normalized_query": "宠物户外便携饮水杯 不锈钢 小狗 饮水",
+          "raw_category": "宠物用品",
+          "effective_category": "户外运动",
+          "candidate_ids": [
+            "1397059922478370816",
+            "2508210325521619600",
+            "2086703455414374401",
+            "2086653160247414785",
+            "2086355607972917250"
+          ],
+          "anchor_rank": null,
+          "result_complete": true
+        },
+        {
+          "raw_query": "给小狗户外喝水的不锈钢便携水杯",
+          "normalized_query": "狗狗外出饮水瓶 不锈钢 便携水壶 宠物随行杯",
+          "raw_category": "宠物户外饮水",
+          "effective_category": "户外运动",
+          "candidate_ids": [
+            "1558373238525407232",
+            "1397059922478370816",
+            "1A51B612-F988-4303-88AB-33F23D973DB2",
+            "2033809139225382913",
+            "1879729375339261953"
+          ],
+          "anchor_rank": null,
+          "result_complete": true
+        },
+        {
+          "raw_query": "给小狗户外喝水的不锈钢便携水杯",
+          "normalized_query": "dog water bottle stainless steel portable pet travel drinking cup",
+          "raw_category": null,
+          "effective_category": null,
+          "candidate_ids": [
+            "2602090303381624300",
+            "2408300217501608200",
+            "2407140655211602100",
+            "1654057903558504448",
+            "2097267882200457217"
+          ],
+          "anchor_rank": 1,
+          "result_complete": true
+        },
+        {
+          "raw_query": "给小狗户外喝水的不锈钢便携水杯",
+          "normalized_query": "stainless steel pet water bottle dog outdoor portable drinking cup dispenser small dog",
+          "raw_category": null,
+          "effective_category": null,
+          "candidate_ids": [
+            "2602090303381624300",
+            "2504100230321610200",
+            "2408300217501608200",
+            "2407140655211602100",
+            "1654057903558504448"
+          ],
+          "anchor_rank": 1,
+          "result_complete": true
+        }
+      ],
+      "cj_tool_calls": [],
+      "tool_errors": [],
+      "first_hit5": false,
+      "any_hit5": true,
+      "final_anchor": true,
+      "final_answer": "已按你的需求做了纯检索（不涉及下单、报价或偏好记录）。用中文关键词召回时命中大量无关品类（瑜伽裤、狗背包等），改用宠物饮水相关中英文关键词后拿到了具体候选。以下按检索返回顺序列出，价格为 CJ 快照的 **USD 列表参考价**，库存、可配送国、运费与最终到手价均未实时核验：\n\n**宠物饮水类候选（Pet Drinking Tools）**\n\n1. **Creative Portable Outdoor Pet Stainless Steel Water Cup / Small Dog Water Bottle（小狗便携饮水杯）**\n   `product_id: 2602090303381624300` ｜ 参考价 US$1.05–14.84（区间价，含多档规格差异） ｜ 标题明确写 Stainless Steel\n2. **2 In 1 Portable Dog Water Bottle For Small Big Dogs（二合一便携饮水瓶，带储粮仓）**\n   `product_id: 2504100230321610200` ｜ 参考价 US$2.21–2.77\n3. **2 In 1 Travel Dog Water Bottle 户外便携饮水器**\n   `product_id: 2408300217501608200` ｜ 参考价 US$1.93\n4. **Dog Water Cup Portable 户外饮水杯**\n   `product_id: 2407140655211602100` ｜ 参考价 US$2.46–2.99\n5. **Portable Pet Dog Water Bottle Soft Silicone Leaf Design（硅胶叶形饮水瓶）**\n   `product_id: 1654057903558504448` ｜ 参考价 US$4.13–11.75 ｜ 标题写明 Soft Silicone，**不是不锈钢**\n\n**挑选提示与数据差异说明**\n\n- 只有第 1 条在标题里明确是**不锈钢**饮水杯，最贴合你的\"不锈钢 + 小狗 + 户外便携\"需求；第 2–4 条是同类便携饮水器但标题未标注不锈钢材质，第 5 条是硅胶材质，与你的材质要求不符。\n- 这几条的结构化 `material_tags` 字段均为空、`detail_available` 为 false，也就是说**材质只能依据标题文字，快照没有可核验的结构化材质/规格数据**，我无法替你把\"不锈钢\"确认为已核实的属性；如需要，我可以再按指定 ID 尝试拉取规格详情，能拿到就以详情为准，拿不到会如实告知。\n- 所有候选 `stock_known: false`、`ships_to` 为空：**当前没有库存与目的国可达性的实时结论**，价格也只是列表参考价（区间价需选定规格才落定），因此上面的数字不能当作到手价。\n- 本次检索返回的 `filtered_out` 为空，即没有任何候选是被价格上限或目的国不可达挡掉的——只是本次未召回到更多明确标注\"不锈钢\"的小狗饮水杯型号。\n\n需要的话，告诉我你倾向的规格（容量/是否要带储粮仓）和收货国家，我可以再检索一轮或对该 ID 查规格详情。",
+      "valid": true,
+      "started_at": "2026-09-30T11:59:00.522885+00:00",
+      "ended_at": "2026-09-30T11:59:33.314379+00:00"
+    },
+    {
+      "id": "CJ-V2H004",
+      "attempt": 1,
+      "variant": "baseline",
+      "raw_query": "坐飞机打盹用可折叠的H形充气护颈枕",
+      "anchor_id": "1400751666202021888",
+      "status": "ok",
+      "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H004.1.baseline.jsonl.gz",
+      "terminal": "RUN_FINISHED",
+      "usage": {
+        "status": "success",
+        "elapsed_ms": 38714.68019997701,
+        "model_calls": 6,
+        "input_tokens": 69303,
+        "output_tokens": 2368,
+        "observed_input_tokens": 69303,
+        "observed_output_tokens": 2368,
+        "unknown_usage_calls": 0,
+        "active_attempts_at_finish": 0,
+        "usage_complete": true,
+        "ttft_p95_ms": 1875.0,
+        "model_elapsed_ms": 14516.00000000326,
+        "tool_calls": 7,
+        "tool_errors": 0,
+        "fallbacks": 0,
+        "cost_usd": null,
+        "unknown_cost_calls": 6
+      },
+      "model_fallbacks": [],
+      "elapsed_ms": 38732.95,
+      "event_counts": {
+        "RUN_STARTED": 1,
+        "STATE_SNAPSHOT": 24,
+        "TOOL_CALL_START": 7,
+        "TOOL_CALL_ARGS": 241,
+        "TOOL_CALL_END": 7,
+        "TOOL_CALL_RESULT": 7,
+        "TEXT_MESSAGE_START": 1,
+        "TEXT_MESSAGE_CONTENT": 681,
+        "TEXT_MESSAGE_END": 1,
+        "MESSAGES_SNAPSHOT": 1,
+        "RUN_FINISHED": 1
+      },
+      "searches": [
+        {
+          "raw_query": "坐飞机打盹用可折叠的H形充气护颈枕",
+          "normalized_query": "H形充气护颈枕 可折叠 便携 旅行 飞机 打盹",
+          "raw_category": "旅行装备",
+          "effective_category": "旅行装备",
+          "candidate_ids": [
+            "2410010651411603900",
+            "2412020937191614400",
+            "2508150136111601200",
+            "2406121449441602000",
+            "2506050836171616400"
+          ],
+          "anchor_rank": null,
+          "result_complete": true
+        },
+        {
+          "raw_query": "坐飞机打盹用可折叠的H形充气护颈枕",
+          "normalized_query": "inflatable neck pillow foldable travel airplane nap H shape",
+          "raw_category": "旅行装备",
+          "effective_category": "旅行装备",
+          "candidate_ids": [
+            "1816366468645670912",
+            "1371703315292884992",
+            "D48478AD-25F2-467B-816D-F05F9A894E3F",
+            "1527483304503685120",
+            "2406110723151610700"
+          ],
+          "anchor_rank": null,
+          "result_complete": true
+        },
+        {
+          "raw_query": "坐飞机打盹用可折叠的H形充气护颈枕",
+          "normalized_query": "neck pillow",
+          "raw_category": "旅行装备",
+          "effective_category": "旅行装备",
+          "candidate_ids": [
+            "2406080144341602200",
+            "2502250839131613300",
+            "1397388693379092480",
+            "1835196011061858304"
+          ],
+          "anchor_rank": null,
+          "result_complete": true
+        },
+        {
+          "raw_query": "坐飞机打盹用可折叠的H形充气护颈枕",
+          "normalized_query": "充气护颈枕 U型枕 飞机 旅行 便携",
+          "raw_category": "旅行装备",
+          "effective_category": "旅行装备",
+          "candidate_ids": [
+            "2410010651411603900",
+            "2412020937191614400",
+            "2508150136111601200",
+            "2406121449441602000",
+            "2506050836171616400"
+          ],
+          "anchor_rank": null,
+          "result_complete": true
+        },
+        {
+          "raw_query": "坐飞机打盹用可折叠的H形充气护颈枕",
+          "normalized_query": "travel pillow inflatable neck support cushion",
+          "raw_category": null,
+          "effective_category": null,
+          "candidate_ids": [
+            "1400751666202021888",
+            "1376507432263618560",
+            "1769305188013191168",
+            "2504270351581616600",
+            "1797828462602883072"
+          ],
+          "anchor_rank": 1,
+          "result_complete": true
+        },
+        {
+          "raw_query": "坐飞机打盹用可折叠的H形充气护颈枕",
+          "normalized_query": "护颈枕 充气 折叠",
+          "raw_category": null,
+          "effective_category": "旅行装备",
+          "candidate_ids": [],
+          "anchor_rank": null,
+          "result_complete": true
+        },
+        {
+          "raw_query": "坐飞机打盹用可折叠的H形充气护颈枕",
+          "normalized_query": "H shaped inflatable neck pillow folding lightweight nap airplane sleeping",
+          "raw_category": null,
+          "effective_category": null,
+          "candidate_ids": [
+            "1400751666202021888",
+            "1376507432263618560",
+            "2406170906021615600",
+            "1945722691007078402",
+            "1888120751535550466"
+          ],
+          "anchor_rank": 1,
+          "result_complete": true
+        }
+      ],
+      "cj_tool_calls": [],
+      "tool_errors": [],
+      "first_hit5": false,
+      "any_hit5": true,
+      "final_anchor": true,
+      "final_answer": "已为你检索完成（本次仅做检索展示，未做下单、报价或偏好写入）。在 CJ 快照目录里，\"充气 + 可折叠 + H 形护颈枕\"这个组合确实有对应的现货款，下面按检索返回顺序展示候选（第 1 项为最匹配）：\n\n**第 1 项｜Hooded Travel Pillow H Shaped Inflatable Neck Pillow Folding Lightweight Nap Car Seat Office Airplane Sleeping Cushion Pillows**\n- product_id：`1400751666202021888`\n- 参考价：US$4.79–9.56（区间价，多规格）\n- 类目：Home, Garden & Furniture / Home Textiles·Pillows\n- 匹配点：标题同时命中「H Shaped」「Inflatable」「Folding」「Airplane Sleeping / Nap」，是你描述的飞机打盹用可折叠 H 形充气护颈枕；带连帽设计。\n- 说明：该款在不同规格间价格有跨度，具体规格与颜色需进详情页选。\n\n**第 2 项｜Outdoor Sleeping Pad Camping Inflatable Mattress With Pillows Travel Mat Folding Bed**（`1376507432263618560`，US$11.49）\n- 充气垫类，非护颈枕，仅作备选参考。\n\n**第 3 项｜Amazon Baby Inflatable Mattress Rear Folding Car Mat**（`1769305188013191168`，US$8.70–19.19）\n- 车载充气垫，与护颈需求不符。\n\n**第 4 项｜Soft Memory Foam Travel Neck Pillow U Shape Adjustable Support Sleeping On Plane Car Office Noon Break**（`2504270351581616600`，US$3.52–14.08）\n- 同为飞机打盹用护颈枕，但是**记忆棉 U 形、非充气、不可折叠收纳**——如果你更看重收纳体积小，第 1 项更贴合；如果更看重支撑感、不介意占体积，这款可看。\n\n**第 5 项｜Hollow Seat Cushion Lumbar Support Pillow**（`1797828462602883072`，US$3.08–4.63）\n- 坐垫/腰靠类，与需求不符，列出仅供你了解本次召回全貌。\n\n**需要提醒的数据口径**\n- 以上来自 CJ 快照关键词召回，价格是 USD 列表参考价；快照不核验实时库存、目的国可配送性、运费与税费，因此**当前无法给出\"到手价\"或\"可准时送达\"的结论**。\n- 本次没有触发任何硬约束过滤（未设预算上限、未指定目的国），`filtered_out` 为空，即上述结果没有因价格或目的国被挡掉。\n- 若你要更精准的规格参数（尺寸、充气方式、面料）或指定收货国的物流试算，告诉我，我再补查。\n\n需要我按\"收纳体积最小 / 支撑最稳 / 价格最低\"哪个维度帮你进一步缩到 1–2 款吗？",
+      "valid": true,
+      "started_at": "2026-09-30T11:59:33.326382+00:00",
+      "ended_at": "2026-09-30T12:00:12.065119+00:00"
+    },
+    {
+      "id": "CJ-V2H004",
+      "attempt": 1,
+      "variant": "candidate",
+      "raw_query": "坐飞机打盹用可折叠的H形充气护颈枕",
+      "anchor_id": "1400751666202021888",
+      "status": "ok",
+      "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H004.1.candidate.jsonl.gz",
+      "terminal": "RUN_FINISHED",
+      "usage": {
+        "status": "success",
+        "elapsed_ms": 28915.105899999617,
+        "model_calls": 5,
+        "input_tokens": 58738,
+        "output_tokens": 1958,
+        "observed_input_tokens": 58738,
+        "observed_output_tokens": 1958,
+        "unknown_usage_calls": 0,
+        "active_attempts_at_finish": 0,
+        "usage_complete": true,
+        "ttft_p95_ms": 2593.9999999827705,
+        "model_elapsed_ms": 12546.999999991385,
+        "tool_calls": 6,
+        "tool_errors": 0,
+        "fallbacks": 0,
+        "cost_usd": null,
+        "unknown_cost_calls": 5
+      },
+      "model_fallbacks": [],
+      "elapsed_ms": 28926.67,
+      "event_counts": {
+        "RUN_STARTED": 1,
+        "STATE_SNAPSHOT": 21,
+        "TOOL_CALL_START": 6,
+        "TOOL_CALL_ARGS": 185,
+        "TOOL_CALL_END": 6,
+        "TOOL_CALL_RESULT": 6,
+        "TEXT_MESSAGE_START": 2,
+        "TEXT_MESSAGE_CONTENT": 670,
+        "TEXT_MESSAGE_END": 2,
+        "MESSAGES_SNAPSHOT": 1,
+        "RUN_FINISHED": 1
+      },
+      "searches": [
+        {
+          "raw_query": "坐飞机打盹用可折叠的H形充气护颈枕",
+          "normalized_query": "foldable H-shaped inflatable neck pillow travel nap",
+          "raw_category": "旅行装备",
+          "effective_category": "旅行装备",
+          "candidate_ids": [
+            "1816366468645670912",
+            "1371703315292884992",
+            "D48478AD-25F2-467B-816D-F05F9A894E3F",
+            "1527483304503685120",
+            "2406110723151610700"
+          ],
+          "anchor_rank": null,
+          "result_complete": true
+        },
+        {
+          "raw_query": "坐飞机打盹用可折叠的H形充气护颈枕",
+          "normalized_query": "inflatable neck pillow travel airplane sleep cushion",
+          "raw_category": "旅行装备",
+          "effective_category": "旅行装备",
+          "candidate_ids": [
+            "45CBE913-5FF4-401A-B9A1-D5F6C5E502A8",
+            "1778990713221423104",
+            "1385473029341057024",
+            "1794967146485784576",
+            "1782680383058874368"
+          ],
+          "anchor_rank": null,
+          "result_complete": true
+        },
+        {
+          "raw_query": "坐飞机打盹用可折叠的H形充气护颈枕",
+          "normalized_query": "H-shaped neck pillow foldable U-shaped travel pillow",
+          "raw_category": "旅行装备",
+          "effective_category": "旅行装备",
+          "candidate_ids": [
+            "1816366468645670912",
+            "1371703315292884992",
+            "D48478AD-25F2-467B-816D-F05F9A894E3F",
+            "1527483304503685120",
+            "2406110723151610700"
+          ],
+          "anchor_rank": null,
+          "result_complete": true
+        },
+        {
+          "raw_query": "坐飞机打盹用可折叠的H形充气护颈枕",
+          "normalized_query": "neck pillow",
+          "raw_category": null,
+          "effective_category": null,
+          "candidate_ids": [
+            "1387250747900563456",
+            "1881601881203437570",
+            "2504270351581616600",
+            "1956612313509810177",
+            "1717813780857499648"
+          ],
+          "anchor_rank": null,
+          "result_complete": true
+        },
+        {
+          "raw_query": "坐飞机打盹用可折叠的H形充气护颈枕",
+          "normalized_query": "travel pillow U shape cervical cushion airplane",
+          "raw_category": null,
+          "effective_category": null,
+          "candidate_ids": [
+            "1400751666202021888",
+            "1376507432263618560",
+            "1822213695960141824",
+            "CBAAC34D-ABD5-4C3D-8245-B34ADDE3D2D6",
+            "2504270351581616600"
+          ],
+          "anchor_rank": 1,
+          "result_complete": true
+        },
+        {
+          "raw_query": "坐飞机打盹用可折叠的H形充气护颈枕",
+          "normalized_query": "inflatable neck pillow folding airplane nap",
+          "raw_category": null,
+          "effective_category": null,
+          "candidate_ids": [
+            "1400751666202021888",
+            "1376507432263618560",
+            "1769305188013191168",
+            "1960972000186908673",
+            "1414755551392436224"
+          ],
+          "anchor_rank": 1,
+          "result_complete": true
+        }
+      ],
+      "cj_tool_calls": [],
+      "tool_errors": [],
+      "first_hit5": false,
+      "any_hit5": true,
+      "final_anchor": true,
+      "final_answer": "已按你的需求在 CJ 目录里做了多轮英文关键词检索（第一轮\"foldable travel\"命中的是折叠旅行包，偏题，已换词重搜）。说明：CJ 快照只给 USD 列表参考价，库存、目的地配送、运费税费均未实时核验，因此下面是候选清单，不是可下单结论，也没有运费或到手价。\n\n**命中你条件（H 形 + 充气 + 可折叠 + 机上打盹）**\n1. **Hooded Travel Pillow H Shaped Inflatable Neck Pillow Folding Lightweight Nap Car Seat Office Airplane Sleeping Cushion** — product_id `1400751666202021888`\n   - 参考价 US$4.79–9.56（区间＝多规格不同价）\n   - 类目：Home, Garden & Furniture / 家纺-枕类；带连帽\n   - 这是本次唯一在标题上同时出现 H Shaped、Inflatable、Folding、Airplane Sleeping 的款，与\"打盹用 H 形充气护颈枕\"几乎逐项对上。\n\n**同类可比候选（但材质/形状与你指定条件有差异）**\n2. **Soft Memory Foam Travel Neck Pillow U Shape Adjustable Support Comfortably Sleeping On Plane Car Office Noon Break** — product_id `2504270351581616600`，US$3.52–14.08\n   - 是 U 形记忆棉、机上午睡用，但非 H 形、非充气、不可折叠压缩。\n3. **Comfortable U-Shape Travel Pillow** — product_id `CBAAC34D-ABD5-4C3D-8245-B34ADDE3D2D6`，US$1.74\n   - U 形旅行枕，快照未标注充气/折叠，也未给出材质。\n4. **Silk U-shape Pillow Solid Color Neck Pillow** — product_id `1717813780857499648`，US$14.10\n   - 真丝 U 形护颈枕，偏居家/商务场景，非充气折叠款。\n\n**需要说明的**\n- 本轮未检索到除第 1 款以外、同时满足\"H 形＋充气＋可折叠\"的型号；第 2–4 款是相关但不完全对标的替代项，差异已如实标出，选哪款由你定。\n- 上面 4 款的快照都没带 material_tags、ships_to、库存与重量字段，所以材质、可否发到你所在国家、是否有货都无法从快照确认；第 1 款的价格是规格区间价，具体规格价需按 product_id 拉详情。\n- 如果你要，我可以：① 拉第 1 款的规格详情（可选颜色/规格、单价）；② 按你的目的国对第 1 款做一次 CJ 物流试算（注意试算合计不等于最终到手价）。告诉我就行。",
+      "valid": true,
+      "started_at": "2026-09-30T12:00:12.072128+00:00",
+      "ended_at": "2026-09-30T12:00:41.002516+00:00"
+    },
+    {
+      "id": "CJ-V2H005",
+      "attempt": 1,
+      "variant": "baseline",
+      "raw_query": "卧室桌上摆的螺旋形LED圣诞树氛围灯",
+      "anchor_id": "2409270619361600100",
+      "status": "ok",
+      "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H005.1.baseline.jsonl.gz",
+      "terminal": "RUN_FINISHED",
+      "usage": {
+        "status": "success",
+        "elapsed_ms": 32315.48640000983,
+        "model_calls": 3,
+        "input_tokens": 28403,
+        "output_tokens": 1553,
+        "observed_input_tokens": 28403,
+        "observed_output_tokens": 1553,
+        "unknown_usage_calls": 0,
+        "active_attempts_at_finish": 0,
+        "usage_complete": true,
+        "ttft_p95_ms": 5516.00000000326,
+        "model_elapsed_ms": 11875.0,
+        "tool_calls": 3,
+        "tool_errors": 0,
+        "fallbacks": 0,
+        "cost_usd": null,
+        "unknown_cost_calls": 3
+      },
+      "model_fallbacks": [],
+      "elapsed_ms": 32329.29,
+      "event_counts": {
+        "RUN_STARTED": 1,
+        "STATE_SNAPSHOT": 12,
+        "TOOL_CALL_START": 3,
+        "TOOL_CALL_ARGS": 113,
+        "TOOL_CALL_END": 3,
+        "TOOL_CALL_RESULT": 3,
+        "TEXT_MESSAGE_START": 1,
+        "TEXT_MESSAGE_CONTENT": 704,
+        "TEXT_MESSAGE_END": 1,
+        "MESSAGES_SNAPSHOT": 1,
+        "RUN_FINISHED": 1
+      },
+      "searches": [
+        {
+          "raw_query": "卧室桌上摆的螺旋形LED圣诞树氛围灯",
+          "normalized_query": "螺旋形 LED 圣诞树 氛围灯 桌面摆件",
+          "raw_category": "节日氛围灯",
+          "effective_category": null,
+          "candidate_ids": [
+            "2045398465321144321",
+            "2045397642778435586",
+            "2045387261229031426",
+            "2045383809701548033",
+            "2045382246547361793"
+          ],
+          "anchor_rank": null,
+          "result_complete": true
+        },
+        {
+          "raw_query": "卧室桌上摆的螺旋形LED圣诞树氛围灯",
+          "normalized_query": "螺旋圣诞树灯 LED 圣诞装饰 桌面 氛围灯 Christmas tree lamp",
+          "raw_category": null,
+          "effective_category": null,
+          "candidate_ids": [
+            "2410100856251619900",
+            "2409270619361600100",
+            "CCEFFAD8-59E8-44BE-9911-E8243DE6BF94",
+            "2510200837231640400",
+            "2411200557061606700"
+          ],
+          "anchor_rank": 2,
+          "result_complete": true
+        },
+        {
+          "raw_query": "卧室桌上摆的螺旋形LED圣诞树氛围灯",
+          "normalized_query": "Christmas decoration LED spiral tree light night lamp",
+          "raw_category": "节日装饰",
+          "effective_category": null,
+          "candidate_ids": [
+            "2409270619361600100",
+            "1718542483283521536",
+            "2410100856251619900",
+            "2411200557061606700",
+            "1868910523392610304"
+          ],
+          "anchor_rank": 1,
+          "result_complete": true
+        }
+      ],
+      "cj_tool_calls": [],
+      "tool_errors": [],
+      "first_hit5": false,
+      "any_hit5": true,
+      "final_anchor": true,
+      "final_answer": "已为你做纯检索（未下单、未做运费试算、未写偏好）。说明：当前命中的是 CJ 快照目录，价格为 USD **列表参考价**，库存、目的国可配送性、运费与税费均未实时核验；部分商品快照无 SKU 明细。\n\n## 最贴合你需求的候选\n**1. LED 螺旋圣诞树桌面摆件 / 铁艺小夜灯** — `product_id: 2409270619361600100`\n- 标题即 \"LED Christmas Tree Spiral Light Table Ornament Wrought Iron Xmas Tree **Bedroom Desk Lamp** Christmas Atmosphere Night Light Decor\"\n- 价格 US$4.70（列表价，单值）\n- 匹配点：螺旋造型 + LED + 卧室/书桌定位，与你的描述几乎逐字对上。目前快照无 SKU 与材质明细，需进一步取详情才能确认尺寸与供电方式。\n\n## 其他相关候选（同品类，造型/定位略有差异）\n2. **PVC 迷你圣诞树 LED 灯桌面摆件** — `product_id: 2411200557061606700` — US$0.90–1.93（区间价）。体积更小、偏传统锥形小树，非螺旋结构。\n3. **LED 电子蜡烛 / 圣诞树 / 雪人 小夜灯摆件** — `product_id: 2510200837231640400` — US$0.56–3.32。多造型混卖，需选中树款才符合需求。\n4. **3D 亚克力 LED 夜灯（圣诞装饰）** — `product_id: 1718542483283521536` — US$1.69–22.51。平面 3D 灯板路线，风格与螺旋铁艺不同。\n5. **DIY 镜面 + LED 立方灯圣诞材料包（圣诞老人/雪人/树）** — `product_id: 2410100856251619900` — US$1.45–2.81。需自行拼装，非成品摆件。\n6. **圣诞 LED 吸盘吊灯（圣老人/麋鹿/雪人）** — `product_id: CCEFFAD8-59E8-44BE-9911-E8243DE6BF94` — US$1.21–1.25。窗贴吸盘款，不是桌面立式。\n\n## 需要说明的两点\n- 我第一次用「螺旋形 LED 圣诞树 氛围灯 桌面摆件」检索时，返回的主要是带 LED 灯带的床头柜/电视柜（如 `2045398465321144321` US$77.12、`2045387261229031426` US$90.54），与圣诞氛围灯无关，已改用中英混合关键词才召回上面这批节日灯饰。\n- 未设定价格上限、也未指定收货国，所以本轮没有 `filtered_out`；如果你有预算或目的国，我可以再按硬条件重搜，并在你明确要看配送/到手费用时做 CJ 物流试算。\n\n要不要我针对第 1 款调取规格详情（尺寸、供电、材质）？或者你给个预算/收货地，我再精筛一轮。",
+      "valid": true,
+      "started_at": "2026-09-30T12:00:41.015531+00:00",
+      "ended_at": "2026-09-30T12:01:13.348728+00:00"
+    },
+    {
+      "id": "CJ-V2H005",
+      "attempt": 1,
+      "variant": "candidate",
+      "raw_query": "卧室桌上摆的螺旋形LED圣诞树氛围灯",
+      "anchor_id": "2409270619361600100",
+      "status": "ok",
+      "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H005.1.candidate.jsonl.gz",
+      "terminal": "RUN_FINISHED",
+      "usage": {
+        "status": "success",
+        "elapsed_ms": 22020.549800014123,
+        "model_calls": 2,
+        "input_tokens": 16548,
+        "output_tokens": 774,
+        "observed_input_tokens": 16548,
+        "observed_output_tokens": 774,
+        "unknown_usage_calls": 0,
+        "active_attempts_at_finish": 0,
+        "usage_complete": true,
+        "ttft_p95_ms": 952.9999999795109,
+        "model_elapsed_ms": 4671.000000031199,
+        "tool_calls": 1,
+        "tool_errors": 0,
+        "fallbacks": 0,
+        "cost_usd": null,
+        "unknown_cost_calls": 2
+      },
+      "model_fallbacks": [],
+      "elapsed_ms": 22031.62,
+      "event_counts": {
+        "RUN_STARTED": 1,
+        "STATE_SNAPSHOT": 6,
+        "TOOL_CALL_START": 1,
+        "TOOL_CALL_ARGS": 38,
+        "TOOL_CALL_END": 1,
+        "TOOL_CALL_RESULT": 1,
+        "TEXT_MESSAGE_START": 1,
+        "TEXT_MESSAGE_CONTENT": 571,
+        "TEXT_MESSAGE_END": 1,
+        "MESSAGES_SNAPSHOT": 1,
+        "RUN_FINISHED": 1
+      },
+      "searches": [
+        {
+          "raw_query": "卧室桌上摆的螺旋形LED圣诞树氛围灯",
+          "normalized_query": "spiral LED Christmas tree ambient lamp tabletop",
+          "raw_category": "家居氛围灯",
+          "effective_category": "家居生活",
+          "candidate_ids": [
+            "2409270619361600100",
+            "2410100856251619900",
+            "1980168988831903745",
+            "1979420173501853697",
+            "CCEFFAD8-59E8-44BE-9911-E8243DE6BF94"
+          ],
+          "anchor_rank": 1,
+          "result_complete": true
+        }
+      ],
+      "cj_tool_calls": [],
+      "tool_errors": [],
+      "first_hit5": true,
+      "any_hit5": true,
+      "final_anchor": true,
+      "final_answer": "以下是本次检索到的候选（按检索返回顺序展示，价格均为 CJ 快照 USD 列表参考价）：\n\n1. **LED 螺旋圣诞树桌面摆灯**（氛围夜灯/卧室书桌装饰）\n   - product_id：`2409270619361600100`\n   - 价格：US$4.70\n   - 标题即 \"LED Christmas Tree Spiral Light Table Ornament … Bedroom Desk Lamp Christmas Atmosphere Night Light Decor\"，与你说的\"螺旋形 LED 圣诞树 + 卧室桌上氛围灯\"最贴合。\n   - 快照未返回规格（SKU）、材质、重量、品牌与可配送国家信息。\n\n2. **圣诞 DIY 装饰 镜面 LED 立方灯（3D 圣诞老人/雪人/树 DIY 材料包）**\n   - product_id：`2410100856251619900`\n   - 价格：US$1.45–2.81（区间价）\n   - 是 DIY 立方灯套件，非螺旋树造型，仅作备选。\n\n3. **4ft 人造植绒圣诞树（366 PVC 枝尖 + 150 灯）**\n   - product_id：`1980168988831903745`\n   - 价格：US$75.07\n   - 落地整树，非桌面小摆件。\n\n4. **6.5ft 人造绿圣诞树（2225 枝尖 + 450 暖白灯）**\n   - product_id：`1979420173501853697`\n   - 价格：US$172.35\n   - 落地整树，尺寸和价格都远超桌面氛围灯定位。\n\n5. **圣诞 LED 吸盘吊灯（圣诞老人/驯鹿/雪人，电池供电）**\n   - product_id：`CCEFFAD8-59E8-44BE-9911-E8243DE6BF94`\n   - 价格：US$1.21–1.25（区间价）\n   - 窗贴吸盘灯，非螺旋树造型。\n\n说明：\n- 本次没有 `filtered_out` 记录，即没有候选因价格上限或目的国不可达被挡掉（本轮也未设预算和收货国约束）。\n- 第 1 件是唯一在标题层面同时命中\"螺旋 + 圣诞树 + 桌面/卧室氛围灯\"的候选；如需它的具体规格（SKU、尺寸、供电方式）或指定国家的物流试算，告诉我，我再按商品 ID 去补详情／试算。\n- CJ 快照的库存、可配送国家、运费与税费均未实时核验，以上价格不构成最终到手价。",
+      "valid": true,
+      "started_at": "2026-09-30T12:01:13.357271+00:00",
+      "ended_at": "2026-09-30T12:01:35.392966+00:00"
+    },
+    {
+      "id": "CJ-V2H006",
+      "attempt": 1,
+      "variant": "baseline",
+      "raw_query": "给猫剪指甲时防滑且带定位圆孔的指甲剪",
+      "anchor_id": "1814500809594785792",
+      "status": "ok",
+      "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H006.1.baseline.jsonl.gz",
+      "terminal": "RUN_FINISHED",
+      "usage": {
+        "status": "success",
+        "elapsed_ms": 29949.00280001457,
+        "model_calls": 4,
+        "input_tokens": 58850,
+        "output_tokens": 1796,
+        "observed_input_tokens": 58850,
+        "observed_output_tokens": 1796,
+        "unknown_usage_calls": 0,
+        "active_attempts_at_finish": 0,
+        "usage_complete": true,
+        "ttft_p95_ms": 2859.000000025844,
+        "model_elapsed_ms": 10968.000000022585,
+        "tool_calls": 4,
+        "tool_errors": 0,
+        "fallbacks": 0,
+        "cost_usd": null,
+        "unknown_cost_calls": 4
+      },
+      "model_fallbacks": [],
+      "elapsed_ms": 29960.03,
+      "event_counts": {
+        "RUN_STARTED": 1,
+        "STATE_SNAPSHOT": 15,
+        "TOOL_CALL_START": 4,
+        "TOOL_CALL_ARGS": 149,
+        "TOOL_CALL_END": 4,
+        "TOOL_CALL_RESULT": 4,
+        "TEXT_MESSAGE_START": 1,
+        "TEXT_MESSAGE_CONTENT": 676,
+        "TEXT_MESSAGE_END": 1,
+        "MESSAGES_SNAPSHOT": 1,
+        "RUN_FINISHED": 1
+      },
+      "searches": [
+        {
+          "raw_query": "给猫剪指甲时防滑且带定位圆孔的指甲剪",
+          "normalized_query": "猫指甲剪 防滑 带定位圆孔 宠物指甲剪",
+          "raw_category": "宠物用品",
+          "effective_category": "母婴宠物",
+          "candidate_ids": [
+            "1711607915393593344",
+            "2411050605281608600",
+            "2410290703491603000",
+            "2510300729471609000",
+            "2508120729361629600"
+          ],
+          "anchor_rank": null,
+          "result_complete": true
+        },
+        {
+          "raw_query": "给猫剪指甲时防滑且带定位圆孔的指甲剪",
+          "normalized_query": "宠物指甲剪 猫咪 指甲钳 防滑握柄 定位圆孔",
+          "raw_category": null,
+          "effective_category": "母婴宠物",
+          "candidate_ids": [
+            "1711607915393593344",
+            "2411050605281608600",
+            "2410290703491603000",
+            "2510300729471609000",
+            "2508120729361629600"
+          ],
+          "anchor_rank": null,
+          "result_complete": true
+        },
+        {
+          "raw_query": "给猫剪指甲时防滑且带定位圆孔的指甲剪",
+          "normalized_query": "猫用指甲剪 剪指甲 防滑",
+          "raw_category": "宠物美容",
+          "effective_category": "母婴宠物",
+          "candidate_ids": [
+            "1795755557681373184",
+            "1711607915393593344",
+            "1669574275931578368",
+            "1629148547394318336",
+            "1452893259000057856"
+          ],
+          "anchor_rank": null,
+          "result_complete": true
+        },
+        {
+          "raw_query": "给猫剪指甲时防滑且带定位圆孔的指甲剪",
+          "normalized_query": "Pet Nail Clippers Grooming Anti-slip Safety Guard",
+          "raw_category": null,
+          "effective_category": null,
+          "candidate_ids": [
+            "1864973646935511040",
+            "1835253835682959360",
+            "1757284392571392000",
+            "1865219663073267712",
+            "1839499921930997760"
+          ],
+          "anchor_rank": null,
+          "result_complete": true
+        }
+      ],
+      "cj_tool_calls": [],
+      "tool_errors": [],
+      "first_hit5": false,
+      "any_hit5": false,
+      "final_anchor": false,
+      "final_answer": "## 检索结果：本次未找到符合\"防滑 + 定位圆孔\"的猫用指甲剪\n\n我换了 4 组检索词（中文\"猫指甲剪 防滑 带定位圆孔\"\"宠物指甲剪 指甲钳 防滑握柄 定位圆孔\"\"猫用指甲剪 剪指甲 防滑\"，以及英文 \"Pet Nail Clippers Grooming Anti-slip Safety Guard\"）在 CJ 快照目录中检索。前三次召回的都是宠物服饰类（连体衣、睡衣、斗篷、棉垫等），与剪指甲无关；只有英文那组拉回了宠物美容周边。**没有任何一条候选是指甲剪，因此\"防滑握柄 + 定位圆孔\"这两个核心属性无商品可核验。**\n\n### 最接近的一次召回（均为宠物美容周边，非指甲剪，按召回顺序）\n\n| # | 商品 | product_id | 价格（USD 列表参考价） | 与需求的差距 |\n|---|---|---|---|---|\n| 1 | Cat Muzzle Anti-Bite Grooming Mask（猫咪防咬美容面罩，可调节） | 1864973646935511040 | US$2.17–2.77 | 防咬辅助件，无剪切功能 |\n| 2 | Cat Grooming Shower Bag 网眼可调约束袋（浴/剪甲防抓） | 1835253835682959360 | US$3.12 | 固定保定用，非指甲剪 |\n| 3 | 无线宠物电推剪理发套装（低噪音） | 1757284392571392000 | US$24.98 | 剃毛器，非指甲剪 |\n| 4 | Anti Bite Puppy Kitten Muzzle（透气防咬口罩） | 1865219663073267712 | US$2.60 | 防咬用，非指甲剪 |\n| 5 | Anti Bite Puppy Kitten Muzzle（透气防咬口罩） | 1839499921930997760 | US$3.36 | 防咬用，非指甲剪 |\n\n以上 5 条都不是您要的品类，仅为本次召回中最接近\"剪甲配套\"的候选，供参考，不建议据此下单。\n\n### 说明与下一步\n\n- 本次检索没有触发任何硬约束过滤（filtered_out 为空），也就是说**不是被价格或目的国挡掉了，而是这轮关键词召回里确实没有指甲剪类目商品**；这不代表目录里一定不存在，只说明本次未检索到确切型号。\n- CJ 快照关键词召回未做重排，库存、可配送性、运费与到手价均未实时核验，上表 USD 价格为列表参考价。\n- 如果您手上有该指甲剪的 product_id / sku_id，直接发我，我可以按 ID 直查目录；或者我可以用更细的属性词（比如\"猫指甲剪 圆孔定位\"\"猫用指甲钳 防剪血线\"）再试几轮。\n\n需要我换关键词再搜一次吗？（本轮按您要求只做检索与展示，未下单、未试算运费、未写入任何偏好。）",
+      "valid": true,
+      "started_at": "2026-09-30T12:01:35.412150+00:00",
+      "ended_at": "2026-09-30T12:02:05.377209+00:00"
+    },
+    {
+      "id": "CJ-V2H006",
+      "attempt": 1,
+      "variant": "candidate",
+      "raw_query": "给猫剪指甲时防滑且带定位圆孔的指甲剪",
+      "anchor_id": "1814500809594785792",
+      "status": "ok",
+      "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H006.1.candidate.jsonl.gz",
+      "terminal": "RUN_FINISHED",
+      "usage": {
+        "status": "success",
+        "elapsed_ms": 21533.293700020295,
+        "model_calls": 2,
+        "input_tokens": 16503,
+        "output_tokens": 812,
+        "observed_input_tokens": 16503,
+        "observed_output_tokens": 812,
+        "unknown_usage_calls": 0,
+        "active_attempts_at_finish": 0,
+        "usage_complete": true,
+        "ttft_p95_ms": 1484.0000000258442,
+        "model_elapsed_ms": 5437.000000034459,
+        "tool_calls": 1,
+        "tool_errors": 0,
+        "fallbacks": 0,
+        "cost_usd": null,
+        "unknown_cost_calls": 2
+      },
+      "model_fallbacks": [],
+      "elapsed_ms": 21544.56,
+      "event_counts": {
+        "RUN_STARTED": 1,
+        "STATE_SNAPSHOT": 6,
+        "TOOL_CALL_START": 1,
+        "TOOL_CALL_ARGS": 37,
+        "TOOL_CALL_END": 1,
+        "TOOL_CALL_RESULT": 1,
+        "TEXT_MESSAGE_START": 1,
+        "TEXT_MESSAGE_CONTENT": 539,
+        "TEXT_MESSAGE_END": 1,
+        "MESSAGES_SNAPSHOT": 1,
+        "RUN_FINISHED": 1
+      },
+      "searches": [
+        {
+          "raw_query": "给猫剪指甲时防滑且带定位圆孔的指甲剪",
+          "normalized_query": "cat nail clipper anti-slip positioning hole",
+          "raw_category": "宠物用品",
+          "effective_category": "母婴宠物",
+          "candidate_ids": [
+            "1814500809594785792",
+            "1534453293844541440",
+            "49C86200-E6E2-4EED-B96F-B0E7FC338895",
+            "2058795311789957121",
+            "1698602629309411328"
+          ],
+          "anchor_rank": 1,
+          "result_complete": true
+        }
+      ],
+      "cj_tool_calls": [],
+      "tool_errors": [],
+      "first_hit5": true,
+      "any_hit5": true,
+      "final_anchor": true,
+      "final_answer": "已按你的需求检索，结果为 CJ 快照关键词匹配（列表参考价，未实时核验库存/目的国配送/运费税费）。以下按返回顺序展示：\n\n**1. 猫用指甲剪（带定位圆孔 + 防滑手柄）｜US$1.97**\n- product_id：`1814500809594785792`\n- 标题：Cat Nail Clipper With Positioning Round Hole Sharp Non Slip Handle Cat Claw Clipper Safe Indoor Pet Nail Clipper For Cats, Puppies And More Animals\n- 品类：Pet Supplies｜价格类型：列表价（listing）\n- 匹配点：**定位圆孔（positioning round hole）**、**防滑手柄（non slip handle）**、猫咪指甲剪 —— 与你说的两个关键属性都对得上，是本次唯一高度吻合的候选。\n- 说明：快照未给出品牌、材质、重量、库存与可配送国家；其 highlights 标为 \"Pet Toys / Pet Toy Set\"，与标题品类存在差异，以标题和结构化字段为准，建议下单前再核验规格。\n\n以下为本次召回的其他候选，**都不含定位圆孔**，仅作参考：\n\n**2. 新生儿电动指甲剪防夹肉护理套装｜US$3.19**｜product_id：`1534453293844541440`\n- 品类为 Toys, Kids & Babies 的婴儿护理套装，不是猫用指甲剪，仅关键词相近。\n\n**3. 宠物外出包（防挤压）｜US$13.61–17.10**｜product_id：`49C86200-E6E2-4EED-B96F-B0E7FC338895`\n- 宠物包，与指甲剪无关。\n\n**4. 重力式宠物喂食喂水器（防滑底座）｜US$16.90**｜product_id：`2058795311789957121`\n- 只命中 \"anti slip\"，非指甲剪。\n\n**5. 便携硅胶双碗折叠宠物碗｜US$4.53**｜product_id：`1698602629309411328`\n- 只命中 \"non-slip\"，非指甲剪。\n\n本次未产生被硬约束挡掉的候选（filtered_out 为空）。需要的话我可以进一步：\n- 拉取第 1 款的真实规格详情（sku、规格价）；\n- 或按你的目的国做 CJ 物流试算（仅在你明确要看配送/到手费用时）。\n\n要不要我继续查第 1 款的规格详情？",
+      "valid": true,
+      "started_at": "2026-09-30T12:02:05.386763+00:00",
+      "ended_at": "2026-09-30T12:02:26.933462+00:00"
+    },
+    {
+      "id": "CJ-V2H007",
+      "attempt": 1,
+      "variant": "candidate",
+      "raw_query": "能称量干湿食材的小型厨房勺子秤",
+      "anchor_id": "1605844768632877056",
+      "status": "ok",
+      "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H007.1.candidate.jsonl.gz",
+      "terminal": "RUN_FINISHED",
+      "usage": {
+        "status": "success",
+        "elapsed_ms": 24966.279600019334,
+        "model_calls": 5,
+        "input_tokens": 62118,
+        "output_tokens": 1368,
+        "observed_input_tokens": 62118,
+        "observed_output_tokens": 1368,
+        "unknown_usage_calls": 0,
+        "active_attempts_at_finish": 0,
+        "usage_complete": true,
+        "ttft_p95_ms": 1812.999999994645,
+        "model_elapsed_ms": 10625.000000029104,
+        "tool_calls": 7,
+        "tool_errors": 0,
+        "fallbacks": 0,
+        "cost_usd": null,
+        "unknown_cost_calls": 5
+      },
+      "model_fallbacks": [],
+      "elapsed_ms": 24974.28,
+      "event_counts": {
+        "RUN_STARTED": 1,
+        "STATE_SNAPSHOT": 24,
+        "TOOL_CALL_START": 7,
+        "TOOL_CALL_ARGS": 214,
+        "TOOL_CALL_END": 7,
+        "TOOL_CALL_RESULT": 7,
+        "TEXT_MESSAGE_START": 3,
+        "TEXT_MESSAGE_CONTENT": 445,
+        "TEXT_MESSAGE_END": 3,
+        "MESSAGES_SNAPSHOT": 1,
+        "RUN_FINISHED": 1
+      },
+      "searches": [
+        {
+          "raw_query": "能称量干湿食材的小型厨房勺子秤",
+          "normalized_query": "small kitchen spoon scale digital weighing dry and wet ingredients",
+          "raw_category": "厨房秤",
+          "effective_category": "厨房餐饮",
+          "candidate_ids": [
+            "1427805511327289344",
+            "1385884986942558208",
+            "2504220724481623400",
+            "2503271025041612400",
+            "2411130520401602500"
+          ],
+          "anchor_rank": null,
+          "result_complete": true
+        },
+        {
+          "raw_query": "能称量干湿食材的小型厨房勺子秤",
+          "normalized_query": "digital spoon scale electronic measuring spoon gram scale kitchen",
+          "raw_category": "厨房秤",
+          "effective_category": "厨房餐饮",
+          "candidate_ids": [
+            "1385884986942558208",
+            "2510200837231640400",
+            "2508150153331629500",
+            "2045398076963315714",
+            "2045325808056188929"
+          ],
+          "anchor_rank": null,
+          "result_complete": true
+        },
+        {
+          "raw_query": "能称量干湿食材的小型厨房勺子秤",
+          "normalized_query": "LCD digital kitchen scale measuring spoon for baking powder liquid ingredients",
+          "raw_category": "厨房秤",
+          "effective_category": "厨房餐饮",
+          "candidate_ids": [
+            "1385884986942558208",
+            "2410010808431618100",
+            "1654681047189573632",
+            "ECAC663E-87ED-4D84-B320-A8E7FD76AE41",
+            "2504140246021602300"
+          ],
+          "anchor_rank": null,
+          "result_complete": true
+        },
+        {
+          "raw_query": "能称量干湿食材的小型厨房勺子秤",
+          "normalized_query": "spoon scale",
+          "raw_category": null,
+          "effective_category": null,
+          "candidate_ids": [
+            "1605844768632877056",
+            "1404388265506770944",
+            "1398811770675662848",
+            "1385884986942558208",
+            "2501150145251618200"
+          ],
+          "anchor_rank": 1,
+          "result_complete": true
+        },
+        {
+          "raw_query": "能称量干湿食材的小型厨房勺子秤",
+          "normalized_query": "kitchen scale digital",
+          "raw_category": null,
+          "effective_category": null,
+          "candidate_ids": [
+            "1605844768632877056",
+            "2508150153331629500",
+            "2086268127732977665",
+            "2045398076963315714",
+            "2045325808056188929"
+          ],
+          "anchor_rank": 1,
+          "result_complete": true
+        },
+        {
+          "raw_query": "能称量干湿食材的小型厨房勺子秤",
+          "normalized_query": "measuring spoon scale food weighing spoon dry wet ingredients",
+          "raw_category": null,
+          "effective_category": null,
+          "candidate_ids": [
+            "1605844768632877056",
+            "2606230442321619500",
+            "2406261145181613000",
+            "1837025392407236608",
+            "0E94A308-8CE9-4FAF-8B82-39FFF20AA837"
+          ],
+          "anchor_rank": 1,
+          "result_complete": true
+        },
+        {
+          "raw_query": "能称量干湿食材的小型厨房勺子秤",
+          "normalized_query": "compact food weighing scale dry wet ingredients",
+          "raw_category": null,
+          "effective_category": null,
+          "candidate_ids": [
+            "1605844768632877056",
+            "2606230442321619500",
+            "2406261145181613000",
+            "2101600682429415425",
+            "2100523446852354049"
+          ],
+          "anchor_rank": 1,
+          "result_complete": true
+        }
+      ],
+      "cj_tool_calls": [],
+      "tool_errors": [],
+      "first_hit5": false,
+      "any_hit5": true,
+      "final_anchor": true,
+      "final_answer": "## 检索结果\n\n我用\"spoon scale / measuring spoon scale / food weighing scale dry and wet ingredients\"等多组英文关键词在多轮里检索了 CJ 商品快照，**只有 1 款与\"能称量干湿食材的小型厨房勺子秤\"精确对口的候选**：\n\n**1. Kitchen Scale Measuring Spoon Scale Compact Food Weighing Scale For Dry And Wet Ingredients**\n- product_id：`1605844768632877056`\n- 参考价：US$1.85（列表价，单一定价）\n- 规格/库存：快照未提供 SKU 明细，库存与是否为实时可售未核验\n- 备注：该商品在快照里的分类字段/亮点写的是 \"Sports & Outdoors / Sportswear\"，与标题描述的厨房秤明显不符，属于快照数据本身存在差异，请以标题与实物页面为准。\n\n## 说明\n\n- 其余召回结果（硅胶锅铲套装、餐具勺、沥水垫、蜡烛、置物架、折叠镜等）与勺子秤无关，不作为候选取用，主要是关键词匹配到了 \"spoon / kitchen / scale\" 等词面。\n- 以上价格仅为 **CJ 列表参考价（USD）**，不含运费、税费，也不代表最终到手价；库存、可配送国家和运费均未实时核验。\n- 本次未检索到其他勺子秤型号，但不代表目录中一定没有——只说明这几轮关键词未召回。\n\n## 如果你要往下走\n\n我可以帮你：\n1. 换更细的关键词再搜（如 \"electronic measuring spoon scale 500g\"、\"LCD spoon scale\"）；\n2. 若你有目标价位或想限定口径，告诉我我再过滤一次；\n3. 需要这款的具体规格详情或配送到某国的运费试算，也可以直接说。\n\n（按你的要求，本次只做检索与展示，未做下单、报价或偏好写入。）",
+      "valid": true,
+      "started_at": "2026-09-30T12:02:26.952387+00:00",
+      "ended_at": "2026-09-30T12:02:51.930951+00:00"
+    },
+    {
+      "id": "CJ-V2H007",
+      "attempt": 1,
+      "variant": "baseline",
+      "raw_query": "能称量干湿食材的小型厨房勺子秤",
+      "anchor_id": "1605844768632877056",
+      "status": "ok",
+      "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H007.1.baseline.jsonl.gz",
+      "terminal": "RUN_FINISHED",
+      "usage": {
+        "status": "success",
+        "elapsed_ms": 20987.613700010115,
+        "model_calls": 4,
+        "input_tokens": 43394,
+        "output_tokens": 1099,
+        "observed_input_tokens": 43394,
+        "observed_output_tokens": 1099,
+        "unknown_usage_calls": 0,
+        "active_attempts_at_finish": 0,
+        "usage_complete": true,
+        "ttft_p95_ms": 1125.0,
+        "model_elapsed_ms": 7796.999999991385,
+        "tool_calls": 4,
+        "tool_errors": 0,
+        "fallbacks": 0,
+        "cost_usd": null,
+        "unknown_cost_calls": 4
+      },
+      "model_fallbacks": [],
+      "elapsed_ms": 20996.85,
+      "event_counts": {
+        "RUN_STARTED": 1,
+        "STATE_SNAPSHOT": 15,
+        "TEXT_MESSAGE_START": 4,
+        "TEXT_MESSAGE_CONTENT": 563,
+        "TEXT_MESSAGE_END": 4,
+        "TOOL_CALL_START": 4,
+        "TOOL_CALL_ARGS": 136,
+        "TOOL_CALL_END": 4,
+        "TOOL_CALL_RESULT": 4,
+        "MESSAGES_SNAPSHOT": 1,
+        "RUN_FINISHED": 1
+      },
+      "searches": [
+        {
+          "raw_query": "能称量干湿食材的小型厨房勺子秤",
+          "normalized_query": "小型厨房勺子秤 称量干湿食材 电子勺秤",
+          "raw_category": "厨房用品",
+          "effective_category": "厨房餐饮",
+          "candidate_ids": [
+            "2508150153331629500",
+            "2045398076963315714",
+            "2045325808056188929",
+            "2045066437907025922",
+            "2042461905748918273"
+          ],
+          "anchor_rank": null,
+          "result_complete": true
+        },
+        {
+          "raw_query": "能称量干湿食材的小型厨房勺子秤",
+          "normalized_query": "电子勺秤 digital spoon scale 厨房称重勺",
+          "raw_category": "厨房用品",
+          "effective_category": "厨房餐饮",
+          "candidate_ids": [
+            "1385884986942558208",
+            "2508150153331629500",
+            "2045398076963315714",
+            "2045325808056188929",
+            "2045066437907025922"
+          ],
+          "anchor_rank": null,
+          "result_complete": true
+        },
+        {
+          "raw_query": "能称量干湿食材的小型厨房勺子秤",
+          "normalized_query": "measuring spoon scale digital kitchen gram scale",
+          "raw_category": null,
+          "effective_category": null,
+          "candidate_ids": [
+            "1605844768632877056",
+            "0E94A308-8CE9-4FAF-8B82-39FFF20AA837",
+            "1385884986942558208",
+            "2508150153331629500",
+            "2086268127732977665"
+          ],
+          "anchor_rank": 1,
+          "result_complete": true
+        },
+        {
+          "raw_query": "能称量干湿食材的小型厨房勺子秤",
+          "normalized_query": "spoon scale dry wet ingredients food weighing LCD",
+          "raw_category": null,
+          "effective_category": null,
+          "candidate_ids": [
+            "1605844768632877056",
+            "2606230442321619500",
+            "2406261145181613000",
+            "1837025392407236608",
+            "2504170636201617200"
+          ],
+          "anchor_rank": 1,
+          "result_complete": true
+        }
+      ],
+      "cj_tool_calls": [],
+      "tool_errors": [],
+      "first_hit5": false,
+      "any_hit5": true,
+      "final_anchor": true,
+      "final_answer": "已完成检索。用了几种不同表述（中文勺秤 / digital spoon scale / measuring spoon scale / dry & wet ingredients）在 CJ 快照里比对，**只有 1 款真正命中的商品**，其余候选都是厨房家具、餐具货架、宠物粮勺等不相关品类。以下按检索返回顺序列出：\n\n**1. Kitchen Scale Measuring Spoon Scale Compact Food Weighing Scale For Dry And Wet Ingredients**\n- product_id：`1605844768632877056`\n- 参考价：US$1.85（列表价，非到手价）\n- 快照分类：Sports & Outdoors（记录如此，与\"厨房秤\"品类不一致，属快照标注差异）\n- 规格：快照未提供 sku 规格\n- 库存/发货：stock_known=false，库存与目的国配送均未实时核验\n- 详情：detail_available=false，快照中无更细规格参数\n\n**选购说明（如实交代差异，供你自行定夺）**\n- 这是本次唯一与\"能称量干湿食材的小型厨房勺子秤\"直接相符的候选，标题即声明适用于 dry and wet ingredients，且属于勺型紧凑款，形态上符合\"小型 + 勺子\"。\n- 但它没有品牌字段、没有产地字段、没有规格明细，快照里也没有可选规格，因此量程、精度、是否可拆洗、供电方式（电池/USB）这些关键参数我无法确认——需要提货前向卖家核实。\n- 它的快照品类被标为 Sports & Outdoors，这只是快照分类问题，不代表商品本身是运动用品。\n\n**需要提醒的边界**\n- 我本次只做检索展示，没有做下单、物流试算，也没有写入或修改任何长期偏好。\n- 由于这是 CJ 快照数据，库存、能否配送到你的国家、运费与税费都未核验；US$1.85 是列表参考价，不等于最终到手价。若你确认要这款，可以告诉我目的国，我再帮你做该商品与默认规格的物流试算（试算也只是已知费用合计，不是最终支付价）。\n\n如果你希望我扩大搜索范围（例如放宽为\"厨房电子秤/烘焙称\"这类相邻品类，或不限勺型），说一声我就重新检索；本次未见其他同类勺秤型号，不代表目录中不存在，只表示这几次检索未召回。",
+      "valid": true,
+      "started_at": "2026-09-30T12:02:51.936945+00:00",
+      "ended_at": "2026-09-30T12:03:12.936632+00:00"
+    },
+    {
+      "id": "CJ-V2H008",
+      "attempt": 1,
+      "variant": "candidate",
+      "raw_query": "蓝牙5.0飞鼠键盘能遥控的那种",
+      "anchor_id": "1418493210132615168",
+      "status": "ok",
+      "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H008.1.candidate.jsonl.gz",
+      "terminal": "RUN_FINISHED",
+      "usage": {
+        "status": "success",
+        "elapsed_ms": 19580.62210000935,
+        "model_calls": 2,
+        "input_tokens": 16531,
+        "output_tokens": 908,
+        "observed_input_tokens": 16531,
+        "observed_output_tokens": 908,
+        "unknown_usage_calls": 0,
+        "active_attempts_at_finish": 0,
+        "usage_complete": true,
+        "ttft_p95_ms": 1516.0000000032596,
+        "model_elapsed_ms": 5531.0000000172295,
+        "tool_calls": 1,
+        "tool_errors": 0,
+        "fallbacks": 0,
+        "cost_usd": null,
+        "unknown_cost_calls": 2
+      },
+      "model_fallbacks": [],
+      "elapsed_ms": 19590.9,
+      "event_counts": {
+        "RUN_STARTED": 1,
+        "STATE_SNAPSHOT": 6,
+        "TOOL_CALL_START": 1,
+        "TOOL_CALL_ARGS": 38,
+        "TOOL_CALL_END": 1,
+        "TOOL_CALL_RESULT": 1,
+        "TEXT_MESSAGE_START": 1,
+        "TEXT_MESSAGE_CONTENT": 671,
+        "TEXT_MESSAGE_END": 1,
+        "MESSAGES_SNAPSHOT": 1,
+        "RUN_FINISHED": 1
+      },
+      "searches": [
+        {
+          "raw_query": "蓝牙5.0飞鼠键盘能遥控的那种",
+          "normalized_query": "bluetooth 5.0 air mouse remote keyboard",
+          "raw_category": "数码配件",
+          "effective_category": "数码配件",
+          "candidate_ids": [
+            "1418493210132615168",
+            "C3D7768B-5393-4BA4-B502-5A9E59E8301C",
+            "0C5FFC3C-886A-445E-836C-403563643F1B",
+            "2410160157391613600",
+            "2407150509361610800"
+          ],
+          "anchor_rank": 1,
+          "result_complete": true
+        }
+      ],
+      "cj_tool_calls": [],
+      "tool_errors": [],
+      "first_hit5": true,
+      "any_hit5": true,
+      "final_anchor": true,
+      "final_answer": "已按“蓝牙 5.0 飞鼠/遥控键盘”检索当前 CJ 商品目录（共 288 个候选，下列为前 5 个展示位，排序即目录返回顺序）：\n\n1. **Wireless Flying Squirrel Keyboard Bluetooth 5.0 Remote Control** — US$7.58\n   - product_id：`1418493210132615168`\n   - 与需求最贴合：标题明确写 Bluetooth 5.0 + 遥控。\n\n2. **Docooler Mini 2.4GHz Wireless QWERTY Keyboard Air Mouse Handheld Remote Control 6 Gxes Gyroscope（Mini PC/TV Box 用）** — US$8.33\n   - product_id：`C3D7768B-5393-4BA4-B502-5A9E59E8301C`\n   - 是典型的空中飞鼠遥控+QWERTY 键盘，但标注的是 **2.4GHz 无线**，不是蓝牙 5.0，请留意差异。\n\n3. **MX3 MX3-L Backlit Air Mouse T3 Smart Voice Remote Control 2.4G RF Wireless Keyboard（Android TV Box 用）** — US$3.79–6.30（区间价）\n   - product_id：`0C5FFC3C-886A-445E-836C-403563643F1B`\n   - 同为飞鼠遥控键盘，但为 **2.4G RF 无线**，非蓝牙 5.0。\n\n4. **Three-in-one Wireless Bluetooth Touch Pad Wireless Keyboard Leather Sheath Stand（iPad/手机通用）** — US$18.24\n   - product_id：`2410160157391613600`\n   - 蓝牙触控键盘，但属于平板保护套式键盘，不是飞鼠遥控类。\n\n5. **360 Swivel Keyboard Clear Case For iPad Smart Trackpad Bluetooth-compatible Keyboard Case Cover** — US$45.61–52.24（区间价）\n   - product_id：`2407150509361610800`\n   - 同样是 iPad 键盘保护套，与“飞鼠遥控”需求不符。\n\n说明与建议：\n- 只有第 1 项在标题层面同时命中“Bluetooth 5.0 + 飞鼠键盘 + 遥控”，最符合你的原话；第 2、3 项是常见的飞鼠遥控键盘，但无线制式是 2.4GHz，如果你的设备必须走蓝牙 5.0 连接，这两款可能不适用。\n- 本次未出现被硬约束挡掉的候选（filtered_out 为空），也就是没有因价格或目的国原因被过滤掉的同类商品。\n- 快照返回的是列表参考价（USD），库存、能否配送到你的目的国、运费与税费均未在本轮核验，不能视为已确认可配送。\n- 如果你告诉我具体用途（电视盒子/电脑/投影）或连接方式必须是蓝牙 5.0，我可以再按更精确的关键词缩小候选，或对选中的商品查规格详情。\n\n需要我针对第 1 项拉取具体规格详情吗？",
+      "valid": true,
+      "started_at": "2026-09-30T12:03:12.960165+00:00",
+      "ended_at": "2026-09-30T12:03:32.553335+00:00"
+    },
+    {
+      "id": "CJ-V2H008",
+      "attempt": 1,
+      "variant": "baseline",
+      "raw_query": "蓝牙5.0飞鼠键盘能遥控的那种",
+      "anchor_id": "1418493210132615168",
+      "status": "ok",
+      "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H008.1.baseline.jsonl.gz",
+      "terminal": "RUN_FINISHED",
+      "usage": {
+        "status": "success",
+        "elapsed_ms": 18964.658600016264,
+        "model_calls": 2,
+        "input_tokens": 16083,
+        "output_tokens": 803,
+        "observed_input_tokens": 16083,
+        "observed_output_tokens": 803,
+        "unknown_usage_calls": 0,
+        "active_attempts_at_finish": 0,
+        "usage_complete": true,
+        "ttft_p95_ms": 952.9999999795109,
+        "model_elapsed_ms": 5326.999999990221,
+        "tool_calls": 1,
+        "tool_errors": 0,
+        "fallbacks": 0,
+        "cost_usd": null,
+        "unknown_cost_calls": 2
+      },
+      "model_fallbacks": [],
+      "elapsed_ms": 18975.14,
+      "event_counts": {
+        "RUN_STARTED": 1,
+        "STATE_SNAPSHOT": 6,
+        "TOOL_CALL_START": 1,
+        "TOOL_CALL_ARGS": 41,
+        "TOOL_CALL_END": 1,
+        "TOOL_CALL_RESULT": 1,
+        "TEXT_MESSAGE_START": 1,
+        "TEXT_MESSAGE_CONTENT": 558,
+        "TEXT_MESSAGE_END": 1,
+        "MESSAGES_SNAPSHOT": 1,
+        "RUN_FINISHED": 1
+      },
+      "searches": [
+        {
+          "raw_query": "蓝牙5.0飞鼠键盘能遥控的那种",
+          "normalized_query": "蓝牙5.0 飞鼠键盘 遥控 空中鼠标",
+          "raw_category": "数码配件",
+          "effective_category": "数码配件",
+          "candidate_ids": [
+            "2410160157391613600",
+            "2407150509361610800",
+            "1418493210132615168",
+            "1384411297810092032",
+            "2411130703501623100"
+          ],
+          "anchor_rank": 3,
+          "result_complete": true
+        }
+      ],
+      "cj_tool_calls": [],
+      "tool_errors": [],
+      "first_hit5": true,
+      "any_hit5": true,
+      "final_anchor": true,
+      "final_answer": "已为你检索「蓝牙 5.0 飞鼠键盘／遥控」相关候选，共召回 200 条，展示前 5 条（CJ 快照关键词匹配，USD 列表参考价）：\n\n| 序号 | 商品 | 参考价 | product_id |\n|---|---|---|---|\n| 1 | Three-in-one Wireless Bluetooth Touch Pad Wireless Keyboard Leather Sheath Stand（平板/手机通用触控板键盘） | US$18.24 | 2410160157391613600 |\n| 2 | 360 Swivel Keyboard Clear Case For iPad Smart Trackpad Bluetooth Keyboard Case（iPad 键盘保护壳） | US$45.61–52.24 | 2407150509361610800 |\n| 3 | **Wireless Flying Squirrel Keyboard Bluetooth 5.0 Remote Control** | **US$7.58** | 1418493210132615168 |\n| 4 | Wireless Bluetooth Keyboard Colorful PBT Keycaps Mechanical Keyboard | US$21.56 | 1384411297810092032 |\n| 5 | Full-key Hot Plug Wireless Three-mode Bluetooth Keyboard | US$39.60–53.70 | 2411130703501623100 |\n\n选购提示（按你的需求「蓝牙 5.0 + 飞鼠/遥控」对齐度）：\n- **第 3 条最贴合**：标题明确是「Flying Squirrel Keyboard + Bluetooth 5.0 + Remote Control」，属于 2.4G/蓝牙空鼠遥控器类，价格也最低（US$7.58）。适合电视盒子、投影、HTPC 遥控场景。\n- 第 1、2 条是平板/手机用的触控板键盘保护套，形态是键盘壳，不是手持遥控飞鼠。\n- 第 4、5 条是普通无线/机械键盘，无空鼠遥控指向功能，与你的需求偏差较大。\n\n需要说明的数据边界：\n- 本次结果的库存、目的国可配送性、运费税费均未实时核验（快照只提供列表参考价），因此**没有**任何一条可称为「已确认可下单到手」；\n- 快照中这些商品的品牌、材质标签、重量、SKU 规格多为空，无法进一步核对是否支持你指定的蓝牙版本细节（第 3 条标题已注明 Bluetooth 5.0，但无结构化规格可交叉验证）；\n- 本次 `filtered_out` 为空，即没有商品被价格或目的国条件挡掉。\n\n如需我针对第 3 条补齐规格详情或试算某目的国的物流费用，告诉我目的国即可。",
+      "valid": true,
+      "started_at": "2026-09-30T12:03:32.565341+00:00",
+      "ended_at": "2026-09-30T12:03:51.542039+00:00"
+    },
+    {
+      "id": "CJ-V2H009",
+      "attempt": 1,
+      "variant": "baseline",
+      "raw_query": "TA-102P户外360度双频天线带黑色支架",
+      "anchor_id": "1868855168021188608",
+      "status": "ok",
+      "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H009.1.baseline.jsonl.gz",
+      "terminal": "RUN_FINISHED",
+      "usage": {
+        "status": "success",
+        "elapsed_ms": 17982.30470000999,
+        "model_calls": 3,
+        "input_tokens": 25493,
+        "output_tokens": 775,
+        "observed_input_tokens": 25493,
+        "observed_output_tokens": 775,
+        "unknown_usage_calls": 0,
+        "active_attempts_at_finish": 0,
+        "usage_complete": true,
+        "ttft_p95_ms": 1531.0000000172295,
+        "model_elapsed_ms": 6016.00000000326,
+        "tool_calls": 2,
+        "tool_errors": 0,
+        "fallbacks": 0,
+        "cost_usd": null,
+        "unknown_cost_calls": 3
+      },
+      "model_fallbacks": [],
+      "elapsed_ms": 17990.46,
+      "event_counts": {
+        "RUN_STARTED": 1,
+        "STATE_SNAPSHOT": 9,
+        "TOOL_CALL_START": 2,
+        "TOOL_CALL_ARGS": 74,
+        "TOOL_CALL_END": 2,
+        "TOOL_CALL_RESULT": 2,
+        "TEXT_MESSAGE_START": 1,
+        "TEXT_MESSAGE_CONTENT": 348,
+        "TEXT_MESSAGE_END": 1,
+        "MESSAGES_SNAPSHOT": 1,
+        "RUN_FINISHED": 1
+      },
+      "searches": [
+        {
+          "raw_query": "TA-102P户外360度双频天线带黑色支架",
+          "normalized_query": "TA-102P 户外360度双频天线 带黑色支架",
+          "raw_category": "数码配件",
+          "effective_category": "数码配件",
+          "candidate_ids": [
+            "ABF24474-9F83-4457-A5FE-0C4BB12B9E64",
+            "2501310749041600900",
+            "2099749350739578882",
+            "2099413754324320258",
+            "2099357486784053250"
+          ],
+          "anchor_rank": null,
+          "result_complete": true
+        },
+        {
+          "raw_query": "TA-102P户外360度双频天线带黑色支架",
+          "normalized_query": "TA-102P",
+          "raw_category": "天线",
+          "effective_category": null,
+          "candidate_ids": [
+            "1868855168021188608"
+          ],
+          "anchor_rank": 1,
+          "result_complete": true
+        }
+      ],
+      "cj_tool_calls": [],
+      "tool_errors": [],
+      "first_hit5": false,
+      "any_hit5": true,
+      "final_anchor": true,
+      "final_answer": "已按型号检索，找到精确匹配的候选（本次仅做检索展示，未做库存核验、未询运费、未下单）：\n\n**1. TA-102P 360 Degree UV Dual Band 28-36dB Outdoor Antenna With Black Bracket**\n- product_id：`1868855168021188608`\n- 参考价：**US$31.10**（CJ 列表参考价，price_kind=listing）\n- 品类：Consumer Electronics → Accessories & Parts / Home Electronic Accessories\n- 规格（SKU）信息：快照中未展开（skus 为空），规格详情可另行补查\n- 命中点：标题同时包含 TA-102P、360 Degree、Dual Band、Outdoor Antenna、With Black Bracket，与你给的\"户外360度双频天线带黑色支架\"完全对应\n\n需要说明的两点：\n- 该结果是 CJ 快照关键词匹配（共 1 个候选），库存、可配送国家、运费与税费均未实时核验，`stock_known=false`、`detail_available=false`，所以价格只作参考，不等于最终到手价。\n- 我另用\"户外360度双频天线 带黑色支架\"做过一次泛品类检索，返回的是 5 款蓝牙音箱等无关商品（如 Portable Power Outdoor Waterproof Speaker，US$14.49），与天线品类不符，未列出。本次未出现任何被价格/目的国约束挡掉的候选（filtered_out 为空）。\n\n如需下一步，可以告诉我要不要补查该商品的规格详情，或指定收货国做物流试算。",
+      "valid": true,
+      "started_at": "2026-09-30T12:03:51.564042+00:00",
+      "ended_at": "2026-09-30T12:04:09.556372+00:00"
+    },
+    {
+      "id": "CJ-V2H009",
+      "attempt": 1,
+      "variant": "candidate",
+      "raw_query": "TA-102P户外360度双频天线带黑色支架",
+      "anchor_id": "1868855168021188608",
+      "status": "ok",
+      "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H009.1.candidate.jsonl.gz",
+      "terminal": "RUN_FINISHED",
+      "usage": {
+        "status": "success",
+        "elapsed_ms": 18355.963900015922,
+        "model_calls": 2,
+        "input_tokens": 16452,
+        "output_tokens": 710,
+        "observed_input_tokens": 16452,
+        "observed_output_tokens": 710,
+        "unknown_usage_calls": 0,
+        "active_attempts_at_finish": 0,
+        "usage_complete": true,
+        "ttft_p95_ms": 984.9999999860302,
+        "model_elapsed_ms": 4500.99999998929,
+        "tool_calls": 1,
+        "tool_errors": 0,
+        "fallbacks": 0,
+        "cost_usd": null,
+        "unknown_cost_calls": 2
+      },
+      "model_fallbacks": [],
+      "elapsed_ms": 18366.74,
+      "event_counts": {
+        "RUN_STARTED": 1,
+        "STATE_SNAPSHOT": 6,
+        "TOOL_CALL_START": 1,
+        "TOOL_CALL_ARGS": 41,
+        "TOOL_CALL_END": 1,
+        "TOOL_CALL_RESULT": 1,
+        "TEXT_MESSAGE_START": 1,
+        "TEXT_MESSAGE_CONTENT": 491,
+        "TEXT_MESSAGE_END": 1,
+        "MESSAGES_SNAPSHOT": 1,
+        "RUN_FINISHED": 1
+      },
+      "searches": [
+        {
+          "raw_query": "TA-102P户外360度双频天线带黑色支架",
+          "normalized_query": "outdoor 360 degree dual band antenna black bracket TA-102P",
+          "raw_category": "天线",
+          "effective_category": null,
+          "candidate_ids": [
+            "1868855168021188608",
+            "1868901740977213440",
+            "1734414659538657280",
+            "2411040318541607700",
+            "1381175506912808960"
+          ],
+          "anchor_rank": 1,
+          "result_complete": true
+        }
+      ],
+      "cj_tool_calls": [],
+      "tool_errors": [],
+      "first_hit5": true,
+      "any_hit5": true,
+      "final_anchor": true,
+      "final_answer": "已按你的需求检索到匹配结果，第 1 条即为所查型号（同类候选一并列出，供你对照）：\n\n| # | 商品 | product_id | 参考价（USD 列表价） |\n|---|---|---|---|\n| 1 | **TA-102P 360 Degree UV Dual Band 28-36dB Outdoor Antenna With Black Bracket**（360° 双频户外天线 + 黑色支架，与你描述的型号、结构一致） | 1868855168021188608 | US$31.10 |\n| 2 | TA-A1 360 Degree Steering TV Antenna UV Dual Band 47-860 MHz 15-18dB HD Outdoor（型号为 TA-A1，非 TA-102P） | 1868901740977213440 | US$31.39 |\n| 3 | Dual Band Outdoor Night Vision Light Bulb Monitoring Wireless（双频户外监控灯泡，非天线类目） | 1734414659538657280 | US$10.38–21.06 |\n| 4 | Baofeng UV-5RA 双频双显户外手台（对讲机，非天线） | 2411040318541607700 | US$9.12–13.43 |\n| 5 | Dual-Band High-Power Outdoor Wireless AP Rangefinder（双频户外无线 AP） | 1381175506912808960 | US$30.20–56.86 |\n\n说明：\n- 只有第 1 条与“TA-102P / 360 度 / 双频 / 户外 / 黑色支架”完全对应，可直接以该 product_id 定位；第 2 条虽同为 360° 双频户外天线，但型号是 TA-A1，请留意区别。\n- 本次为 CJ 快照关键词检索（召回 1000 条，无候选被硬约束过滤），价格是 USD **列表参考价**，规格、库存、目的国配送与运费/税费均未实时核验；商品卡中未带 SKU 与重量信息，快照数据不完整处我无法替你确认。\n\n如需按某个 product_id 补规格详情或试算到指定国家的物流费用，告诉我产品与目的国即可（本次按要求仅做检索展示，未执行报价或下单）。",
+      "valid": true,
+      "started_at": "2026-09-30T12:04:09.566350+00:00",
+      "ended_at": "2026-09-30T12:04:27.935011+00:00"
+    },
+    {
+      "id": "CJ-V2H010",
+      "attempt": 1,
+      "variant": "baseline",
+      "raw_query": "家用迷你LED口袋投影仪，要带USB和HDMI",
+      "anchor_id": "962C89C4-F9C8-415F-B173-E23D856B8C83",
+      "status": "ok",
+      "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H010.1.baseline.jsonl.gz",
+      "terminal": "RUN_FINISHED",
+      "usage": {
+        "status": "success",
+        "elapsed_ms": 21665.062700019917,
+        "model_calls": 2,
+        "input_tokens": 16187,
+        "output_tokens": 708,
+        "observed_input_tokens": 16187,
+        "observed_output_tokens": 708,
+        "unknown_usage_calls": 0,
+        "active_attempts_at_finish": 0,
+        "usage_complete": true,
+        "ttft_p95_ms": 922.0000000204891,
+        "model_elapsed_ms": 5953.000000008615,
+        "tool_calls": 1,
+        "tool_errors": 0,
+        "fallbacks": 0,
+        "cost_usd": null,
+        "unknown_cost_calls": 2
+      },
+      "model_fallbacks": [],
+      "elapsed_ms": 21675.99,
+      "event_counts": {
+        "RUN_STARTED": 1,
+        "STATE_SNAPSHOT": 6,
+        "TOOL_CALL_START": 1,
+        "TOOL_CALL_ARGS": 37,
+        "TOOL_CALL_END": 1,
+        "TOOL_CALL_RESULT": 1,
+        "TEXT_MESSAGE_START": 1,
+        "TEXT_MESSAGE_CONTENT": 547,
+        "TEXT_MESSAGE_END": 1,
+        "MESSAGES_SNAPSHOT": 1,
+        "RUN_FINISHED": 1
+      },
+      "searches": [
+        {
+          "raw_query": "家用迷你LED口袋投影仪，要带USB和HDMI",
+          "normalized_query": "家用迷你 LED 口袋投影仪 USB HDMI",
+          "raw_category": "数码配件",
+          "effective_category": "数码配件",
+          "candidate_ids": [
+            "962C89C4-F9C8-415F-B173-E23D856B8C83",
+            "461C62AD-6DD4-4BB6-A0B4-51EE138480B5",
+            "1392029096455835648",
+            "7340352E-91A6-42D0-99A1-E506098DB97E",
+            "1384428337052651520"
+          ],
+          "anchor_rank": 1,
+          "result_complete": true
+        }
+      ],
+      "cj_tool_calls": [],
+      "tool_errors": [],
+      "first_hit5": true,
+      "any_hit5": true,
+      "final_anchor": true,
+      "final_answer": "已为你检索到候选（CJ 快照关键词匹配，共 149 个候选，展示前 5 个）：\n\n1. **Mini LED Pocket Projector Home USB HDMI Video Portable Projector Optional Battery**\n   - product_id：`962C89C4-F9C8-415F-B173-E23D856B8C83`\n   - 参考价：US$37.48–42.60（区间价，USD 列表参考价）\n   - 类目：Consumer Electronics → Home Audio & Video / Projectors\n   - 与你需求的匹配点：标题明确含 Mini LED / Pocket / USB / HDMI / Portable，是本轮唯一命中\"口袋投影仪\"的候选；可选电池版本。\n\n2. **Magnetic Cable LED Magnet Charger Cable USB & USB Type-C**\n   - product_id：`461C62AD-6DD4-4BB6-A0B4-51EE138480B5`，参考价 US$1.19–3.60 — 这是数据线，不是投影仪。\n\n3. **4 英寸补光灯 / LED 环形自拍灯（USB 供电）**\n   - product_id：`1392029096455835648`，参考价 US$3.45 — 补光灯，非投影仪。\n\n4. **USB LED 阅读台灯（触摸感应）**\n   - product_id：`7340352E-91A6-42D0-99A1-E506098DB97E`，参考价 US$6.48 — 台灯，非投影仪。\n\n5. **540° 旋转磁吸 LED 数据线**\n   - product_id：`1384428337052651520`，参考价 US$1.54–3.33 — 数据线，非投影仪。\n\n**说明与提示：**\n- 真正符合\"迷你 LED 口袋投影仪 + USB + HDMI\"的只有第 1 条；第 2–5 条是关键词里\"USB / LED\"误召回的数据线和灯具，供你排除。\n- 第 1 条的接口是否同时含 USB 和 HDMI，需要看具体规格；该商品暂无内联详情，若你需要我可以按需补查规格详情。\n- 快照数据里库存、可配送国家、运费与税费均未实时核验，以上价格仅为 USD 列表参考价，不代表最终到手价。\n- 本轮只做检索展示，未执行报价或下单。\n\n需要我进一步查第 1 条的规格详情，或换个关键词再搜一轮吗？",
+      "valid": true,
+      "started_at": "2026-09-30T12:04:27.955021+00:00",
+      "ended_at": "2026-09-30T12:04:49.633264+00:00"
+    },
+    {
+      "id": "CJ-V2H010",
+      "attempt": 1,
+      "variant": "candidate",
+      "raw_query": "家用迷你LED口袋投影仪，要带USB和HDMI",
+      "anchor_id": "962C89C4-F9C8-415F-B173-E23D856B8C83",
+      "status": "ok",
+      "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H010.1.candidate.jsonl.gz",
+      "terminal": "RUN_FINISHED",
+      "usage": {
+        "status": "success",
+        "elapsed_ms": 22794.538599991938,
+        "model_calls": 2,
+        "input_tokens": 16466,
+        "output_tokens": 899,
+        "observed_input_tokens": 16466,
+        "observed_output_tokens": 899,
+        "unknown_usage_calls": 0,
+        "active_attempts_at_finish": 0,
+        "usage_complete": true,
+        "ttft_p95_ms": 1421.9999999913853,
+        "model_elapsed_ms": 5437.000000005355,
+        "tool_calls": 1,
+        "tool_errors": 0,
+        "fallbacks": 0,
+        "cost_usd": null,
+        "unknown_cost_calls": 2
+      },
+      "model_fallbacks": [],
+      "elapsed_ms": 22805.89,
+      "event_counts": {
+        "RUN_STARTED": 1,
+        "STATE_SNAPSHOT": 6,
+        "TOOL_CALL_START": 1,
+        "TOOL_CALL_ARGS": 34,
+        "TOOL_CALL_END": 1,
+        "TOOL_CALL_RESULT": 1,
+        "TEXT_MESSAGE_START": 1,
+        "TEXT_MESSAGE_CONTENT": 571,
+        "TEXT_MESSAGE_END": 1,
+        "MESSAGES_SNAPSHOT": 1,
+        "RUN_FINISHED": 1
+      },
+      "searches": [
+        {
+          "raw_query": "家用迷你LED口袋投影仪，要带USB和HDMI",
+          "normalized_query": "mini LED pocket projector USB HDMI",
+          "raw_category": "数码配件",
+          "effective_category": "数码配件",
+          "candidate_ids": [
+            "962C89C4-F9C8-415F-B173-E23D856B8C83",
+            "1443879108323971072",
+            "1439461538644758528",
+            "1433636562008150016",
+            "1610929826083385344"
+          ],
+          "anchor_rank": 1,
+          "result_complete": true
+        }
+      ],
+      "cj_tool_calls": [],
+      "tool_errors": [],
+      "first_hit5": true,
+      "any_hit5": true,
+      "final_anchor": true,
+      "final_answer": "我按“迷你 LED 口袋投影仪 + USB/HDMI”在 CJ 目录检索，共召回 279 个候选，返回前 5 个（按返回顺序展示）：\n\n| # | 商品 | 参考价（USD） | product_id |\n|---|---|---|---|\n| 1 | Mini LED Pocket Projector Home USB HDMI Video Portable Projector Optional Battery | US$37.48–42.60（区间价） | 962C89C4-F9C8-415F-B173-E23D856B8C83 |\n| 2 | Projector Full Hd Mini Projector For Home Portable Led | US$92.09 | 1443879108323971072 |\n| 3 | Hot YG310 Mini Projector Home HD LED | US$23.90 | 1439461538644758528 |\n| 4 | Home Mobile Phone Projector LED Portable Miniature | US$38.95–47.08（区间价） | 1433636562008150016 |\n| 5 | Mini Screenless TV Touch Home Portable Smartphone Projector | US$395.64 | 1610929826083385344 |\n\n简要说明（只引用结构化/标题信息，不做推断）：\n\n- 第 1 位是本轮最贴合需求的：标题明确写了 Mini LED Pocket Projector、Home、USB、HDMI，还标注电池可选；价位也是口袋投影仪的常见区间，可作为首选对比对象。\n- 第 2、3、4 位是 LED 迷你/家用投影仪，价格从 US$23.90 到 US$92.09 不等，但标题里没有明确出现 USB/HDMI 接口字样，需要看规格详情才能确认接口是否齐全。\n- 第 5 位虽带“Mini/Portable”，但归类在 Camera & Photo 且价格 US$395.64，明显不属于口袋机价位段，仅作参考。\n\n需要提醒的数据口径：\n\n- 以上价格是 CJ 快照的 USD 列表参考价，**库存、目的国可配送性、运费和税费均未实时核验**，不代表到手价。\n- 第 1、4 位是价格区间（对应不同规格），具体规格单价要看详情。\n- 品牌、材质、重量等字段在快照中为空，未做确认。\n\n下一步我可以为你做（按你需要挑一项）：① 拉取第 1 位（或任意指定 product_id）的规格详情，逐个确认 USB/HDMI 接口与规格价；② 换个更具体的检索词（如限定分辨率 / 是否内置电池 / 是否带 Android 系统）再搜一轮。需要我继续哪一步？",
+      "valid": true,
+      "started_at": "2026-09-30T12:04:49.642774+00:00",
+      "ended_at": "2026-09-30T12:05:12.451312+00:00"
+    }
+  ],
+  "pairs": [
+    {
+      "id": "CJ-V2H001",
+      "attempt": 1,
+      "valid": true,
+      "baseline": {
+        "id": "CJ-V2H001",
+        "raw_query": "出门背宝宝用的纯棉前后两用肩带",
+        "anchor_id": "2505140542021607400",
+        "status": "ok",
+        "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H001.1.baseline.jsonl.gz",
+        "terminal": "RUN_FINISHED",
+        "usage": {
+          "status": "success",
+          "elapsed_ms": 34102.36689998419,
+          "model_calls": 3,
+          "input_tokens": 35702,
+          "output_tokens": 2168,
+          "observed_input_tokens": 35702,
+          "observed_output_tokens": 2168,
+          "unknown_usage_calls": 0,
+          "active_attempts_at_finish": 0,
+          "usage_complete": true,
+          "ttft_p95_ms": 5062.000000005355,
+          "model_elapsed_ms": 13656.00000001723,
+          "tool_calls": 3,
+          "tool_errors": 0,
+          "fallbacks": 0,
+          "cost_usd": null,
+          "unknown_cost_calls": 3
+        },
+        "model_fallbacks": [],
+        "elapsed_ms": 34115.35,
+        "event_counts": {
+          "RUN_STARTED": 1,
+          "STATE_SNAPSHOT": 12,
+          "TOOL_CALL_START": 3,
+          "TOOL_CALL_ARGS": 114,
+          "TOOL_CALL_END": 3,
+          "TOOL_CALL_RESULT": 3,
+          "TEXT_MESSAGE_START": 1,
+          "TEXT_MESSAGE_CONTENT": 652,
+          "TEXT_MESSAGE_END": 1,
+          "MESSAGES_SNAPSHOT": 1,
+          "RUN_FINISHED": 1
+        },
+        "searches": [
+          {
+            "raw_query": "出门背宝宝用的纯棉前后两用肩带",
+            "normalized_query": "婴儿背带 纯棉 前后两用 肩带 背宝宝",
+            "raw_category": "母婴用品",
+            "effective_category": "母婴宠物",
+            "candidate_ids": [
+              "2503070304061603500",
+              "2501240516281613600",
+              "2501100154481611700",
+              "2501010246591624600",
+              "2412050227251603200"
+            ],
+            "anchor_rank": null,
+            "result_complete": true
+          },
+          {
+            "raw_query": "出门背宝宝用的纯棉前后两用肩带",
+            "normalized_query": "baby carrier 婴儿背巾 背带 前后两用 棉",
+            "raw_category": null,
+            "effective_category": "母婴宠物",
+            "candidate_ids": [
+              "FB2753BA-9041-4D5A-A554-1967E1106BB6",
+              "6417F683-F198-45E7-8025-0DEAFE92033A",
+              "4887879B-1947-4166-ABFB-AE1C8E223685",
+              "2505140542021607400",
+              "2502010846351614600"
+            ],
+            "anchor_rank": 4,
+            "result_complete": true
+          },
+          {
+            "raw_query": "出门背宝宝用的纯棉前后两用肩带",
+            "normalized_query": "婴儿背带 肩带 背娃神器 婴儿腰凳 纯棉",
+            "raw_category": null,
+            "effective_category": "母婴宠物",
+            "candidate_ids": [
+              "2503070304061603500",
+              "2501240516281613600",
+              "2501100154481611700",
+              "2501010246591624600",
+              "2412050227251603200"
+            ],
+            "anchor_rank": null,
+            "result_complete": true
+          }
+        ],
+        "cj_tool_calls": [],
+        "tool_errors": [],
+        "first_hit5": false,
+        "any_hit5": true,
+        "final_anchor": true,
+        "final_answer": "## 检索结果：「纯棉 · 前后两用肩带」婴儿背带\n\n第二轮换成英文/同义词关键词后命中了一批真正的背带类候选（CJ 快照关键词匹配，按工具返回顺序，共 5 个）：\n\n1. **Baby Carrier Strap Baby Shoulder Front And Back Cotton** — `2505140542021607400` — **US$9.44–9.93**\n   标题同时含 \"Shoulder / Front And Back / Cotton\"，与\"前后两用肩带 + 棉\"最贴合。\n   ⚠️ 该条详情不可用，规格（SKU）字段为空，因此**无法从结构化字段确认是纯棉、也无法确认前后两用的具体形态**，只能引用标题。\n\n2. **Baby carrier** — `FB2753BA-9041-4D5A-A554-1967E1106BB6` — **US$9.20**\n   有 4 个颜色规格：Apphire blue / Rose Red / Purple / Blue print（默认 Apphire blue）；重量 0.8 kg；材质标签为 \"fabric\"（**未标明纯棉**）。快照显示工厂库存约 1 万件级别，库存核查时间 2026-09-29，是唯一有库存数据的候选。\n\n3. **Baby sling solid color baby carrier** — `6417F683-F198-45E7-8025-0DEAFE92033A` — **US$6.09**\n   无规格、无详情、无材质标签，是否为肩带式/前后两用未标注。\n\n4. **Multifunctional coax sleeper baby carrier** — `4887879B-1947-4166-ABFB-AE1C8E223685` — **US$22.94**\n   多功能款，无规格详情，材质未知。\n\n5. **Four-season Cotton Cross X Baby Carrier** — `2502010846351614600` — **US$11.44**\n   标题含 Cotton、四季款、交叉 X 型；无规格详情，结构字段中没有棉材质标签。\n\n### 需要说明的几点\n- 另一次中文关键词检索返回的是婴儿**服装**（连体衣、毛衣套装等），与背带需求不符，未列入候选。\n- 以上均为 CJ 快照的 **USD 列表参考价**，库存、目的国可配送性、运费、税费和最终到手价都未实时核验，**不能作为到手价**。\n- 只有标题/标签能证明材质时我才写\"棉\"；第 2 条的材质标签只是 \"fabric\"，不能推断为纯棉。\n\n### 可选的下一步\n- 想要确认某一款的**纯棉成分与前后两用规格**，告诉我它的 product_id，我可以拉取该商品的 CJ 规格详情；\n- 若已确定款式并告知收货国家，我可以做一次物流费用试算（仅为已知费用合计，不代表最终支付价）。\n\n本轮只做检索展示，未做报价、下单或偏好写入。",
+        "valid": true,
+        "started_at": "2026-09-30T11:56:59.684367+00:00",
+        "ended_at": "2026-09-30T11:57:34.495475+00:00"
+      },
+      "candidate": {
+        "id": "CJ-V2H001",
+        "raw_query": "出门背宝宝用的纯棉前后两用肩带",
+        "anchor_id": "2505140542021607400",
+        "status": "ok",
+        "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H001.1.candidate.jsonl.gz",
+        "terminal": "RUN_FINISHED",
+        "usage": {
+          "status": "success",
+          "elapsed_ms": 21526.91290000803,
+          "model_calls": 2,
+          "input_tokens": 16622,
+          "output_tokens": 943,
+          "observed_input_tokens": 16622,
+          "observed_output_tokens": 943,
+          "unknown_usage_calls": 0,
+          "active_attempts_at_finish": 0,
+          "usage_complete": true,
+          "ttft_p95_ms": 1233.9999999967404,
+          "model_elapsed_ms": 7483.99999999674,
+          "tool_calls": 1,
+          "tool_errors": 0,
+          "fallbacks": 0,
+          "cost_usd": null,
+          "unknown_cost_calls": 2
+        },
+        "model_fallbacks": [],
+        "elapsed_ms": 21535.12,
+        "event_counts": {
+          "RUN_STARTED": 1,
+          "STATE_SNAPSHOT": 6,
+          "TOOL_CALL_START": 1,
+          "TOOL_CALL_ARGS": 33,
+          "TOOL_CALL_END": 1,
+          "TOOL_CALL_RESULT": 1,
+          "TEXT_MESSAGE_START": 1,
+          "TEXT_MESSAGE_CONTENT": 501,
+          "TEXT_MESSAGE_END": 1,
+          "MESSAGES_SNAPSHOT": 1,
+          "RUN_FINISHED": 1
+        },
+        "searches": [
+          {
+            "raw_query": "出门背宝宝用的纯棉前后两用肩带",
+            "normalized_query": "baby carrier cotton front back",
+            "raw_category": "母婴用品",
+            "effective_category": "母婴宠物",
+            "candidate_ids": [
+              "2505140542021607400",
+              "2502010846351614600",
+              "1440567249101524992",
+              "1621757324790607872",
+              "2409300256321606500"
+            ],
+            "anchor_rank": 1,
+            "result_complete": true
+          }
+        ],
+        "cj_tool_calls": [],
+        "tool_errors": [],
+        "first_hit5": true,
+        "any_hit5": true,
+        "final_anchor": true,
+        "final_answer": "为你检索到以下候选（按检索返回顺序，均为 CJ 快照列表参考价，USD）：\n\n| # | 商品 | product_id | 参考价 | 说明 |\n|---|---|---|---|---|\n| 1 | Baby Carrier Strap Baby Shoulder Front And Back Cotton | 2505140542021607400 | US$9.44–9.93 | 标题直接含 \"Front And Back\" 前后两用 + Cotton，最贴合你的需求 |\n| 2 | Four-season Cotton Cross X Baby Carrier | 2502010846351614600 | US$11.44 | 棉质、交叉 X 型设计，四季款；标题未写明前后两用 |\n| 3 | Baby Breathable And Cool Lumbar Stool Carrier Front Hugging Multifunctional | 1440567249101524992 | US$9.19 | 透气腰凳式、前抱多功能，非纯棉定位 |\n| 4 | Baby Newborn Clothes Suede Half Back Pure Cotton Monk Clothes | 1621757324790607872 | US$2.06 | 这是新生儿半背和尚服（衣物），不是背带，仅因关键词召回，建议排除 |\n| 5 | Baby Strap Simple Baby Horizontally Holding Style Front And Back Two Use | 2409300256321606500 | US$6.63–7.63 | 前后两用，但为横抱式简易背带，标题未标棉质 |\n\n推荐思路：**第 1 款**同时命中\"前后两用 + Cotton\"，最符合你的诉求；若你更看重四季通用和交叉承托，可看第 2 款。\n\n需要提醒的两点（如实说明，非工具故障）：\n- 这些商品卡的 `material_tags` 字段为空，所以\"纯棉\"目前只来自商品标题，快照里没有可用的结构化材质属性可核验，我无法断言材质一定是纯棉。\n- 本次为列表快照检索，**库存、是否可配送到你的国家、运费与税费均未实时核验**，价格仅为列表参考价（含区间价，非最终到手价）。你只要求检索展示，我没有做物流试算，也没有准备任何订单。\n\n需要的话，告诉我目的国和想要的第几款，我可以再帮你拉取该商品的具体规格详情或做物流试算。",
+        "valid": true,
+        "started_at": "2026-09-30T11:57:34.499477+00:00",
+        "ended_at": "2026-09-30T11:57:56.700653+00:00"
+      }
+    },
+    {
+      "id": "CJ-V2H002",
+      "attempt": 1,
+      "valid": true,
+      "baseline": {
+        "id": "CJ-V2H002",
+        "raw_query": "做演示时既能当激光笔又能当无线鼠标的遥控器",
+        "anchor_id": "1676057944049332224",
+        "status": "ok",
+        "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H002.1.baseline.jsonl.gz",
+        "terminal": "RUN_FINISHED",
+        "usage": {
+          "status": "success",
+          "elapsed_ms": 18739.265600015642,
+          "model_calls": 2,
+          "input_tokens": 16105,
+          "output_tokens": 803,
+          "observed_input_tokens": 16105,
+          "observed_output_tokens": 803,
+          "unknown_usage_calls": 0,
+          "active_attempts_at_finish": 0,
+          "usage_complete": true,
+          "ttft_p95_ms": 1766.0000000032596,
+          "model_elapsed_ms": 6344.000000011874,
+          "tool_calls": 1,
+          "tool_errors": 0,
+          "fallbacks": 0,
+          "cost_usd": null,
+          "unknown_cost_calls": 2
+        },
+        "model_fallbacks": [],
+        "elapsed_ms": 18755.35,
+        "event_counts": {
+          "RUN_STARTED": 1,
+          "STATE_SNAPSHOT": 6,
+          "TOOL_CALL_START": 1,
+          "TOOL_CALL_ARGS": 43,
+          "TOOL_CALL_END": 1,
+          "TOOL_CALL_RESULT": 1,
+          "TEXT_MESSAGE_START": 1,
+          "TEXT_MESSAGE_CONTENT": 541,
+          "TEXT_MESSAGE_END": 1,
+          "MESSAGES_SNAPSHOT": 1,
+          "RUN_FINISHED": 1
+        },
+        "searches": [
+          {
+            "raw_query": "做演示时既能当激光笔又能当无线鼠标的遥控器",
+            "normalized_query": "演示遥控器 激光笔 无线鼠标 二合一 演示器",
+            "raw_category": "数码配件",
+            "effective_category": "数码配件",
+            "candidate_ids": [
+              "1676057944049332224",
+              "1382559743557636096",
+              "1474316891509100544",
+              "361DD967-3213-4F1B-84C0-045AFEF8ADB4",
+              "1401810436990570496"
+            ],
+            "anchor_rank": 1,
+            "result_complete": true
+          }
+        ],
+        "cj_tool_calls": [],
+        "tool_errors": [],
+        "first_hit5": true,
+        "any_hit5": true,
+        "final_anchor": true,
+        "final_answer": "已为你检索到以下候选（CJ 快照关键词匹配，列表参考价，均为 USD；库存、可配送国家、运费与税费未实时核验，仅供挑选参考）：\n\n1. **Smartphone Remote Control Multi-function Laser Pen Wireless Mouse** — US$39.90\n   product_id: `1676057944049332224`\n   与本需求最贴的一条：标题即写明「多功能激光笔 + 无线鼠标」的遥控器形态，适合演示场景一机两用。品牌/材质/重量等结构化字段为空，快照未提供更多细节。\n\n2. **Handwriting Second-generation Pen-shaped Flying Squirrel Mouse Pen Wireless Gaming Optical Pen** — US$6.62\n   product_id: `1382559743557636096`\n   笔形无线光电鼠标，便携性接近演示遥控的握持感，但快照标题与高亮字段均未标明激光笔功能，只能算「笔形鼠标」方向的备选。\n\n3. **S1 Mini Wireless ... With Mouse Typadnd** — US$13.63\n   product_id: `1474316891509100544`\n   快照归类为手持游戏/掌机类，与演示遥控的用途差异较大，仅作列示。\n\n4. **Led super large shiny mouse pad** — US$2.97–6.02\n   product_id: `361DD967-3213-4F1B-84C0-045AFEF8ADB4`\n5. **Large Mouse Pad, Gaming, Colorful Seaming, Waterproof Cloth** — US$5.24–8.87\n   product_id: `1401810436990570496`\n\n第 4、5 条是鼠标垫，属于本次关键词带出的无关结果，可直接忽略。\n\n**小结与建议**\n- 真正同时满足「激光笔 + 无线鼠标」二合一演示遥控的，目前只有第 1 条（US$39.90）；其余候选与需求存在明显差异，是否接受由你定夺。\n- 说明一下数据边界：本次为 CJ 快照关键词召回，**未**做实时库存、目的国可达性与运费核验，因此上面价格只是列表参考价，不等于最终到手价，也不代表可配送。\n- 本次检索未出现被硬约束拦下的候选（filtered_out 为空），也没有对价格或目的国做过滤。\n\n如果你告诉我收货国家和预算，我可以再做一轮更贴合的检索；若要确认某条的规格细节或配送费用，也可以按具体商品进一步查。",
+        "valid": true,
+        "started_at": "2026-09-30T11:57:56.711884+00:00",
+        "ended_at": "2026-09-30T11:58:15.470256+00:00"
+      },
+      "candidate": {
+        "id": "CJ-V2H002",
+        "raw_query": "做演示时既能当激光笔又能当无线鼠标的遥控器",
+        "anchor_id": "1676057944049332224",
+        "status": "ok",
+        "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H002.1.candidate.jsonl.gz",
+        "terminal": "RUN_FINISHED",
+        "usage": {
+          "status": "success",
+          "elapsed_ms": 21344.75519999978,
+          "model_calls": 2,
+          "input_tokens": 16668,
+          "output_tokens": 1048,
+          "observed_input_tokens": 16668,
+          "observed_output_tokens": 1048,
+          "unknown_usage_calls": 0,
+          "active_attempts_at_finish": 0,
+          "usage_complete": true,
+          "ttft_p95_ms": 1625.0,
+          "model_elapsed_ms": 5842.999999993481,
+          "tool_calls": 1,
+          "tool_errors": 0,
+          "fallbacks": 0,
+          "cost_usd": null,
+          "unknown_cost_calls": 2
+        },
+        "model_fallbacks": [],
+        "elapsed_ms": 21356.47,
+        "event_counts": {
+          "RUN_STARTED": 1,
+          "STATE_SNAPSHOT": 6,
+          "TOOL_CALL_START": 1,
+          "TOOL_CALL_ARGS": 37,
+          "TOOL_CALL_END": 1,
+          "TOOL_CALL_RESULT": 1,
+          "TEXT_MESSAGE_START": 1,
+          "TEXT_MESSAGE_CONTENT": 624,
+          "TEXT_MESSAGE_END": 1,
+          "MESSAGES_SNAPSHOT": 1,
+          "RUN_FINISHED": 1
+        },
+        "searches": [
+          {
+            "raw_query": "做演示时既能当激光笔又能当无线鼠标的遥控器",
+            "normalized_query": "presentation clicker laser pointer wireless mouse remote",
+            "raw_category": "数码配件",
+            "effective_category": "数码配件",
+            "candidate_ids": [
+              "1676057944049332224",
+              "C3D7768B-5393-4BA4-B502-5A9E59E8301C",
+              "527B67AC-835B-4E1E-9169-88A19A8CCAAE",
+              "0C5FFC3C-886A-445E-836C-403563643F1B",
+              "1529009428740190208"
+            ],
+            "anchor_rank": 1,
+            "result_complete": true
+          }
+        ],
+        "cj_tool_calls": [],
+        "tool_errors": [],
+        "first_hit5": true,
+        "any_hit5": true,
+        "final_anchor": true,
+        "final_answer": "已按你的需求做了检索（演示用「激光笔 + 无线鼠标」一体的遥控器）。以下是本次召回候选，按返回顺序展示，价格来自 CJ 快照的**列表参考价（USD）**，库存、可配送国家、运费税费均未实时核验。\n\n| # | 商品 | product_id | 参考价 | 与需求吻合度 |\n|---|------|-----------|--------|-------------|\n| 1 | Smartphone Remote Control Multi-function Laser Pen Wireless Mouse | `1676057944049332224` | US$39.90 | 标题直接写明 Laser Pen + Wireless Mouse，最贴合「激光笔兼无线鼠标」 |\n| 2 | Docooler Mini 2.4GHz Wireless QWERTY Keyboard Air Mouse Handheld Remote Control 6-axis Gyroscope（Mini PC / TV Box） | `C3D7768B-5393-4BA4-B502-5A9E59E8301C` | US$8.33 | 体感空鼠+键盘遥控，**标题未提激光笔**，偏 TV Box/PC 场景 |\n| 3 | G20 flying mouse 2.4G wireless voice remote control | `527B67AC-835B-4E1E-9169-88A19A8CCAAE` | US$3.08–4.89 | 飞鼠遥控，**未见激光笔描述** |\n| 4 | MX3 / MX3-L Backlit Air Mouse T3 Smart Voice Remote（Android TV Box） | `0C5FFC3C-886A-445E-836C-403563643F1B` | US$3.79–6.30 | 空鼠+键盘遥控，**未见激光笔描述**，偏机顶盒 |\n| 5 | Rechargeable Powerpoint Presentation Remote Control Pen | `1529009428740190208` | US$8.34 | 明确是 PPT 演示遥控笔，但标题未确认是否带鼠标功能 |\n\n几点如实说明：\n- 本次检索无被硬约束挡掉的候选（filtered_out 为空），以上即召回结果。\n- 只有 **1 号** 的标题同时覆盖「激光笔」与「无线鼠标」；2–4 号是体感空鼠/多媒体遥控，通常用于电视盒子或 HTPC，**未必带激光笔**；5 号是演示笔，**是否兼具鼠标功能标题未体现**。\n- 快照未提供材质、重量、品牌、产地，也不含 SKU；因此无法从数据层面进一步确认真激光/鼠标按键细节。\n- 若你想看某款的真实规格明细（例如接口、按键、是否含激光），我可以按 product_id 拉取详情；本次仅做检索展示，未下单、未做运费试算。\n\n如果你愿意补充目的国或预算，我可以据此再收窄一轮候选。",
+        "valid": true,
+        "started_at": "2026-09-30T11:58:15.475257+00:00",
+        "ended_at": "2026-09-30T11:58:36.834453+00:00"
+      }
+    },
+    {
+      "id": "CJ-V2H003",
+      "attempt": 1,
+      "valid": true,
+      "candidate": {
+        "id": "CJ-V2H003",
+        "raw_query": "给小狗户外喝水的不锈钢便携水杯",
+        "anchor_id": "2602090303381624300",
+        "status": "ok",
+        "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H003.1.candidate.jsonl.gz",
+        "terminal": "RUN_FINISHED",
+        "usage": {
+          "status": "success",
+          "elapsed_ms": 23657.77559997514,
+          "model_calls": 2,
+          "input_tokens": 16481,
+          "output_tokens": 745,
+          "observed_input_tokens": 16481,
+          "observed_output_tokens": 745,
+          "unknown_usage_calls": 0,
+          "active_attempts_at_finish": 0,
+          "usage_complete": true,
+          "ttft_p95_ms": 1265.9999999741558,
+          "model_elapsed_ms": 4873.999999981606,
+          "tool_calls": 1,
+          "tool_errors": 0,
+          "fallbacks": 0,
+          "cost_usd": null,
+          "unknown_cost_calls": 2
+        },
+        "model_fallbacks": [],
+        "elapsed_ms": 23668.37,
+        "event_counts": {
+          "RUN_STARTED": 1,
+          "STATE_SNAPSHOT": 6,
+          "TOOL_CALL_START": 1,
+          "TOOL_CALL_ARGS": 35,
+          "TOOL_CALL_END": 1,
+          "TOOL_CALL_RESULT": 1,
+          "TEXT_MESSAGE_START": 1,
+          "TEXT_MESSAGE_CONTENT": 514,
+          "TEXT_MESSAGE_END": 1,
+          "MESSAGES_SNAPSHOT": 1,
+          "RUN_FINISHED": 1
+        },
+        "searches": [
+          {
+            "raw_query": "给小狗户外喝水的不锈钢便携水杯",
+            "normalized_query": "dog outdoor portable water bottle stainless steel",
+            "raw_category": "宠物用品",
+            "effective_category": "母婴宠物",
+            "candidate_ids": [
+              "2602090303381624300",
+              "2504100230321610200",
+              "2408300217501608200",
+              "2407140655211602100",
+              "1654057903558504448"
+            ],
+            "anchor_rank": 1,
+            "result_complete": true
+          }
+        ],
+        "cj_tool_calls": [],
+        "tool_errors": [],
+        "first_hit5": true,
+        "any_hit5": true,
+        "final_anchor": false,
+        "final_answer": "给你找到 5 个狗狗户外便携饮水杯候选（CJ 目录快照，USD 参考价，按检索顺序展示）：\n\n| # | 商品 | 参考价 | 备注 |\n|---|---|---|---|\n| 1 | Creative Portable Outdoor Pet Stainless Steel Water Cup Small Dog Water Bottle Convenient Dog Drink Dispenser Puppy Travel Portable Water Bowl | US$1.05–14.84（区间价） | 标题明确写 **不锈钢**，最贴合\"不锈钢\"诉求；价格区间跨度大，具体规格与对应价快照里未给 |\n| 2 | 2 In 1 Portable Dog Water Bottle For Small Big Dogs Cat Outdoor Leak-proof Puppy Drinking Bowl With Food Container | US$2.21–2.77 | 二合一（水+粮仓），防漏，大中小型犬通用；未标材质 |\n| 3 | 2 In 1 Travel Dog Water Bottle Pet Water Dispenser Feeder Drinking Feeder Dog Outing Water Feeder Pets Outdoor Portable Cup | US$1.93 | 单一标价，二合一饮水器；未标材质 |\n| 4 | Dog Water Cup Portable Pet Supplies For Water Bottle Dog Drinking Bowl Cup Outdoor Travel Dogs Cats Water Dispenser Feeder | US$2.46–2.99 | 犬猫通用户外饮水杯；未标材质 |\n| 5 | New Portable Pet Dog Water Bottle Soft Silicone Leaf Design For Dog Pets Outdoor Travel Drinking Bowls Water Dispenser | US$4.13–11.75 | 标题写 **软硅胶** 叶片设计，非不锈钢，供对比参考 |\n\n几点如实说明：\n- 只有第 1 款标题明确是 stainless steel；其余几款快照的商品卡里 **材质字段为空**，我不能替它们断定是不锈钢，需要你按标题/后续详情页核对。\n- 快照的库存、可配送国家、运费与税费均未实时核验，以上价格只是列表参考价，不是到手价，也不代表已确认可发。\n- 第 1 款是区间价（US$1.05–14.84），不同容量/规格价格差异大；若要看某款的真实规格与对应价格，告诉我 product_id，我可以拉详情。\n\n想更聚焦的话，可以告诉我：预算上限、狗狗体型（小型/中大型）、以及是否必须要\"水粮二合一\"，我再帮你缩范围。",
+        "valid": true,
+        "started_at": "2026-09-30T11:58:36.847464+00:00",
+        "ended_at": "2026-09-30T11:59:00.517892+00:00"
+      },
+      "baseline": {
+        "id": "CJ-V2H003",
+        "raw_query": "给小狗户外喝水的不锈钢便携水杯",
+        "anchor_id": "2602090303381624300",
+        "status": "ok",
+        "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H003.1.baseline.jsonl.gz",
+        "terminal": "RUN_FINISHED",
+        "usage": {
+          "status": "success",
+          "elapsed_ms": 32775.79590000096,
+          "model_calls": 4,
+          "input_tokens": 49807,
+          "output_tokens": 2321,
+          "observed_input_tokens": 49807,
+          "observed_output_tokens": 2321,
+          "unknown_usage_calls": 0,
+          "active_attempts_at_finish": 0,
+          "usage_complete": true,
+          "ttft_p95_ms": 3375.0,
+          "model_elapsed_ms": 17138.999999995576,
+          "tool_calls": 4,
+          "tool_errors": 0,
+          "fallbacks": 0,
+          "cost_usd": null,
+          "unknown_cost_calls": 4
+        },
+        "model_fallbacks": [],
+        "elapsed_ms": 32788.13,
+        "event_counts": {
+          "RUN_STARTED": 1,
+          "STATE_SNAPSHOT": 15,
+          "TOOL_CALL_START": 4,
+          "TOOL_CALL_ARGS": 147,
+          "TOOL_CALL_END": 4,
+          "TOOL_CALL_RESULT": 4,
+          "TEXT_MESSAGE_START": 1,
+          "TEXT_MESSAGE_CONTENT": 676,
+          "TEXT_MESSAGE_END": 1,
+          "MESSAGES_SNAPSHOT": 1,
+          "RUN_FINISHED": 1
+        },
+        "searches": [
+          {
+            "raw_query": "给小狗户外喝水的不锈钢便携水杯",
+            "normalized_query": "宠物户外便携饮水杯 不锈钢 小狗 饮水",
+            "raw_category": "宠物用品",
+            "effective_category": "户外运动",
+            "candidate_ids": [
+              "1397059922478370816",
+              "2508210325521619600",
+              "2086703455414374401",
+              "2086653160247414785",
+              "2086355607972917250"
+            ],
+            "anchor_rank": null,
+            "result_complete": true
+          },
+          {
+            "raw_query": "给小狗户外喝水的不锈钢便携水杯",
+            "normalized_query": "狗狗外出饮水瓶 不锈钢 便携水壶 宠物随行杯",
+            "raw_category": "宠物户外饮水",
+            "effective_category": "户外运动",
+            "candidate_ids": [
+              "1558373238525407232",
+              "1397059922478370816",
+              "1A51B612-F988-4303-88AB-33F23D973DB2",
+              "2033809139225382913",
+              "1879729375339261953"
+            ],
+            "anchor_rank": null,
+            "result_complete": true
+          },
+          {
+            "raw_query": "给小狗户外喝水的不锈钢便携水杯",
+            "normalized_query": "dog water bottle stainless steel portable pet travel drinking cup",
+            "raw_category": null,
+            "effective_category": null,
+            "candidate_ids": [
+              "2602090303381624300",
+              "2408300217501608200",
+              "2407140655211602100",
+              "1654057903558504448",
+              "2097267882200457217"
+            ],
+            "anchor_rank": 1,
+            "result_complete": true
+          },
+          {
+            "raw_query": "给小狗户外喝水的不锈钢便携水杯",
+            "normalized_query": "stainless steel pet water bottle dog outdoor portable drinking cup dispenser small dog",
+            "raw_category": null,
+            "effective_category": null,
+            "candidate_ids": [
+              "2602090303381624300",
+              "2504100230321610200",
+              "2408300217501608200",
+              "2407140655211602100",
+              "1654057903558504448"
+            ],
+            "anchor_rank": 1,
+            "result_complete": true
+          }
+        ],
+        "cj_tool_calls": [],
+        "tool_errors": [],
+        "first_hit5": false,
+        "any_hit5": true,
+        "final_anchor": true,
+        "final_answer": "已按你的需求做了纯检索（不涉及下单、报价或偏好记录）。用中文关键词召回时命中大量无关品类（瑜伽裤、狗背包等），改用宠物饮水相关中英文关键词后拿到了具体候选。以下按检索返回顺序列出，价格为 CJ 快照的 **USD 列表参考价**，库存、可配送国、运费与最终到手价均未实时核验：\n\n**宠物饮水类候选（Pet Drinking Tools）**\n\n1. **Creative Portable Outdoor Pet Stainless Steel Water Cup / Small Dog Water Bottle（小狗便携饮水杯）**\n   `product_id: 2602090303381624300` ｜ 参考价 US$1.05–14.84（区间价，含多档规格差异） ｜ 标题明确写 Stainless Steel\n2. **2 In 1 Portable Dog Water Bottle For Small Big Dogs（二合一便携饮水瓶，带储粮仓）**\n   `product_id: 2504100230321610200` ｜ 参考价 US$2.21–2.77\n3. **2 In 1 Travel Dog Water Bottle 户外便携饮水器**\n   `product_id: 2408300217501608200` ｜ 参考价 US$1.93\n4. **Dog Water Cup Portable 户外饮水杯**\n   `product_id: 2407140655211602100` ｜ 参考价 US$2.46–2.99\n5. **Portable Pet Dog Water Bottle Soft Silicone Leaf Design（硅胶叶形饮水瓶）**\n   `product_id: 1654057903558504448` ｜ 参考价 US$4.13–11.75 ｜ 标题写明 Soft Silicone，**不是不锈钢**\n\n**挑选提示与数据差异说明**\n\n- 只有第 1 条在标题里明确是**不锈钢**饮水杯，最贴合你的\"不锈钢 + 小狗 + 户外便携\"需求；第 2–4 条是同类便携饮水器但标题未标注不锈钢材质，第 5 条是硅胶材质，与你的材质要求不符。\n- 这几条的结构化 `material_tags` 字段均为空、`detail_available` 为 false，也就是说**材质只能依据标题文字，快照没有可核验的结构化材质/规格数据**，我无法替你把\"不锈钢\"确认为已核实的属性；如需要，我可以再按指定 ID 尝试拉取规格详情，能拿到就以详情为准，拿不到会如实告知。\n- 所有候选 `stock_known: false`、`ships_to` 为空：**当前没有库存与目的国可达性的实时结论**，价格也只是列表参考价（区间价需选定规格才落定），因此上面的数字不能当作到手价。\n- 本次检索返回的 `filtered_out` 为空，即没有任何候选是被价格上限或目的国不可达挡掉的——只是本次未召回到更多明确标注\"不锈钢\"的小狗饮水杯型号。\n\n需要的话，告诉我你倾向的规格（容量/是否要带储粮仓）和收货国家，我可以再检索一轮或对该 ID 查规格详情。",
+        "valid": true,
+        "started_at": "2026-09-30T11:59:00.522885+00:00",
+        "ended_at": "2026-09-30T11:59:33.314379+00:00"
+      }
+    },
+    {
+      "id": "CJ-V2H004",
+      "attempt": 1,
+      "valid": true,
+      "baseline": {
+        "id": "CJ-V2H004",
+        "raw_query": "坐飞机打盹用可折叠的H形充气护颈枕",
+        "anchor_id": "1400751666202021888",
+        "status": "ok",
+        "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H004.1.baseline.jsonl.gz",
+        "terminal": "RUN_FINISHED",
+        "usage": {
+          "status": "success",
+          "elapsed_ms": 38714.68019997701,
+          "model_calls": 6,
+          "input_tokens": 69303,
+          "output_tokens": 2368,
+          "observed_input_tokens": 69303,
+          "observed_output_tokens": 2368,
+          "unknown_usage_calls": 0,
+          "active_attempts_at_finish": 0,
+          "usage_complete": true,
+          "ttft_p95_ms": 1875.0,
+          "model_elapsed_ms": 14516.00000000326,
+          "tool_calls": 7,
+          "tool_errors": 0,
+          "fallbacks": 0,
+          "cost_usd": null,
+          "unknown_cost_calls": 6
+        },
+        "model_fallbacks": [],
+        "elapsed_ms": 38732.95,
+        "event_counts": {
+          "RUN_STARTED": 1,
+          "STATE_SNAPSHOT": 24,
+          "TOOL_CALL_START": 7,
+          "TOOL_CALL_ARGS": 241,
+          "TOOL_CALL_END": 7,
+          "TOOL_CALL_RESULT": 7,
+          "TEXT_MESSAGE_START": 1,
+          "TEXT_MESSAGE_CONTENT": 681,
+          "TEXT_MESSAGE_END": 1,
+          "MESSAGES_SNAPSHOT": 1,
+          "RUN_FINISHED": 1
+        },
+        "searches": [
+          {
+            "raw_query": "坐飞机打盹用可折叠的H形充气护颈枕",
+            "normalized_query": "H形充气护颈枕 可折叠 便携 旅行 飞机 打盹",
+            "raw_category": "旅行装备",
+            "effective_category": "旅行装备",
+            "candidate_ids": [
+              "2410010651411603900",
+              "2412020937191614400",
+              "2508150136111601200",
+              "2406121449441602000",
+              "2506050836171616400"
+            ],
+            "anchor_rank": null,
+            "result_complete": true
+          },
+          {
+            "raw_query": "坐飞机打盹用可折叠的H形充气护颈枕",
+            "normalized_query": "inflatable neck pillow foldable travel airplane nap H shape",
+            "raw_category": "旅行装备",
+            "effective_category": "旅行装备",
+            "candidate_ids": [
+              "1816366468645670912",
+              "1371703315292884992",
+              "D48478AD-25F2-467B-816D-F05F9A894E3F",
+              "1527483304503685120",
+              "2406110723151610700"
+            ],
+            "anchor_rank": null,
+            "result_complete": true
+          },
+          {
+            "raw_query": "坐飞机打盹用可折叠的H形充气护颈枕",
+            "normalized_query": "neck pillow",
+            "raw_category": "旅行装备",
+            "effective_category": "旅行装备",
+            "candidate_ids": [
+              "2406080144341602200",
+              "2502250839131613300",
+              "1397388693379092480",
+              "1835196011061858304"
+            ],
+            "anchor_rank": null,
+            "result_complete": true
+          },
+          {
+            "raw_query": "坐飞机打盹用可折叠的H形充气护颈枕",
+            "normalized_query": "充气护颈枕 U型枕 飞机 旅行 便携",
+            "raw_category": "旅行装备",
+            "effective_category": "旅行装备",
+            "candidate_ids": [
+              "2410010651411603900",
+              "2412020937191614400",
+              "2508150136111601200",
+              "2406121449441602000",
+              "2506050836171616400"
+            ],
+            "anchor_rank": null,
+            "result_complete": true
+          },
+          {
+            "raw_query": "坐飞机打盹用可折叠的H形充气护颈枕",
+            "normalized_query": "travel pillow inflatable neck support cushion",
+            "raw_category": null,
+            "effective_category": null,
+            "candidate_ids": [
+              "1400751666202021888",
+              "1376507432263618560",
+              "1769305188013191168",
+              "2504270351581616600",
+              "1797828462602883072"
+            ],
+            "anchor_rank": 1,
+            "result_complete": true
+          },
+          {
+            "raw_query": "坐飞机打盹用可折叠的H形充气护颈枕",
+            "normalized_query": "护颈枕 充气 折叠",
+            "raw_category": null,
+            "effective_category": "旅行装备",
+            "candidate_ids": [],
+            "anchor_rank": null,
+            "result_complete": true
+          },
+          {
+            "raw_query": "坐飞机打盹用可折叠的H形充气护颈枕",
+            "normalized_query": "H shaped inflatable neck pillow folding lightweight nap airplane sleeping",
+            "raw_category": null,
+            "effective_category": null,
+            "candidate_ids": [
+              "1400751666202021888",
+              "1376507432263618560",
+              "2406170906021615600",
+              "1945722691007078402",
+              "1888120751535550466"
+            ],
+            "anchor_rank": 1,
+            "result_complete": true
+          }
+        ],
+        "cj_tool_calls": [],
+        "tool_errors": [],
+        "first_hit5": false,
+        "any_hit5": true,
+        "final_anchor": true,
+        "final_answer": "已为你检索完成（本次仅做检索展示，未做下单、报价或偏好写入）。在 CJ 快照目录里，\"充气 + 可折叠 + H 形护颈枕\"这个组合确实有对应的现货款，下面按检索返回顺序展示候选（第 1 项为最匹配）：\n\n**第 1 项｜Hooded Travel Pillow H Shaped Inflatable Neck Pillow Folding Lightweight Nap Car Seat Office Airplane Sleeping Cushion Pillows**\n- product_id：`1400751666202021888`\n- 参考价：US$4.79–9.56（区间价，多规格）\n- 类目：Home, Garden & Furniture / Home Textiles·Pillows\n- 匹配点：标题同时命中「H Shaped」「Inflatable」「Folding」「Airplane Sleeping / Nap」，是你描述的飞机打盹用可折叠 H 形充气护颈枕；带连帽设计。\n- 说明：该款在不同规格间价格有跨度，具体规格与颜色需进详情页选。\n\n**第 2 项｜Outdoor Sleeping Pad Camping Inflatable Mattress With Pillows Travel Mat Folding Bed**（`1376507432263618560`，US$11.49）\n- 充气垫类，非护颈枕，仅作备选参考。\n\n**第 3 项｜Amazon Baby Inflatable Mattress Rear Folding Car Mat**（`1769305188013191168`，US$8.70–19.19）\n- 车载充气垫，与护颈需求不符。\n\n**第 4 项｜Soft Memory Foam Travel Neck Pillow U Shape Adjustable Support Sleeping On Plane Car Office Noon Break**（`2504270351581616600`，US$3.52–14.08）\n- 同为飞机打盹用护颈枕，但是**记忆棉 U 形、非充气、不可折叠收纳**——如果你更看重收纳体积小，第 1 项更贴合；如果更看重支撑感、不介意占体积，这款可看。\n\n**第 5 项｜Hollow Seat Cushion Lumbar Support Pillow**（`1797828462602883072`，US$3.08–4.63）\n- 坐垫/腰靠类，与需求不符，列出仅供你了解本次召回全貌。\n\n**需要提醒的数据口径**\n- 以上来自 CJ 快照关键词召回，价格是 USD 列表参考价；快照不核验实时库存、目的国可配送性、运费与税费，因此**当前无法给出\"到手价\"或\"可准时送达\"的结论**。\n- 本次没有触发任何硬约束过滤（未设预算上限、未指定目的国），`filtered_out` 为空，即上述结果没有因价格或目的国被挡掉。\n- 若你要更精准的规格参数（尺寸、充气方式、面料）或指定收货国的物流试算，告诉我，我再补查。\n\n需要我按\"收纳体积最小 / 支撑最稳 / 价格最低\"哪个维度帮你进一步缩到 1–2 款吗？",
+        "valid": true,
+        "started_at": "2026-09-30T11:59:33.326382+00:00",
+        "ended_at": "2026-09-30T12:00:12.065119+00:00"
+      },
+      "candidate": {
+        "id": "CJ-V2H004",
+        "raw_query": "坐飞机打盹用可折叠的H形充气护颈枕",
+        "anchor_id": "1400751666202021888",
+        "status": "ok",
+        "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H004.1.candidate.jsonl.gz",
+        "terminal": "RUN_FINISHED",
+        "usage": {
+          "status": "success",
+          "elapsed_ms": 28915.105899999617,
+          "model_calls": 5,
+          "input_tokens": 58738,
+          "output_tokens": 1958,
+          "observed_input_tokens": 58738,
+          "observed_output_tokens": 1958,
+          "unknown_usage_calls": 0,
+          "active_attempts_at_finish": 0,
+          "usage_complete": true,
+          "ttft_p95_ms": 2593.9999999827705,
+          "model_elapsed_ms": 12546.999999991385,
+          "tool_calls": 6,
+          "tool_errors": 0,
+          "fallbacks": 0,
+          "cost_usd": null,
+          "unknown_cost_calls": 5
+        },
+        "model_fallbacks": [],
+        "elapsed_ms": 28926.67,
+        "event_counts": {
+          "RUN_STARTED": 1,
+          "STATE_SNAPSHOT": 21,
+          "TOOL_CALL_START": 6,
+          "TOOL_CALL_ARGS": 185,
+          "TOOL_CALL_END": 6,
+          "TOOL_CALL_RESULT": 6,
+          "TEXT_MESSAGE_START": 2,
+          "TEXT_MESSAGE_CONTENT": 670,
+          "TEXT_MESSAGE_END": 2,
+          "MESSAGES_SNAPSHOT": 1,
+          "RUN_FINISHED": 1
+        },
+        "searches": [
+          {
+            "raw_query": "坐飞机打盹用可折叠的H形充气护颈枕",
+            "normalized_query": "foldable H-shaped inflatable neck pillow travel nap",
+            "raw_category": "旅行装备",
+            "effective_category": "旅行装备",
+            "candidate_ids": [
+              "1816366468645670912",
+              "1371703315292884992",
+              "D48478AD-25F2-467B-816D-F05F9A894E3F",
+              "1527483304503685120",
+              "2406110723151610700"
+            ],
+            "anchor_rank": null,
+            "result_complete": true
+          },
+          {
+            "raw_query": "坐飞机打盹用可折叠的H形充气护颈枕",
+            "normalized_query": "inflatable neck pillow travel airplane sleep cushion",
+            "raw_category": "旅行装备",
+            "effective_category": "旅行装备",
+            "candidate_ids": [
+              "45CBE913-5FF4-401A-B9A1-D5F6C5E502A8",
+              "1778990713221423104",
+              "1385473029341057024",
+              "1794967146485784576",
+              "1782680383058874368"
+            ],
+            "anchor_rank": null,
+            "result_complete": true
+          },
+          {
+            "raw_query": "坐飞机打盹用可折叠的H形充气护颈枕",
+            "normalized_query": "H-shaped neck pillow foldable U-shaped travel pillow",
+            "raw_category": "旅行装备",
+            "effective_category": "旅行装备",
+            "candidate_ids": [
+              "1816366468645670912",
+              "1371703315292884992",
+              "D48478AD-25F2-467B-816D-F05F9A894E3F",
+              "1527483304503685120",
+              "2406110723151610700"
+            ],
+            "anchor_rank": null,
+            "result_complete": true
+          },
+          {
+            "raw_query": "坐飞机打盹用可折叠的H形充气护颈枕",
+            "normalized_query": "neck pillow",
+            "raw_category": null,
+            "effective_category": null,
+            "candidate_ids": [
+              "1387250747900563456",
+              "1881601881203437570",
+              "2504270351581616600",
+              "1956612313509810177",
+              "1717813780857499648"
+            ],
+            "anchor_rank": null,
+            "result_complete": true
+          },
+          {
+            "raw_query": "坐飞机打盹用可折叠的H形充气护颈枕",
+            "normalized_query": "travel pillow U shape cervical cushion airplane",
+            "raw_category": null,
+            "effective_category": null,
+            "candidate_ids": [
+              "1400751666202021888",
+              "1376507432263618560",
+              "1822213695960141824",
+              "CBAAC34D-ABD5-4C3D-8245-B34ADDE3D2D6",
+              "2504270351581616600"
+            ],
+            "anchor_rank": 1,
+            "result_complete": true
+          },
+          {
+            "raw_query": "坐飞机打盹用可折叠的H形充气护颈枕",
+            "normalized_query": "inflatable neck pillow folding airplane nap",
+            "raw_category": null,
+            "effective_category": null,
+            "candidate_ids": [
+              "1400751666202021888",
+              "1376507432263618560",
+              "1769305188013191168",
+              "1960972000186908673",
+              "1414755551392436224"
+            ],
+            "anchor_rank": 1,
+            "result_complete": true
+          }
+        ],
+        "cj_tool_calls": [],
+        "tool_errors": [],
+        "first_hit5": false,
+        "any_hit5": true,
+        "final_anchor": true,
+        "final_answer": "已按你的需求在 CJ 目录里做了多轮英文关键词检索（第一轮\"foldable travel\"命中的是折叠旅行包，偏题，已换词重搜）。说明：CJ 快照只给 USD 列表参考价，库存、目的地配送、运费税费均未实时核验，因此下面是候选清单，不是可下单结论，也没有运费或到手价。\n\n**命中你条件（H 形 + 充气 + 可折叠 + 机上打盹）**\n1. **Hooded Travel Pillow H Shaped Inflatable Neck Pillow Folding Lightweight Nap Car Seat Office Airplane Sleeping Cushion** — product_id `1400751666202021888`\n   - 参考价 US$4.79–9.56（区间＝多规格不同价）\n   - 类目：Home, Garden & Furniture / 家纺-枕类；带连帽\n   - 这是本次唯一在标题上同时出现 H Shaped、Inflatable、Folding、Airplane Sleeping 的款，与\"打盹用 H 形充气护颈枕\"几乎逐项对上。\n\n**同类可比候选（但材质/形状与你指定条件有差异）**\n2. **Soft Memory Foam Travel Neck Pillow U Shape Adjustable Support Comfortably Sleeping On Plane Car Office Noon Break** — product_id `2504270351581616600`，US$3.52–14.08\n   - 是 U 形记忆棉、机上午睡用，但非 H 形、非充气、不可折叠压缩。\n3. **Comfortable U-Shape Travel Pillow** — product_id `CBAAC34D-ABD5-4C3D-8245-B34ADDE3D2D6`，US$1.74\n   - U 形旅行枕，快照未标注充气/折叠，也未给出材质。\n4. **Silk U-shape Pillow Solid Color Neck Pillow** — product_id `1717813780857499648`，US$14.10\n   - 真丝 U 形护颈枕，偏居家/商务场景，非充气折叠款。\n\n**需要说明的**\n- 本轮未检索到除第 1 款以外、同时满足\"H 形＋充气＋可折叠\"的型号；第 2–4 款是相关但不完全对标的替代项，差异已如实标出，选哪款由你定。\n- 上面 4 款的快照都没带 material_tags、ships_to、库存与重量字段，所以材质、可否发到你所在国家、是否有货都无法从快照确认；第 1 款的价格是规格区间价，具体规格价需按 product_id 拉详情。\n- 如果你要，我可以：① 拉第 1 款的规格详情（可选颜色/规格、单价）；② 按你的目的国对第 1 款做一次 CJ 物流试算（注意试算合计不等于最终到手价）。告诉我就行。",
+        "valid": true,
+        "started_at": "2026-09-30T12:00:12.072128+00:00",
+        "ended_at": "2026-09-30T12:00:41.002516+00:00"
+      }
+    },
+    {
+      "id": "CJ-V2H005",
+      "attempt": 1,
+      "valid": true,
+      "baseline": {
+        "id": "CJ-V2H005",
+        "raw_query": "卧室桌上摆的螺旋形LED圣诞树氛围灯",
+        "anchor_id": "2409270619361600100",
+        "status": "ok",
+        "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H005.1.baseline.jsonl.gz",
+        "terminal": "RUN_FINISHED",
+        "usage": {
+          "status": "success",
+          "elapsed_ms": 32315.48640000983,
+          "model_calls": 3,
+          "input_tokens": 28403,
+          "output_tokens": 1553,
+          "observed_input_tokens": 28403,
+          "observed_output_tokens": 1553,
+          "unknown_usage_calls": 0,
+          "active_attempts_at_finish": 0,
+          "usage_complete": true,
+          "ttft_p95_ms": 5516.00000000326,
+          "model_elapsed_ms": 11875.0,
+          "tool_calls": 3,
+          "tool_errors": 0,
+          "fallbacks": 0,
+          "cost_usd": null,
+          "unknown_cost_calls": 3
+        },
+        "model_fallbacks": [],
+        "elapsed_ms": 32329.29,
+        "event_counts": {
+          "RUN_STARTED": 1,
+          "STATE_SNAPSHOT": 12,
+          "TOOL_CALL_START": 3,
+          "TOOL_CALL_ARGS": 113,
+          "TOOL_CALL_END": 3,
+          "TOOL_CALL_RESULT": 3,
+          "TEXT_MESSAGE_START": 1,
+          "TEXT_MESSAGE_CONTENT": 704,
+          "TEXT_MESSAGE_END": 1,
+          "MESSAGES_SNAPSHOT": 1,
+          "RUN_FINISHED": 1
+        },
+        "searches": [
+          {
+            "raw_query": "卧室桌上摆的螺旋形LED圣诞树氛围灯",
+            "normalized_query": "螺旋形 LED 圣诞树 氛围灯 桌面摆件",
+            "raw_category": "节日氛围灯",
+            "effective_category": null,
+            "candidate_ids": [
+              "2045398465321144321",
+              "2045397642778435586",
+              "2045387261229031426",
+              "2045383809701548033",
+              "2045382246547361793"
+            ],
+            "anchor_rank": null,
+            "result_complete": true
+          },
+          {
+            "raw_query": "卧室桌上摆的螺旋形LED圣诞树氛围灯",
+            "normalized_query": "螺旋圣诞树灯 LED 圣诞装饰 桌面 氛围灯 Christmas tree lamp",
+            "raw_category": null,
+            "effective_category": null,
+            "candidate_ids": [
+              "2410100856251619900",
+              "2409270619361600100",
+              "CCEFFAD8-59E8-44BE-9911-E8243DE6BF94",
+              "2510200837231640400",
+              "2411200557061606700"
+            ],
+            "anchor_rank": 2,
+            "result_complete": true
+          },
+          {
+            "raw_query": "卧室桌上摆的螺旋形LED圣诞树氛围灯",
+            "normalized_query": "Christmas decoration LED spiral tree light night lamp",
+            "raw_category": "节日装饰",
+            "effective_category": null,
+            "candidate_ids": [
+              "2409270619361600100",
+              "1718542483283521536",
+              "2410100856251619900",
+              "2411200557061606700",
+              "1868910523392610304"
+            ],
+            "anchor_rank": 1,
+            "result_complete": true
+          }
+        ],
+        "cj_tool_calls": [],
+        "tool_errors": [],
+        "first_hit5": false,
+        "any_hit5": true,
+        "final_anchor": true,
+        "final_answer": "已为你做纯检索（未下单、未做运费试算、未写偏好）。说明：当前命中的是 CJ 快照目录，价格为 USD **列表参考价**，库存、目的国可配送性、运费与税费均未实时核验；部分商品快照无 SKU 明细。\n\n## 最贴合你需求的候选\n**1. LED 螺旋圣诞树桌面摆件 / 铁艺小夜灯** — `product_id: 2409270619361600100`\n- 标题即 \"LED Christmas Tree Spiral Light Table Ornament Wrought Iron Xmas Tree **Bedroom Desk Lamp** Christmas Atmosphere Night Light Decor\"\n- 价格 US$4.70（列表价，单值）\n- 匹配点：螺旋造型 + LED + 卧室/书桌定位，与你的描述几乎逐字对上。目前快照无 SKU 与材质明细，需进一步取详情才能确认尺寸与供电方式。\n\n## 其他相关候选（同品类，造型/定位略有差异）\n2. **PVC 迷你圣诞树 LED 灯桌面摆件** — `product_id: 2411200557061606700` — US$0.90–1.93（区间价）。体积更小、偏传统锥形小树，非螺旋结构。\n3. **LED 电子蜡烛 / 圣诞树 / 雪人 小夜灯摆件** — `product_id: 2510200837231640400` — US$0.56–3.32。多造型混卖，需选中树款才符合需求。\n4. **3D 亚克力 LED 夜灯（圣诞装饰）** — `product_id: 1718542483283521536` — US$1.69–22.51。平面 3D 灯板路线，风格与螺旋铁艺不同。\n5. **DIY 镜面 + LED 立方灯圣诞材料包（圣诞老人/雪人/树）** — `product_id: 2410100856251619900` — US$1.45–2.81。需自行拼装，非成品摆件。\n6. **圣诞 LED 吸盘吊灯（圣老人/麋鹿/雪人）** — `product_id: CCEFFAD8-59E8-44BE-9911-E8243DE6BF94` — US$1.21–1.25。窗贴吸盘款，不是桌面立式。\n\n## 需要说明的两点\n- 我第一次用「螺旋形 LED 圣诞树 氛围灯 桌面摆件」检索时，返回的主要是带 LED 灯带的床头柜/电视柜（如 `2045398465321144321` US$77.12、`2045387261229031426` US$90.54），与圣诞氛围灯无关，已改用中英混合关键词才召回上面这批节日灯饰。\n- 未设定价格上限、也未指定收货国，所以本轮没有 `filtered_out`；如果你有预算或目的国，我可以再按硬条件重搜，并在你明确要看配送/到手费用时做 CJ 物流试算。\n\n要不要我针对第 1 款调取规格详情（尺寸、供电、材质）？或者你给个预算/收货地，我再精筛一轮。",
+        "valid": true,
+        "started_at": "2026-09-30T12:00:41.015531+00:00",
+        "ended_at": "2026-09-30T12:01:13.348728+00:00"
+      },
+      "candidate": {
+        "id": "CJ-V2H005",
+        "raw_query": "卧室桌上摆的螺旋形LED圣诞树氛围灯",
+        "anchor_id": "2409270619361600100",
+        "status": "ok",
+        "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H005.1.candidate.jsonl.gz",
+        "terminal": "RUN_FINISHED",
+        "usage": {
+          "status": "success",
+          "elapsed_ms": 22020.549800014123,
+          "model_calls": 2,
+          "input_tokens": 16548,
+          "output_tokens": 774,
+          "observed_input_tokens": 16548,
+          "observed_output_tokens": 774,
+          "unknown_usage_calls": 0,
+          "active_attempts_at_finish": 0,
+          "usage_complete": true,
+          "ttft_p95_ms": 952.9999999795109,
+          "model_elapsed_ms": 4671.000000031199,
+          "tool_calls": 1,
+          "tool_errors": 0,
+          "fallbacks": 0,
+          "cost_usd": null,
+          "unknown_cost_calls": 2
+        },
+        "model_fallbacks": [],
+        "elapsed_ms": 22031.62,
+        "event_counts": {
+          "RUN_STARTED": 1,
+          "STATE_SNAPSHOT": 6,
+          "TOOL_CALL_START": 1,
+          "TOOL_CALL_ARGS": 38,
+          "TOOL_CALL_END": 1,
+          "TOOL_CALL_RESULT": 1,
+          "TEXT_MESSAGE_START": 1,
+          "TEXT_MESSAGE_CONTENT": 571,
+          "TEXT_MESSAGE_END": 1,
+          "MESSAGES_SNAPSHOT": 1,
+          "RUN_FINISHED": 1
+        },
+        "searches": [
+          {
+            "raw_query": "卧室桌上摆的螺旋形LED圣诞树氛围灯",
+            "normalized_query": "spiral LED Christmas tree ambient lamp tabletop",
+            "raw_category": "家居氛围灯",
+            "effective_category": "家居生活",
+            "candidate_ids": [
+              "2409270619361600100",
+              "2410100856251619900",
+              "1980168988831903745",
+              "1979420173501853697",
+              "CCEFFAD8-59E8-44BE-9911-E8243DE6BF94"
+            ],
+            "anchor_rank": 1,
+            "result_complete": true
+          }
+        ],
+        "cj_tool_calls": [],
+        "tool_errors": [],
+        "first_hit5": true,
+        "any_hit5": true,
+        "final_anchor": true,
+        "final_answer": "以下是本次检索到的候选（按检索返回顺序展示，价格均为 CJ 快照 USD 列表参考价）：\n\n1. **LED 螺旋圣诞树桌面摆灯**（氛围夜灯/卧室书桌装饰）\n   - product_id：`2409270619361600100`\n   - 价格：US$4.70\n   - 标题即 \"LED Christmas Tree Spiral Light Table Ornament … Bedroom Desk Lamp Christmas Atmosphere Night Light Decor\"，与你说的\"螺旋形 LED 圣诞树 + 卧室桌上氛围灯\"最贴合。\n   - 快照未返回规格（SKU）、材质、重量、品牌与可配送国家信息。\n\n2. **圣诞 DIY 装饰 镜面 LED 立方灯（3D 圣诞老人/雪人/树 DIY 材料包）**\n   - product_id：`2410100856251619900`\n   - 价格：US$1.45–2.81（区间价）\n   - 是 DIY 立方灯套件，非螺旋树造型，仅作备选。\n\n3. **4ft 人造植绒圣诞树（366 PVC 枝尖 + 150 灯）**\n   - product_id：`1980168988831903745`\n   - 价格：US$75.07\n   - 落地整树，非桌面小摆件。\n\n4. **6.5ft 人造绿圣诞树（2225 枝尖 + 450 暖白灯）**\n   - product_id：`1979420173501853697`\n   - 价格：US$172.35\n   - 落地整树，尺寸和价格都远超桌面氛围灯定位。\n\n5. **圣诞 LED 吸盘吊灯（圣诞老人/驯鹿/雪人，电池供电）**\n   - product_id：`CCEFFAD8-59E8-44BE-9911-E8243DE6BF94`\n   - 价格：US$1.21–1.25（区间价）\n   - 窗贴吸盘灯，非螺旋树造型。\n\n说明：\n- 本次没有 `filtered_out` 记录，即没有候选因价格上限或目的国不可达被挡掉（本轮也未设预算和收货国约束）。\n- 第 1 件是唯一在标题层面同时命中\"螺旋 + 圣诞树 + 桌面/卧室氛围灯\"的候选；如需它的具体规格（SKU、尺寸、供电方式）或指定国家的物流试算，告诉我，我再按商品 ID 去补详情／试算。\n- CJ 快照的库存、可配送国家、运费与税费均未实时核验，以上价格不构成最终到手价。",
+        "valid": true,
+        "started_at": "2026-09-30T12:01:13.357271+00:00",
+        "ended_at": "2026-09-30T12:01:35.392966+00:00"
+      }
+    },
+    {
+      "id": "CJ-V2H006",
+      "attempt": 1,
+      "valid": true,
+      "baseline": {
+        "id": "CJ-V2H006",
+        "raw_query": "给猫剪指甲时防滑且带定位圆孔的指甲剪",
+        "anchor_id": "1814500809594785792",
+        "status": "ok",
+        "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H006.1.baseline.jsonl.gz",
+        "terminal": "RUN_FINISHED",
+        "usage": {
+          "status": "success",
+          "elapsed_ms": 29949.00280001457,
+          "model_calls": 4,
+          "input_tokens": 58850,
+          "output_tokens": 1796,
+          "observed_input_tokens": 58850,
+          "observed_output_tokens": 1796,
+          "unknown_usage_calls": 0,
+          "active_attempts_at_finish": 0,
+          "usage_complete": true,
+          "ttft_p95_ms": 2859.000000025844,
+          "model_elapsed_ms": 10968.000000022585,
+          "tool_calls": 4,
+          "tool_errors": 0,
+          "fallbacks": 0,
+          "cost_usd": null,
+          "unknown_cost_calls": 4
+        },
+        "model_fallbacks": [],
+        "elapsed_ms": 29960.03,
+        "event_counts": {
+          "RUN_STARTED": 1,
+          "STATE_SNAPSHOT": 15,
+          "TOOL_CALL_START": 4,
+          "TOOL_CALL_ARGS": 149,
+          "TOOL_CALL_END": 4,
+          "TOOL_CALL_RESULT": 4,
+          "TEXT_MESSAGE_START": 1,
+          "TEXT_MESSAGE_CONTENT": 676,
+          "TEXT_MESSAGE_END": 1,
+          "MESSAGES_SNAPSHOT": 1,
+          "RUN_FINISHED": 1
+        },
+        "searches": [
+          {
+            "raw_query": "给猫剪指甲时防滑且带定位圆孔的指甲剪",
+            "normalized_query": "猫指甲剪 防滑 带定位圆孔 宠物指甲剪",
+            "raw_category": "宠物用品",
+            "effective_category": "母婴宠物",
+            "candidate_ids": [
+              "1711607915393593344",
+              "2411050605281608600",
+              "2410290703491603000",
+              "2510300729471609000",
+              "2508120729361629600"
+            ],
+            "anchor_rank": null,
+            "result_complete": true
+          },
+          {
+            "raw_query": "给猫剪指甲时防滑且带定位圆孔的指甲剪",
+            "normalized_query": "宠物指甲剪 猫咪 指甲钳 防滑握柄 定位圆孔",
+            "raw_category": null,
+            "effective_category": "母婴宠物",
+            "candidate_ids": [
+              "1711607915393593344",
+              "2411050605281608600",
+              "2410290703491603000",
+              "2510300729471609000",
+              "2508120729361629600"
+            ],
+            "anchor_rank": null,
+            "result_complete": true
+          },
+          {
+            "raw_query": "给猫剪指甲时防滑且带定位圆孔的指甲剪",
+            "normalized_query": "猫用指甲剪 剪指甲 防滑",
+            "raw_category": "宠物美容",
+            "effective_category": "母婴宠物",
+            "candidate_ids": [
+              "1795755557681373184",
+              "1711607915393593344",
+              "1669574275931578368",
+              "1629148547394318336",
+              "1452893259000057856"
+            ],
+            "anchor_rank": null,
+            "result_complete": true
+          },
+          {
+            "raw_query": "给猫剪指甲时防滑且带定位圆孔的指甲剪",
+            "normalized_query": "Pet Nail Clippers Grooming Anti-slip Safety Guard",
+            "raw_category": null,
+            "effective_category": null,
+            "candidate_ids": [
+              "1864973646935511040",
+              "1835253835682959360",
+              "1757284392571392000",
+              "1865219663073267712",
+              "1839499921930997760"
+            ],
+            "anchor_rank": null,
+            "result_complete": true
+          }
+        ],
+        "cj_tool_calls": [],
+        "tool_errors": [],
+        "first_hit5": false,
+        "any_hit5": false,
+        "final_anchor": false,
+        "final_answer": "## 检索结果：本次未找到符合\"防滑 + 定位圆孔\"的猫用指甲剪\n\n我换了 4 组检索词（中文\"猫指甲剪 防滑 带定位圆孔\"\"宠物指甲剪 指甲钳 防滑握柄 定位圆孔\"\"猫用指甲剪 剪指甲 防滑\"，以及英文 \"Pet Nail Clippers Grooming Anti-slip Safety Guard\"）在 CJ 快照目录中检索。前三次召回的都是宠物服饰类（连体衣、睡衣、斗篷、棉垫等），与剪指甲无关；只有英文那组拉回了宠物美容周边。**没有任何一条候选是指甲剪，因此\"防滑握柄 + 定位圆孔\"这两个核心属性无商品可核验。**\n\n### 最接近的一次召回（均为宠物美容周边，非指甲剪，按召回顺序）\n\n| # | 商品 | product_id | 价格（USD 列表参考价） | 与需求的差距 |\n|---|---|---|---|---|\n| 1 | Cat Muzzle Anti-Bite Grooming Mask（猫咪防咬美容面罩，可调节） | 1864973646935511040 | US$2.17–2.77 | 防咬辅助件，无剪切功能 |\n| 2 | Cat Grooming Shower Bag 网眼可调约束袋（浴/剪甲防抓） | 1835253835682959360 | US$3.12 | 固定保定用，非指甲剪 |\n| 3 | 无线宠物电推剪理发套装（低噪音） | 1757284392571392000 | US$24.98 | 剃毛器，非指甲剪 |\n| 4 | Anti Bite Puppy Kitten Muzzle（透气防咬口罩） | 1865219663073267712 | US$2.60 | 防咬用，非指甲剪 |\n| 5 | Anti Bite Puppy Kitten Muzzle（透气防咬口罩） | 1839499921930997760 | US$3.36 | 防咬用，非指甲剪 |\n\n以上 5 条都不是您要的品类，仅为本次召回中最接近\"剪甲配套\"的候选，供参考，不建议据此下单。\n\n### 说明与下一步\n\n- 本次检索没有触发任何硬约束过滤（filtered_out 为空），也就是说**不是被价格或目的国挡掉了，而是这轮关键词召回里确实没有指甲剪类目商品**；这不代表目录里一定不存在，只说明本次未检索到确切型号。\n- CJ 快照关键词召回未做重排，库存、可配送性、运费与到手价均未实时核验，上表 USD 价格为列表参考价。\n- 如果您手上有该指甲剪的 product_id / sku_id，直接发我，我可以按 ID 直查目录；或者我可以用更细的属性词（比如\"猫指甲剪 圆孔定位\"\"猫用指甲钳 防剪血线\"）再试几轮。\n\n需要我换关键词再搜一次吗？（本轮按您要求只做检索与展示，未下单、未试算运费、未写入任何偏好。）",
+        "valid": true,
+        "started_at": "2026-09-30T12:01:35.412150+00:00",
+        "ended_at": "2026-09-30T12:02:05.377209+00:00"
+      },
+      "candidate": {
+        "id": "CJ-V2H006",
+        "raw_query": "给猫剪指甲时防滑且带定位圆孔的指甲剪",
+        "anchor_id": "1814500809594785792",
+        "status": "ok",
+        "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H006.1.candidate.jsonl.gz",
+        "terminal": "RUN_FINISHED",
+        "usage": {
+          "status": "success",
+          "elapsed_ms": 21533.293700020295,
+          "model_calls": 2,
+          "input_tokens": 16503,
+          "output_tokens": 812,
+          "observed_input_tokens": 16503,
+          "observed_output_tokens": 812,
+          "unknown_usage_calls": 0,
+          "active_attempts_at_finish": 0,
+          "usage_complete": true,
+          "ttft_p95_ms": 1484.0000000258442,
+          "model_elapsed_ms": 5437.000000034459,
+          "tool_calls": 1,
+          "tool_errors": 0,
+          "fallbacks": 0,
+          "cost_usd": null,
+          "unknown_cost_calls": 2
+        },
+        "model_fallbacks": [],
+        "elapsed_ms": 21544.56,
+        "event_counts": {
+          "RUN_STARTED": 1,
+          "STATE_SNAPSHOT": 6,
+          "TOOL_CALL_START": 1,
+          "TOOL_CALL_ARGS": 37,
+          "TOOL_CALL_END": 1,
+          "TOOL_CALL_RESULT": 1,
+          "TEXT_MESSAGE_START": 1,
+          "TEXT_MESSAGE_CONTENT": 539,
+          "TEXT_MESSAGE_END": 1,
+          "MESSAGES_SNAPSHOT": 1,
+          "RUN_FINISHED": 1
+        },
+        "searches": [
+          {
+            "raw_query": "给猫剪指甲时防滑且带定位圆孔的指甲剪",
+            "normalized_query": "cat nail clipper anti-slip positioning hole",
+            "raw_category": "宠物用品",
+            "effective_category": "母婴宠物",
+            "candidate_ids": [
+              "1814500809594785792",
+              "1534453293844541440",
+              "49C86200-E6E2-4EED-B96F-B0E7FC338895",
+              "2058795311789957121",
+              "1698602629309411328"
+            ],
+            "anchor_rank": 1,
+            "result_complete": true
+          }
+        ],
+        "cj_tool_calls": [],
+        "tool_errors": [],
+        "first_hit5": true,
+        "any_hit5": true,
+        "final_anchor": true,
+        "final_answer": "已按你的需求检索，结果为 CJ 快照关键词匹配（列表参考价，未实时核验库存/目的国配送/运费税费）。以下按返回顺序展示：\n\n**1. 猫用指甲剪（带定位圆孔 + 防滑手柄）｜US$1.97**\n- product_id：`1814500809594785792`\n- 标题：Cat Nail Clipper With Positioning Round Hole Sharp Non Slip Handle Cat Claw Clipper Safe Indoor Pet Nail Clipper For Cats, Puppies And More Animals\n- 品类：Pet Supplies｜价格类型：列表价（listing）\n- 匹配点：**定位圆孔（positioning round hole）**、**防滑手柄（non slip handle）**、猫咪指甲剪 —— 与你说的两个关键属性都对得上，是本次唯一高度吻合的候选。\n- 说明：快照未给出品牌、材质、重量、库存与可配送国家；其 highlights 标为 \"Pet Toys / Pet Toy Set\"，与标题品类存在差异，以标题和结构化字段为准，建议下单前再核验规格。\n\n以下为本次召回的其他候选，**都不含定位圆孔**，仅作参考：\n\n**2. 新生儿电动指甲剪防夹肉护理套装｜US$3.19**｜product_id：`1534453293844541440`\n- 品类为 Toys, Kids & Babies 的婴儿护理套装，不是猫用指甲剪，仅关键词相近。\n\n**3. 宠物外出包（防挤压）｜US$13.61–17.10**｜product_id：`49C86200-E6E2-4EED-B96F-B0E7FC338895`\n- 宠物包，与指甲剪无关。\n\n**4. 重力式宠物喂食喂水器（防滑底座）｜US$16.90**｜product_id：`2058795311789957121`\n- 只命中 \"anti slip\"，非指甲剪。\n\n**5. 便携硅胶双碗折叠宠物碗｜US$4.53**｜product_id：`1698602629309411328`\n- 只命中 \"non-slip\"，非指甲剪。\n\n本次未产生被硬约束挡掉的候选（filtered_out 为空）。需要的话我可以进一步：\n- 拉取第 1 款的真实规格详情（sku、规格价）；\n- 或按你的目的国做 CJ 物流试算（仅在你明确要看配送/到手费用时）。\n\n要不要我继续查第 1 款的规格详情？",
+        "valid": true,
+        "started_at": "2026-09-30T12:02:05.386763+00:00",
+        "ended_at": "2026-09-30T12:02:26.933462+00:00"
+      }
+    },
+    {
+      "id": "CJ-V2H007",
+      "attempt": 1,
+      "valid": true,
+      "candidate": {
+        "id": "CJ-V2H007",
+        "raw_query": "能称量干湿食材的小型厨房勺子秤",
+        "anchor_id": "1605844768632877056",
+        "status": "ok",
+        "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H007.1.candidate.jsonl.gz",
+        "terminal": "RUN_FINISHED",
+        "usage": {
+          "status": "success",
+          "elapsed_ms": 24966.279600019334,
+          "model_calls": 5,
+          "input_tokens": 62118,
+          "output_tokens": 1368,
+          "observed_input_tokens": 62118,
+          "observed_output_tokens": 1368,
+          "unknown_usage_calls": 0,
+          "active_attempts_at_finish": 0,
+          "usage_complete": true,
+          "ttft_p95_ms": 1812.999999994645,
+          "model_elapsed_ms": 10625.000000029104,
+          "tool_calls": 7,
+          "tool_errors": 0,
+          "fallbacks": 0,
+          "cost_usd": null,
+          "unknown_cost_calls": 5
+        },
+        "model_fallbacks": [],
+        "elapsed_ms": 24974.28,
+        "event_counts": {
+          "RUN_STARTED": 1,
+          "STATE_SNAPSHOT": 24,
+          "TOOL_CALL_START": 7,
+          "TOOL_CALL_ARGS": 214,
+          "TOOL_CALL_END": 7,
+          "TOOL_CALL_RESULT": 7,
+          "TEXT_MESSAGE_START": 3,
+          "TEXT_MESSAGE_CONTENT": 445,
+          "TEXT_MESSAGE_END": 3,
+          "MESSAGES_SNAPSHOT": 1,
+          "RUN_FINISHED": 1
+        },
+        "searches": [
+          {
+            "raw_query": "能称量干湿食材的小型厨房勺子秤",
+            "normalized_query": "small kitchen spoon scale digital weighing dry and wet ingredients",
+            "raw_category": "厨房秤",
+            "effective_category": "厨房餐饮",
+            "candidate_ids": [
+              "1427805511327289344",
+              "1385884986942558208",
+              "2504220724481623400",
+              "2503271025041612400",
+              "2411130520401602500"
+            ],
+            "anchor_rank": null,
+            "result_complete": true
+          },
+          {
+            "raw_query": "能称量干湿食材的小型厨房勺子秤",
+            "normalized_query": "digital spoon scale electronic measuring spoon gram scale kitchen",
+            "raw_category": "厨房秤",
+            "effective_category": "厨房餐饮",
+            "candidate_ids": [
+              "1385884986942558208",
+              "2510200837231640400",
+              "2508150153331629500",
+              "2045398076963315714",
+              "2045325808056188929"
+            ],
+            "anchor_rank": null,
+            "result_complete": true
+          },
+          {
+            "raw_query": "能称量干湿食材的小型厨房勺子秤",
+            "normalized_query": "LCD digital kitchen scale measuring spoon for baking powder liquid ingredients",
+            "raw_category": "厨房秤",
+            "effective_category": "厨房餐饮",
+            "candidate_ids": [
+              "1385884986942558208",
+              "2410010808431618100",
+              "1654681047189573632",
+              "ECAC663E-87ED-4D84-B320-A8E7FD76AE41",
+              "2504140246021602300"
+            ],
+            "anchor_rank": null,
+            "result_complete": true
+          },
+          {
+            "raw_query": "能称量干湿食材的小型厨房勺子秤",
+            "normalized_query": "spoon scale",
+            "raw_category": null,
+            "effective_category": null,
+            "candidate_ids": [
+              "1605844768632877056",
+              "1404388265506770944",
+              "1398811770675662848",
+              "1385884986942558208",
+              "2501150145251618200"
+            ],
+            "anchor_rank": 1,
+            "result_complete": true
+          },
+          {
+            "raw_query": "能称量干湿食材的小型厨房勺子秤",
+            "normalized_query": "kitchen scale digital",
+            "raw_category": null,
+            "effective_category": null,
+            "candidate_ids": [
+              "1605844768632877056",
+              "2508150153331629500",
+              "2086268127732977665",
+              "2045398076963315714",
+              "2045325808056188929"
+            ],
+            "anchor_rank": 1,
+            "result_complete": true
+          },
+          {
+            "raw_query": "能称量干湿食材的小型厨房勺子秤",
+            "normalized_query": "measuring spoon scale food weighing spoon dry wet ingredients",
+            "raw_category": null,
+            "effective_category": null,
+            "candidate_ids": [
+              "1605844768632877056",
+              "2606230442321619500",
+              "2406261145181613000",
+              "1837025392407236608",
+              "0E94A308-8CE9-4FAF-8B82-39FFF20AA837"
+            ],
+            "anchor_rank": 1,
+            "result_complete": true
+          },
+          {
+            "raw_query": "能称量干湿食材的小型厨房勺子秤",
+            "normalized_query": "compact food weighing scale dry wet ingredients",
+            "raw_category": null,
+            "effective_category": null,
+            "candidate_ids": [
+              "1605844768632877056",
+              "2606230442321619500",
+              "2406261145181613000",
+              "2101600682429415425",
+              "2100523446852354049"
+            ],
+            "anchor_rank": 1,
+            "result_complete": true
+          }
+        ],
+        "cj_tool_calls": [],
+        "tool_errors": [],
+        "first_hit5": false,
+        "any_hit5": true,
+        "final_anchor": true,
+        "final_answer": "## 检索结果\n\n我用\"spoon scale / measuring spoon scale / food weighing scale dry and wet ingredients\"等多组英文关键词在多轮里检索了 CJ 商品快照，**只有 1 款与\"能称量干湿食材的小型厨房勺子秤\"精确对口的候选**：\n\n**1. Kitchen Scale Measuring Spoon Scale Compact Food Weighing Scale For Dry And Wet Ingredients**\n- product_id：`1605844768632877056`\n- 参考价：US$1.85（列表价，单一定价）\n- 规格/库存：快照未提供 SKU 明细，库存与是否为实时可售未核验\n- 备注：该商品在快照里的分类字段/亮点写的是 \"Sports & Outdoors / Sportswear\"，与标题描述的厨房秤明显不符，属于快照数据本身存在差异，请以标题与实物页面为准。\n\n## 说明\n\n- 其余召回结果（硅胶锅铲套装、餐具勺、沥水垫、蜡烛、置物架、折叠镜等）与勺子秤无关，不作为候选取用，主要是关键词匹配到了 \"spoon / kitchen / scale\" 等词面。\n- 以上价格仅为 **CJ 列表参考价（USD）**，不含运费、税费，也不代表最终到手价；库存、可配送国家和运费均未实时核验。\n- 本次未检索到其他勺子秤型号，但不代表目录中一定没有——只说明这几轮关键词未召回。\n\n## 如果你要往下走\n\n我可以帮你：\n1. 换更细的关键词再搜（如 \"electronic measuring spoon scale 500g\"、\"LCD spoon scale\"）；\n2. 若你有目标价位或想限定口径，告诉我我再过滤一次；\n3. 需要这款的具体规格详情或配送到某国的运费试算，也可以直接说。\n\n（按你的要求，本次只做检索与展示，未做下单、报价或偏好写入。）",
+        "valid": true,
+        "started_at": "2026-09-30T12:02:26.952387+00:00",
+        "ended_at": "2026-09-30T12:02:51.930951+00:00"
+      },
+      "baseline": {
+        "id": "CJ-V2H007",
+        "raw_query": "能称量干湿食材的小型厨房勺子秤",
+        "anchor_id": "1605844768632877056",
+        "status": "ok",
+        "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H007.1.baseline.jsonl.gz",
+        "terminal": "RUN_FINISHED",
+        "usage": {
+          "status": "success",
+          "elapsed_ms": 20987.613700010115,
+          "model_calls": 4,
+          "input_tokens": 43394,
+          "output_tokens": 1099,
+          "observed_input_tokens": 43394,
+          "observed_output_tokens": 1099,
+          "unknown_usage_calls": 0,
+          "active_attempts_at_finish": 0,
+          "usage_complete": true,
+          "ttft_p95_ms": 1125.0,
+          "model_elapsed_ms": 7796.999999991385,
+          "tool_calls": 4,
+          "tool_errors": 0,
+          "fallbacks": 0,
+          "cost_usd": null,
+          "unknown_cost_calls": 4
+        },
+        "model_fallbacks": [],
+        "elapsed_ms": 20996.85,
+        "event_counts": {
+          "RUN_STARTED": 1,
+          "STATE_SNAPSHOT": 15,
+          "TEXT_MESSAGE_START": 4,
+          "TEXT_MESSAGE_CONTENT": 563,
+          "TEXT_MESSAGE_END": 4,
+          "TOOL_CALL_START": 4,
+          "TOOL_CALL_ARGS": 136,
+          "TOOL_CALL_END": 4,
+          "TOOL_CALL_RESULT": 4,
+          "MESSAGES_SNAPSHOT": 1,
+          "RUN_FINISHED": 1
+        },
+        "searches": [
+          {
+            "raw_query": "能称量干湿食材的小型厨房勺子秤",
+            "normalized_query": "小型厨房勺子秤 称量干湿食材 电子勺秤",
+            "raw_category": "厨房用品",
+            "effective_category": "厨房餐饮",
+            "candidate_ids": [
+              "2508150153331629500",
+              "2045398076963315714",
+              "2045325808056188929",
+              "2045066437907025922",
+              "2042461905748918273"
+            ],
+            "anchor_rank": null,
+            "result_complete": true
+          },
+          {
+            "raw_query": "能称量干湿食材的小型厨房勺子秤",
+            "normalized_query": "电子勺秤 digital spoon scale 厨房称重勺",
+            "raw_category": "厨房用品",
+            "effective_category": "厨房餐饮",
+            "candidate_ids": [
+              "1385884986942558208",
+              "2508150153331629500",
+              "2045398076963315714",
+              "2045325808056188929",
+              "2045066437907025922"
+            ],
+            "anchor_rank": null,
+            "result_complete": true
+          },
+          {
+            "raw_query": "能称量干湿食材的小型厨房勺子秤",
+            "normalized_query": "measuring spoon scale digital kitchen gram scale",
+            "raw_category": null,
+            "effective_category": null,
+            "candidate_ids": [
+              "1605844768632877056",
+              "0E94A308-8CE9-4FAF-8B82-39FFF20AA837",
+              "1385884986942558208",
+              "2508150153331629500",
+              "2086268127732977665"
+            ],
+            "anchor_rank": 1,
+            "result_complete": true
+          },
+          {
+            "raw_query": "能称量干湿食材的小型厨房勺子秤",
+            "normalized_query": "spoon scale dry wet ingredients food weighing LCD",
+            "raw_category": null,
+            "effective_category": null,
+            "candidate_ids": [
+              "1605844768632877056",
+              "2606230442321619500",
+              "2406261145181613000",
+              "1837025392407236608",
+              "2504170636201617200"
+            ],
+            "anchor_rank": 1,
+            "result_complete": true
+          }
+        ],
+        "cj_tool_calls": [],
+        "tool_errors": [],
+        "first_hit5": false,
+        "any_hit5": true,
+        "final_anchor": true,
+        "final_answer": "已完成检索。用了几种不同表述（中文勺秤 / digital spoon scale / measuring spoon scale / dry & wet ingredients）在 CJ 快照里比对，**只有 1 款真正命中的商品**，其余候选都是厨房家具、餐具货架、宠物粮勺等不相关品类。以下按检索返回顺序列出：\n\n**1. Kitchen Scale Measuring Spoon Scale Compact Food Weighing Scale For Dry And Wet Ingredients**\n- product_id：`1605844768632877056`\n- 参考价：US$1.85（列表价，非到手价）\n- 快照分类：Sports & Outdoors（记录如此，与\"厨房秤\"品类不一致，属快照标注差异）\n- 规格：快照未提供 sku 规格\n- 库存/发货：stock_known=false，库存与目的国配送均未实时核验\n- 详情：detail_available=false，快照中无更细规格参数\n\n**选购说明（如实交代差异，供你自行定夺）**\n- 这是本次唯一与\"能称量干湿食材的小型厨房勺子秤\"直接相符的候选，标题即声明适用于 dry and wet ingredients，且属于勺型紧凑款，形态上符合\"小型 + 勺子\"。\n- 但它没有品牌字段、没有产地字段、没有规格明细，快照里也没有可选规格，因此量程、精度、是否可拆洗、供电方式（电池/USB）这些关键参数我无法确认——需要提货前向卖家核实。\n- 它的快照品类被标为 Sports & Outdoors，这只是快照分类问题，不代表商品本身是运动用品。\n\n**需要提醒的边界**\n- 我本次只做检索展示，没有做下单、物流试算，也没有写入或修改任何长期偏好。\n- 由于这是 CJ 快照数据，库存、能否配送到你的国家、运费与税费都未核验；US$1.85 是列表参考价，不等于最终到手价。若你确认要这款，可以告诉我目的国，我再帮你做该商品与默认规格的物流试算（试算也只是已知费用合计，不是最终支付价）。\n\n如果你希望我扩大搜索范围（例如放宽为\"厨房电子秤/烘焙称\"这类相邻品类，或不限勺型），说一声我就重新检索；本次未见其他同类勺秤型号，不代表目录中不存在，只表示这几次检索未召回。",
+        "valid": true,
+        "started_at": "2026-09-30T12:02:51.936945+00:00",
+        "ended_at": "2026-09-30T12:03:12.936632+00:00"
+      }
+    },
+    {
+      "id": "CJ-V2H008",
+      "attempt": 1,
+      "valid": true,
+      "candidate": {
+        "id": "CJ-V2H008",
+        "raw_query": "蓝牙5.0飞鼠键盘能遥控的那种",
+        "anchor_id": "1418493210132615168",
+        "status": "ok",
+        "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H008.1.candidate.jsonl.gz",
+        "terminal": "RUN_FINISHED",
+        "usage": {
+          "status": "success",
+          "elapsed_ms": 19580.62210000935,
+          "model_calls": 2,
+          "input_tokens": 16531,
+          "output_tokens": 908,
+          "observed_input_tokens": 16531,
+          "observed_output_tokens": 908,
+          "unknown_usage_calls": 0,
+          "active_attempts_at_finish": 0,
+          "usage_complete": true,
+          "ttft_p95_ms": 1516.0000000032596,
+          "model_elapsed_ms": 5531.0000000172295,
+          "tool_calls": 1,
+          "tool_errors": 0,
+          "fallbacks": 0,
+          "cost_usd": null,
+          "unknown_cost_calls": 2
+        },
+        "model_fallbacks": [],
+        "elapsed_ms": 19590.9,
+        "event_counts": {
+          "RUN_STARTED": 1,
+          "STATE_SNAPSHOT": 6,
+          "TOOL_CALL_START": 1,
+          "TOOL_CALL_ARGS": 38,
+          "TOOL_CALL_END": 1,
+          "TOOL_CALL_RESULT": 1,
+          "TEXT_MESSAGE_START": 1,
+          "TEXT_MESSAGE_CONTENT": 671,
+          "TEXT_MESSAGE_END": 1,
+          "MESSAGES_SNAPSHOT": 1,
+          "RUN_FINISHED": 1
+        },
+        "searches": [
+          {
+            "raw_query": "蓝牙5.0飞鼠键盘能遥控的那种",
+            "normalized_query": "bluetooth 5.0 air mouse remote keyboard",
+            "raw_category": "数码配件",
+            "effective_category": "数码配件",
+            "candidate_ids": [
+              "1418493210132615168",
+              "C3D7768B-5393-4BA4-B502-5A9E59E8301C",
+              "0C5FFC3C-886A-445E-836C-403563643F1B",
+              "2410160157391613600",
+              "2407150509361610800"
+            ],
+            "anchor_rank": 1,
+            "result_complete": true
+          }
+        ],
+        "cj_tool_calls": [],
+        "tool_errors": [],
+        "first_hit5": true,
+        "any_hit5": true,
+        "final_anchor": true,
+        "final_answer": "已按“蓝牙 5.0 飞鼠/遥控键盘”检索当前 CJ 商品目录（共 288 个候选，下列为前 5 个展示位，排序即目录返回顺序）：\n\n1. **Wireless Flying Squirrel Keyboard Bluetooth 5.0 Remote Control** — US$7.58\n   - product_id：`1418493210132615168`\n   - 与需求最贴合：标题明确写 Bluetooth 5.0 + 遥控。\n\n2. **Docooler Mini 2.4GHz Wireless QWERTY Keyboard Air Mouse Handheld Remote Control 6 Gxes Gyroscope（Mini PC/TV Box 用）** — US$8.33\n   - product_id：`C3D7768B-5393-4BA4-B502-5A9E59E8301C`\n   - 是典型的空中飞鼠遥控+QWERTY 键盘，但标注的是 **2.4GHz 无线**，不是蓝牙 5.0，请留意差异。\n\n3. **MX3 MX3-L Backlit Air Mouse T3 Smart Voice Remote Control 2.4G RF Wireless Keyboard（Android TV Box 用）** — US$3.79–6.30（区间价）\n   - product_id：`0C5FFC3C-886A-445E-836C-403563643F1B`\n   - 同为飞鼠遥控键盘，但为 **2.4G RF 无线**，非蓝牙 5.0。\n\n4. **Three-in-one Wireless Bluetooth Touch Pad Wireless Keyboard Leather Sheath Stand（iPad/手机通用）** — US$18.24\n   - product_id：`2410160157391613600`\n   - 蓝牙触控键盘，但属于平板保护套式键盘，不是飞鼠遥控类。\n\n5. **360 Swivel Keyboard Clear Case For iPad Smart Trackpad Bluetooth-compatible Keyboard Case Cover** — US$45.61–52.24（区间价）\n   - product_id：`2407150509361610800`\n   - 同样是 iPad 键盘保护套，与“飞鼠遥控”需求不符。\n\n说明与建议：\n- 只有第 1 项在标题层面同时命中“Bluetooth 5.0 + 飞鼠键盘 + 遥控”，最符合你的原话；第 2、3 项是常见的飞鼠遥控键盘，但无线制式是 2.4GHz，如果你的设备必须走蓝牙 5.0 连接，这两款可能不适用。\n- 本次未出现被硬约束挡掉的候选（filtered_out 为空），也就是没有因价格或目的国原因被过滤掉的同类商品。\n- 快照返回的是列表参考价（USD），库存、能否配送到你的目的国、运费与税费均未在本轮核验，不能视为已确认可配送。\n- 如果你告诉我具体用途（电视盒子/电脑/投影）或连接方式必须是蓝牙 5.0，我可以再按更精确的关键词缩小候选，或对选中的商品查规格详情。\n\n需要我针对第 1 项拉取具体规格详情吗？",
+        "valid": true,
+        "started_at": "2026-09-30T12:03:12.960165+00:00",
+        "ended_at": "2026-09-30T12:03:32.553335+00:00"
+      },
+      "baseline": {
+        "id": "CJ-V2H008",
+        "raw_query": "蓝牙5.0飞鼠键盘能遥控的那种",
+        "anchor_id": "1418493210132615168",
+        "status": "ok",
+        "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H008.1.baseline.jsonl.gz",
+        "terminal": "RUN_FINISHED",
+        "usage": {
+          "status": "success",
+          "elapsed_ms": 18964.658600016264,
+          "model_calls": 2,
+          "input_tokens": 16083,
+          "output_tokens": 803,
+          "observed_input_tokens": 16083,
+          "observed_output_tokens": 803,
+          "unknown_usage_calls": 0,
+          "active_attempts_at_finish": 0,
+          "usage_complete": true,
+          "ttft_p95_ms": 952.9999999795109,
+          "model_elapsed_ms": 5326.999999990221,
+          "tool_calls": 1,
+          "tool_errors": 0,
+          "fallbacks": 0,
+          "cost_usd": null,
+          "unknown_cost_calls": 2
+        },
+        "model_fallbacks": [],
+        "elapsed_ms": 18975.14,
+        "event_counts": {
+          "RUN_STARTED": 1,
+          "STATE_SNAPSHOT": 6,
+          "TOOL_CALL_START": 1,
+          "TOOL_CALL_ARGS": 41,
+          "TOOL_CALL_END": 1,
+          "TOOL_CALL_RESULT": 1,
+          "TEXT_MESSAGE_START": 1,
+          "TEXT_MESSAGE_CONTENT": 558,
+          "TEXT_MESSAGE_END": 1,
+          "MESSAGES_SNAPSHOT": 1,
+          "RUN_FINISHED": 1
+        },
+        "searches": [
+          {
+            "raw_query": "蓝牙5.0飞鼠键盘能遥控的那种",
+            "normalized_query": "蓝牙5.0 飞鼠键盘 遥控 空中鼠标",
+            "raw_category": "数码配件",
+            "effective_category": "数码配件",
+            "candidate_ids": [
+              "2410160157391613600",
+              "2407150509361610800",
+              "1418493210132615168",
+              "1384411297810092032",
+              "2411130703501623100"
+            ],
+            "anchor_rank": 3,
+            "result_complete": true
+          }
+        ],
+        "cj_tool_calls": [],
+        "tool_errors": [],
+        "first_hit5": true,
+        "any_hit5": true,
+        "final_anchor": true,
+        "final_answer": "已为你检索「蓝牙 5.0 飞鼠键盘／遥控」相关候选，共召回 200 条，展示前 5 条（CJ 快照关键词匹配，USD 列表参考价）：\n\n| 序号 | 商品 | 参考价 | product_id |\n|---|---|---|---|\n| 1 | Three-in-one Wireless Bluetooth Touch Pad Wireless Keyboard Leather Sheath Stand（平板/手机通用触控板键盘） | US$18.24 | 2410160157391613600 |\n| 2 | 360 Swivel Keyboard Clear Case For iPad Smart Trackpad Bluetooth Keyboard Case（iPad 键盘保护壳） | US$45.61–52.24 | 2407150509361610800 |\n| 3 | **Wireless Flying Squirrel Keyboard Bluetooth 5.0 Remote Control** | **US$7.58** | 1418493210132615168 |\n| 4 | Wireless Bluetooth Keyboard Colorful PBT Keycaps Mechanical Keyboard | US$21.56 | 1384411297810092032 |\n| 5 | Full-key Hot Plug Wireless Three-mode Bluetooth Keyboard | US$39.60–53.70 | 2411130703501623100 |\n\n选购提示（按你的需求「蓝牙 5.0 + 飞鼠/遥控」对齐度）：\n- **第 3 条最贴合**：标题明确是「Flying Squirrel Keyboard + Bluetooth 5.0 + Remote Control」，属于 2.4G/蓝牙空鼠遥控器类，价格也最低（US$7.58）。适合电视盒子、投影、HTPC 遥控场景。\n- 第 1、2 条是平板/手机用的触控板键盘保护套，形态是键盘壳，不是手持遥控飞鼠。\n- 第 4、5 条是普通无线/机械键盘，无空鼠遥控指向功能，与你的需求偏差较大。\n\n需要说明的数据边界：\n- 本次结果的库存、目的国可配送性、运费税费均未实时核验（快照只提供列表参考价），因此**没有**任何一条可称为「已确认可下单到手」；\n- 快照中这些商品的品牌、材质标签、重量、SKU 规格多为空，无法进一步核对是否支持你指定的蓝牙版本细节（第 3 条标题已注明 Bluetooth 5.0，但无结构化规格可交叉验证）；\n- 本次 `filtered_out` 为空，即没有商品被价格或目的国条件挡掉。\n\n如需我针对第 3 条补齐规格详情或试算某目的国的物流费用，告诉我目的国即可。",
+        "valid": true,
+        "started_at": "2026-09-30T12:03:32.565341+00:00",
+        "ended_at": "2026-09-30T12:03:51.542039+00:00"
+      }
+    },
+    {
+      "id": "CJ-V2H009",
+      "attempt": 1,
+      "valid": true,
+      "baseline": {
+        "id": "CJ-V2H009",
+        "raw_query": "TA-102P户外360度双频天线带黑色支架",
+        "anchor_id": "1868855168021188608",
+        "status": "ok",
+        "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H009.1.baseline.jsonl.gz",
+        "terminal": "RUN_FINISHED",
+        "usage": {
+          "status": "success",
+          "elapsed_ms": 17982.30470000999,
+          "model_calls": 3,
+          "input_tokens": 25493,
+          "output_tokens": 775,
+          "observed_input_tokens": 25493,
+          "observed_output_tokens": 775,
+          "unknown_usage_calls": 0,
+          "active_attempts_at_finish": 0,
+          "usage_complete": true,
+          "ttft_p95_ms": 1531.0000000172295,
+          "model_elapsed_ms": 6016.00000000326,
+          "tool_calls": 2,
+          "tool_errors": 0,
+          "fallbacks": 0,
+          "cost_usd": null,
+          "unknown_cost_calls": 3
+        },
+        "model_fallbacks": [],
+        "elapsed_ms": 17990.46,
+        "event_counts": {
+          "RUN_STARTED": 1,
+          "STATE_SNAPSHOT": 9,
+          "TOOL_CALL_START": 2,
+          "TOOL_CALL_ARGS": 74,
+          "TOOL_CALL_END": 2,
+          "TOOL_CALL_RESULT": 2,
+          "TEXT_MESSAGE_START": 1,
+          "TEXT_MESSAGE_CONTENT": 348,
+          "TEXT_MESSAGE_END": 1,
+          "MESSAGES_SNAPSHOT": 1,
+          "RUN_FINISHED": 1
+        },
+        "searches": [
+          {
+            "raw_query": "TA-102P户外360度双频天线带黑色支架",
+            "normalized_query": "TA-102P 户外360度双频天线 带黑色支架",
+            "raw_category": "数码配件",
+            "effective_category": "数码配件",
+            "candidate_ids": [
+              "ABF24474-9F83-4457-A5FE-0C4BB12B9E64",
+              "2501310749041600900",
+              "2099749350739578882",
+              "2099413754324320258",
+              "2099357486784053250"
+            ],
+            "anchor_rank": null,
+            "result_complete": true
+          },
+          {
+            "raw_query": "TA-102P户外360度双频天线带黑色支架",
+            "normalized_query": "TA-102P",
+            "raw_category": "天线",
+            "effective_category": null,
+            "candidate_ids": [
+              "1868855168021188608"
+            ],
+            "anchor_rank": 1,
+            "result_complete": true
+          }
+        ],
+        "cj_tool_calls": [],
+        "tool_errors": [],
+        "first_hit5": false,
+        "any_hit5": true,
+        "final_anchor": true,
+        "final_answer": "已按型号检索，找到精确匹配的候选（本次仅做检索展示，未做库存核验、未询运费、未下单）：\n\n**1. TA-102P 360 Degree UV Dual Band 28-36dB Outdoor Antenna With Black Bracket**\n- product_id：`1868855168021188608`\n- 参考价：**US$31.10**（CJ 列表参考价，price_kind=listing）\n- 品类：Consumer Electronics → Accessories & Parts / Home Electronic Accessories\n- 规格（SKU）信息：快照中未展开（skus 为空），规格详情可另行补查\n- 命中点：标题同时包含 TA-102P、360 Degree、Dual Band、Outdoor Antenna、With Black Bracket，与你给的\"户外360度双频天线带黑色支架\"完全对应\n\n需要说明的两点：\n- 该结果是 CJ 快照关键词匹配（共 1 个候选），库存、可配送国家、运费与税费均未实时核验，`stock_known=false`、`detail_available=false`，所以价格只作参考，不等于最终到手价。\n- 我另用\"户外360度双频天线 带黑色支架\"做过一次泛品类检索，返回的是 5 款蓝牙音箱等无关商品（如 Portable Power Outdoor Waterproof Speaker，US$14.49），与天线品类不符，未列出。本次未出现任何被价格/目的国约束挡掉的候选（filtered_out 为空）。\n\n如需下一步，可以告诉我要不要补查该商品的规格详情，或指定收货国做物流试算。",
+        "valid": true,
+        "started_at": "2026-09-30T12:03:51.564042+00:00",
+        "ended_at": "2026-09-30T12:04:09.556372+00:00"
+      },
+      "candidate": {
+        "id": "CJ-V2H009",
+        "raw_query": "TA-102P户外360度双频天线带黑色支架",
+        "anchor_id": "1868855168021188608",
+        "status": "ok",
+        "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H009.1.candidate.jsonl.gz",
+        "terminal": "RUN_FINISHED",
+        "usage": {
+          "status": "success",
+          "elapsed_ms": 18355.963900015922,
+          "model_calls": 2,
+          "input_tokens": 16452,
+          "output_tokens": 710,
+          "observed_input_tokens": 16452,
+          "observed_output_tokens": 710,
+          "unknown_usage_calls": 0,
+          "active_attempts_at_finish": 0,
+          "usage_complete": true,
+          "ttft_p95_ms": 984.9999999860302,
+          "model_elapsed_ms": 4500.99999998929,
+          "tool_calls": 1,
+          "tool_errors": 0,
+          "fallbacks": 0,
+          "cost_usd": null,
+          "unknown_cost_calls": 2
+        },
+        "model_fallbacks": [],
+        "elapsed_ms": 18366.74,
+        "event_counts": {
+          "RUN_STARTED": 1,
+          "STATE_SNAPSHOT": 6,
+          "TOOL_CALL_START": 1,
+          "TOOL_CALL_ARGS": 41,
+          "TOOL_CALL_END": 1,
+          "TOOL_CALL_RESULT": 1,
+          "TEXT_MESSAGE_START": 1,
+          "TEXT_MESSAGE_CONTENT": 491,
+          "TEXT_MESSAGE_END": 1,
+          "MESSAGES_SNAPSHOT": 1,
+          "RUN_FINISHED": 1
+        },
+        "searches": [
+          {
+            "raw_query": "TA-102P户外360度双频天线带黑色支架",
+            "normalized_query": "outdoor 360 degree dual band antenna black bracket TA-102P",
+            "raw_category": "天线",
+            "effective_category": null,
+            "candidate_ids": [
+              "1868855168021188608",
+              "1868901740977213440",
+              "1734414659538657280",
+              "2411040318541607700",
+              "1381175506912808960"
+            ],
+            "anchor_rank": 1,
+            "result_complete": true
+          }
+        ],
+        "cj_tool_calls": [],
+        "tool_errors": [],
+        "first_hit5": true,
+        "any_hit5": true,
+        "final_anchor": true,
+        "final_answer": "已按你的需求检索到匹配结果，第 1 条即为所查型号（同类候选一并列出，供你对照）：\n\n| # | 商品 | product_id | 参考价（USD 列表价） |\n|---|---|---|---|\n| 1 | **TA-102P 360 Degree UV Dual Band 28-36dB Outdoor Antenna With Black Bracket**（360° 双频户外天线 + 黑色支架，与你描述的型号、结构一致） | 1868855168021188608 | US$31.10 |\n| 2 | TA-A1 360 Degree Steering TV Antenna UV Dual Band 47-860 MHz 15-18dB HD Outdoor（型号为 TA-A1，非 TA-102P） | 1868901740977213440 | US$31.39 |\n| 3 | Dual Band Outdoor Night Vision Light Bulb Monitoring Wireless（双频户外监控灯泡，非天线类目） | 1734414659538657280 | US$10.38–21.06 |\n| 4 | Baofeng UV-5RA 双频双显户外手台（对讲机，非天线） | 2411040318541607700 | US$9.12–13.43 |\n| 5 | Dual-Band High-Power Outdoor Wireless AP Rangefinder（双频户外无线 AP） | 1381175506912808960 | US$30.20–56.86 |\n\n说明：\n- 只有第 1 条与“TA-102P / 360 度 / 双频 / 户外 / 黑色支架”完全对应，可直接以该 product_id 定位；第 2 条虽同为 360° 双频户外天线，但型号是 TA-A1，请留意区别。\n- 本次为 CJ 快照关键词检索（召回 1000 条，无候选被硬约束过滤），价格是 USD **列表参考价**，规格、库存、目的国配送与运费/税费均未实时核验；商品卡中未带 SKU 与重量信息，快照数据不完整处我无法替你确认。\n\n如需按某个 product_id 补规格详情或试算到指定国家的物流费用，告诉我产品与目的国即可（本次按要求仅做检索展示，未执行报价或下单）。",
+        "valid": true,
+        "started_at": "2026-09-30T12:04:09.566350+00:00",
+        "ended_at": "2026-09-30T12:04:27.935011+00:00"
+      }
+    },
+    {
+      "id": "CJ-V2H010",
+      "attempt": 1,
+      "valid": true,
+      "baseline": {
+        "id": "CJ-V2H010",
+        "raw_query": "家用迷你LED口袋投影仪，要带USB和HDMI",
+        "anchor_id": "962C89C4-F9C8-415F-B173-E23D856B8C83",
+        "status": "ok",
+        "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H010.1.baseline.jsonl.gz",
+        "terminal": "RUN_FINISHED",
+        "usage": {
+          "status": "success",
+          "elapsed_ms": 21665.062700019917,
+          "model_calls": 2,
+          "input_tokens": 16187,
+          "output_tokens": 708,
+          "observed_input_tokens": 16187,
+          "observed_output_tokens": 708,
+          "unknown_usage_calls": 0,
+          "active_attempts_at_finish": 0,
+          "usage_complete": true,
+          "ttft_p95_ms": 922.0000000204891,
+          "model_elapsed_ms": 5953.000000008615,
+          "tool_calls": 1,
+          "tool_errors": 0,
+          "fallbacks": 0,
+          "cost_usd": null,
+          "unknown_cost_calls": 2
+        },
+        "model_fallbacks": [],
+        "elapsed_ms": 21675.99,
+        "event_counts": {
+          "RUN_STARTED": 1,
+          "STATE_SNAPSHOT": 6,
+          "TOOL_CALL_START": 1,
+          "TOOL_CALL_ARGS": 37,
+          "TOOL_CALL_END": 1,
+          "TOOL_CALL_RESULT": 1,
+          "TEXT_MESSAGE_START": 1,
+          "TEXT_MESSAGE_CONTENT": 547,
+          "TEXT_MESSAGE_END": 1,
+          "MESSAGES_SNAPSHOT": 1,
+          "RUN_FINISHED": 1
+        },
+        "searches": [
+          {
+            "raw_query": "家用迷你LED口袋投影仪，要带USB和HDMI",
+            "normalized_query": "家用迷你 LED 口袋投影仪 USB HDMI",
+            "raw_category": "数码配件",
+            "effective_category": "数码配件",
+            "candidate_ids": [
+              "962C89C4-F9C8-415F-B173-E23D856B8C83",
+              "461C62AD-6DD4-4BB6-A0B4-51EE138480B5",
+              "1392029096455835648",
+              "7340352E-91A6-42D0-99A1-E506098DB97E",
+              "1384428337052651520"
+            ],
+            "anchor_rank": 1,
+            "result_complete": true
+          }
+        ],
+        "cj_tool_calls": [],
+        "tool_errors": [],
+        "first_hit5": true,
+        "any_hit5": true,
+        "final_anchor": true,
+        "final_answer": "已为你检索到候选（CJ 快照关键词匹配，共 149 个候选，展示前 5 个）：\n\n1. **Mini LED Pocket Projector Home USB HDMI Video Portable Projector Optional Battery**\n   - product_id：`962C89C4-F9C8-415F-B173-E23D856B8C83`\n   - 参考价：US$37.48–42.60（区间价，USD 列表参考价）\n   - 类目：Consumer Electronics → Home Audio & Video / Projectors\n   - 与你需求的匹配点：标题明确含 Mini LED / Pocket / USB / HDMI / Portable，是本轮唯一命中\"口袋投影仪\"的候选；可选电池版本。\n\n2. **Magnetic Cable LED Magnet Charger Cable USB & USB Type-C**\n   - product_id：`461C62AD-6DD4-4BB6-A0B4-51EE138480B5`，参考价 US$1.19–3.60 — 这是数据线，不是投影仪。\n\n3. **4 英寸补光灯 / LED 环形自拍灯（USB 供电）**\n   - product_id：`1392029096455835648`，参考价 US$3.45 — 补光灯，非投影仪。\n\n4. **USB LED 阅读台灯（触摸感应）**\n   - product_id：`7340352E-91A6-42D0-99A1-E506098DB97E`，参考价 US$6.48 — 台灯，非投影仪。\n\n5. **540° 旋转磁吸 LED 数据线**\n   - product_id：`1384428337052651520`，参考价 US$1.54–3.33 — 数据线，非投影仪。\n\n**说明与提示：**\n- 真正符合\"迷你 LED 口袋投影仪 + USB + HDMI\"的只有第 1 条；第 2–5 条是关键词里\"USB / LED\"误召回的数据线和灯具，供你排除。\n- 第 1 条的接口是否同时含 USB 和 HDMI，需要看具体规格；该商品暂无内联详情，若你需要我可以按需补查规格详情。\n- 快照数据里库存、可配送国家、运费与税费均未实时核验，以上价格仅为 USD 列表参考价，不代表最终到手价。\n- 本轮只做检索展示，未执行报价或下单。\n\n需要我进一步查第 1 条的规格详情，或换个关键词再搜一轮吗？",
+        "valid": true,
+        "started_at": "2026-09-30T12:04:27.955021+00:00",
+        "ended_at": "2026-09-30T12:04:49.633264+00:00"
+      },
+      "candidate": {
+        "id": "CJ-V2H010",
+        "raw_query": "家用迷你LED口袋投影仪，要带USB和HDMI",
+        "anchor_id": "962C89C4-F9C8-415F-B173-E23D856B8C83",
+        "status": "ok",
+        "trace_file": "eval\\verification\\cj-crosslang-v2\\holdout\\traces\\CJ-V2H010.1.candidate.jsonl.gz",
+        "terminal": "RUN_FINISHED",
+        "usage": {
+          "status": "success",
+          "elapsed_ms": 22794.538599991938,
+          "model_calls": 2,
+          "input_tokens": 16466,
+          "output_tokens": 899,
+          "observed_input_tokens": 16466,
+          "observed_output_tokens": 899,
+          "unknown_usage_calls": 0,
+          "active_attempts_at_finish": 0,
+          "usage_complete": true,
+          "ttft_p95_ms": 1421.9999999913853,
+          "model_elapsed_ms": 5437.000000005355,
+          "tool_calls": 1,
+          "tool_errors": 0,
+          "fallbacks": 0,
+          "cost_usd": null,
+          "unknown_cost_calls": 2
+        },
+        "model_fallbacks": [],
+        "elapsed_ms": 22805.89,
+        "event_counts": {
+          "RUN_STARTED": 1,
+          "STATE_SNAPSHOT": 6,
+          "TOOL_CALL_START": 1,
+          "TOOL_CALL_ARGS": 34,
+          "TOOL_CALL_END": 1,
+          "TOOL_CALL_RESULT": 1,
+          "TEXT_MESSAGE_START": 1,
+          "TEXT_MESSAGE_CONTENT": 571,
+          "TEXT_MESSAGE_END": 1,
+          "MESSAGES_SNAPSHOT": 1,
+          "RUN_FINISHED": 1
+        },
+        "searches": [
+          {
+            "raw_query": "家用迷你LED口袋投影仪，要带USB和HDMI",
+            "normalized_query": "mini LED pocket projector USB HDMI",
+            "raw_category": "数码配件",
+            "effective_category": "数码配件",
+            "candidate_ids": [
+              "962C89C4-F9C8-415F-B173-E23D856B8C83",
+              "1443879108323971072",
+              "1439461538644758528",
+              "1433636562008150016",
+              "1610929826083385344"
+            ],
+            "anchor_rank": 1,
+            "result_complete": true
+          }
+        ],
+        "cj_tool_calls": [],
+        "tool_errors": [],
+        "first_hit5": true,
+        "any_hit5": true,
+        "final_anchor": true,
+        "final_answer": "我按“迷你 LED 口袋投影仪 + USB/HDMI”在 CJ 目录检索，共召回 279 个候选，返回前 5 个（按返回顺序展示）：\n\n| # | 商品 | 参考价（USD） | product_id |\n|---|---|---|---|\n| 1 | Mini LED Pocket Projector Home USB HDMI Video Portable Projector Optional Battery | US$37.48–42.60（区间价） | 962C89C4-F9C8-415F-B173-E23D856B8C83 |\n| 2 | Projector Full Hd Mini Projector For Home Portable Led | US$92.09 | 1443879108323971072 |\n| 3 | Hot YG310 Mini Projector Home HD LED | US$23.90 | 1439461538644758528 |\n| 4 | Home Mobile Phone Projector LED Portable Miniature | US$38.95–47.08（区间价） | 1433636562008150016 |\n| 5 | Mini Screenless TV Touch Home Portable Smartphone Projector | US$395.64 | 1610929826083385344 |\n\n简要说明（只引用结构化/标题信息，不做推断）：\n\n- 第 1 位是本轮最贴合需求的：标题明确写了 Mini LED Pocket Projector、Home、USB、HDMI，还标注电池可选；价位也是口袋投影仪的常见区间，可作为首选对比对象。\n- 第 2、3、4 位是 LED 迷你/家用投影仪，价格从 US$23.90 到 US$92.09 不等，但标题里没有明确出现 USB/HDMI 接口字样，需要看规格详情才能确认接口是否齐全。\n- 第 5 位虽带“Mini/Portable”，但归类在 Camera & Photo 且价格 US$395.64，明显不属于口袋机价位段，仅作参考。\n\n需要提醒的数据口径：\n\n- 以上价格是 CJ 快照的 USD 列表参考价，**库存、目的国可配送性、运费和税费均未实时核验**，不代表到手价。\n- 第 1、4 位是价格区间（对应不同规格），具体规格单价要看详情。\n- 品牌、材质、重量等字段在快照中为空，未做确认。\n\n下一步我可以为你做（按你需要挑一项）：① 拉取第 1 位（或任意指定 product_id）的规格详情，逐个确认 USB/HDMI 接口与规格价；② 换个更具体的检索词（如限定分辨率 / 是否内置电池 / 是否带 Android 系统）再搜一轮。需要我继续哪一步？",
+        "valid": true,
+        "started_at": "2026-09-30T12:04:49.642774+00:00",
+        "ended_at": "2026-09-30T12:05:12.451312+00:00"
+      }
+    }
+  ],
+  "workers": {
+    "baseline": {
+      "status": "ready",
+      "label": "baseline",
+      "commit": "30b9a4f7e22cfe42c234ba0dc0449d717e870aac",
+      "runtime": {
+        "app_source_sha256": "8295d18923357650bc57f825909060a23a980caeb27f0ead195e287b0bdf5bfa",
+        "catalog_source": "cj",
+        "product_index": "unused_for_cj_snapshot"
+      },
+      "prompt": {
+        "deployment_id": "pd-1914a9f2c54e480b9c46bfbcc665713c",
+        "baseline": "p-3fcc119e8e48706581eb2321c981c6a07115bd8b12b97c47b7547a887f0ae2bc",
+        "candidate": null,
+        "candidate_bps": 0,
+        "experiment": "bootstrap",
+        "action": "bootstrap",
+        "created_at": "2026-09-30T10:59:32.702776+00:00",
+        "pinned_version": null,
+        "effective_version": {
+          "version_id": "p-3fcc119e8e48706581eb2321c981c6a07115bd8b12b97c47b7547a887f0ae2bc",
+          "content_sha256": "3fcc119e8e48706581eb2321c981c6a07115bd8b12b97c47b7547a887f0ae2bc",
+          "yaml_sha256": "8708d01a802629afb22e048363771f8049a7d1f36ca2deedc54caf608e2a6554",
+          "toolset_sha256": "3e02e15c10acf842b2cc908e6b870dbbc7071fc84c582549cbd5d0f7ee999839",
+          "created_at": "2026-09-30T10:59:32.686860+00:00"
+        }
+      },
+      "model": "deepseek-v4-flash",
+      "fallback_model": "qwen-plus",
+      "catalog_source": "cj",
+      "semantic_cache": false,
+      "queue": false,
+      "redis": false,
+      "data_dir": "C:\\Users\\哈哈\\Desktop\\跨境电商项目\\data\\cj_eval\\v2_runs\\baseline"
+    },
+    "candidate": {
+      "status": "ready",
+      "label": "candidate",
+      "commit": "101f319924b20d795a8987da195fb16e4a2925d6",
+      "runtime": {
+        "app_source_sha256": "dc8403759ed5b1033bc203c2ad803392addc7867cf2479533ccfcd7838247025",
+        "catalog_source": "cj",
+        "product_index": "unused_for_cj_snapshot"
+      },
+      "prompt": {
+        "deployment_id": "pd-c18ab3b940ce4ccf81ef25f854bac621",
+        "baseline": "p-08a9e060bafc5e0bf7c417211300ea515d0d8d365efa6ed825ae6926acdf70c4",
+        "candidate": null,
+        "candidate_bps": 0,
+        "experiment": "bootstrap",
+        "action": "bootstrap",
+        "created_at": "2026-09-30T11:37:35.717004+00:00",
+        "pinned_version": null,
+        "effective_version": {
+          "version_id": "p-08a9e060bafc5e0bf7c417211300ea515d0d8d365efa6ed825ae6926acdf70c4",
+          "content_sha256": "08a9e060bafc5e0bf7c417211300ea515d0d8d365efa6ed825ae6926acdf70c4",
+          "yaml_sha256": "adaddcf55f36b576a6547f77074aaf93eae42985c97f4a02cd16e0b7816456c8",
+          "toolset_sha256": "3e02e15c10acf842b2cc908e6b870dbbc7071fc84c582549cbd5d0f7ee999839",
+          "created_at": "2026-09-30T11:37:35.700489+00:00"
+        }
+      },
+      "model": "deepseek-v4-flash",
+      "fallback_model": "qwen-plus",
+      "catalog_source": "cj",
+      "semantic_cache": false,
+      "queue": false,
+      "redis": false,
+      "data_dir": "C:\\Users\\哈哈\\Desktop\\跨境电商项目\\data\\cj_eval\\v2_runs\\candidate2"
+    }
+  },
+  "valid_pairs": 10,
+  "metrics": {
+    "first_hit5": {
+      "baseline": 3,
+      "candidate": 8,
+      "net": 5,
+      "denominator": 10
+    },
+    "any_hit5": {
+      "baseline": 9,
+      "candidate": 10,
+      "net": 1,
+      "denominator": 10
+    },
+    "final_anchor": {
+      "baseline": 9,
+      "candidate": 9,
+      "net": 0,
+      "denominator": 10
+    }
+  },
+  "regressions": {
+    "first_hit5": [],
+    "any_hit5": [],
+    "final_anchor": [
+      "CJ-V2H003"
+    ]
+  },
+  "usage": {
+    "baseline": {
+      "model_calls": 33,
+      "input_tokens": 359327,
+      "output_tokens": 14394
+    },
+    "candidate": {
+      "model_calls": 26,
+      "input_tokens": 253127,
+      "output_tokens": 10165
+    }
+  },
+  "invalid_attempts": [],
+  "all_attempt_cost_complete": true,
+  "gate_passed": false,
+  "finished_at": "2026-09-30T12:05:15.090282+00:00"
+}

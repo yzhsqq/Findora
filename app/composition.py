@@ -45,6 +45,7 @@ from app.infrastructure.persistence.in_memory_repositories import (
     InMemoryProductRepository,
 )
 from app.infrastructure.persistence.cj_catalog import CJCatalog
+from app.infrastructure.persistence.cj_localization import CJLocalization
 from app.infrastructure.persistence.json_file_stores import (
     JsonFileConversationStore,
     JsonFilePreferenceStore,
@@ -296,16 +297,21 @@ async def build_container() -> Container:
     drift_detector = DriftDetector() if settings.drift_detect_enabled else None
 
     # ---- Application ----
+    cj_localization = (CJLocalization(settings.data_dir / "cj_localization.sqlite3")
+                       if settings.catalog_source == "cj" else None)
     catalog_search = (CJCatalog(settings.data_dir / "cj_catalog.sqlite3",
                                 experimental_lexicon=settings.cj_experimental_lexicon,
                                 embedder=embedder, vector_index=vector_index,
-                                hybrid_enabled=settings.hybrid_recall_enabled)
+                                hybrid_enabled=settings.hybrid_recall_enabled,
+                                localization=cj_localization)
                       if settings.catalog_source == "cj" else
         CatalogSearchUseCase(
             product_repo, embedder=embedder, vector_index=vector_index, reranker=reranker,
             hybrid_enabled=settings.hybrid_recall_enabled,
         ))
-    cj_live_quote = (CJLiveQuoteService(settings.data_dir / "cj_catalog.sqlite3")
+    cj_live_quote = (CJLiveQuoteService.from_snapshot(
+        settings.data_dir / "cj_catalog.sqlite3",
+        settings.data_dir / "cj_live_quote.sqlite3", localization=cj_localization)
                      if settings.catalog_source == "cj" else None)
     place_order = PlaceOrderUseCase(confirmations)
     query_order = QueryOrderUseCase(trade_store)

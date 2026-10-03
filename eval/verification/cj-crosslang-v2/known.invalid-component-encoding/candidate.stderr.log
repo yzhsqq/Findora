@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "C:\Users\哈哈\Desktop\跨境电商项目\scripts\eval\run_cj_v2_pairs.py", line 390, in <module>
+    if args.worker:
+        ^^^^^^^^^^^^
+  File "D:\Python\Python312\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "D:\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Python\Python312\Lib\asyncio\base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "C:\Users\哈哈\Desktop\跨境电商项目\scripts\eval\run_cj_v2_pairs.py", line 132, in worker
+    print(PREFIX + json.dumps(info, ensure_ascii=True), flush=True)
+OSError: [Errno 22] Invalid argument
+Exception ignored in: <_io.TextIOWrapper name='<stdout>' mode='w' encoding='utf-8'>
+OSError: [Errno 22] Invalid argument

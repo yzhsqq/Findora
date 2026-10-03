@@ -234,6 +234,7 @@ class MainAgentOrchestrator:
             buyer_id=intent.buyer_id,
             locale=intent.locale,
             currency=intent.currency,
+            raw_query=intent.raw_query,
         )
         token = ShoppingContext.set(snapshot)
         started_at = time.monotonic()

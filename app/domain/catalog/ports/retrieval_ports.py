@@ -53,6 +53,12 @@ class ProductVectorIndex(ABC):
     async def search(self, embedding: list[float], top_n: int) -> list[VectorHit]:
         ...
 
+    async def hybrid_search(
+        self, dense_queries: list[list[float]], english_query: str, top_n: int,
+    ) -> list[VectorHit]:
+        """Query a dense/sparse collection with engine-side RRF when supported."""
+        raise NotImplementedError("该商品索引不支持库内混合检索")
+
 
 class Reranker(ABC):
     @abstractmethod

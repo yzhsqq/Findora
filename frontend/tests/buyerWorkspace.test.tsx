@@ -9,7 +9,7 @@ let personal: any[], preferences: any[], requests: any[], failure: boolean;
 beforeEach(() => {
   (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
   sessionStorage.clear();
-  localStorage.clear(); localStorage.setItem("globex.access-token", "test-token");
+  localStorage.clear(); localStorage.setItem("findora.access-token", "test-token");
   personal=[]; preferences=[]; requests=[]; failure=false;
   vi.stubGlobal("scrollTo",vi.fn()); Element.prototype.scrollIntoView=vi.fn();
   vi.stubGlobal("fetch",vi.fn(async (input: string, init?: RequestInit) => {
@@ -113,7 +113,7 @@ it("长期偏好支持添加、精确编辑、删除，并从服务器重新加�
 
 
 it("刷新后保留偏好页面并重新读取已保存的服务端偏好", async () => {
-  sessionStorage.setItem("globex.workspace.view", "preferences");
+  sessionStorage.setItem("findora.workspace.view", "preferences");
   preferences=[{kind:"like", statement:"喜欢小香风连衣裙"}];
   await mount();
   expect(host.textContent).toContain("喜欢小香风连衣裙");
