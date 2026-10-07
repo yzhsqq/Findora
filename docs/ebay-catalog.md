@@ -7,7 +7,10 @@
 在项目根目录执行：
 
 ```powershell
+# 首批（玩具与卡牌，40 条）
 .\.venv\Scripts\python.exe scripts\import_ebay_catalog.py --input D:\download\products_filtered.json --output data\ebay_catalog.sqlite3
+# 后续批次必须 --merge，否则整批替换会丢掉此前批次
+.\.venv\Scripts\python.exe scripts\import_ebay_catalog.py --input D:\sd_muwlfq8f2hdc6fpizv.json --output data\ebay_catalog.sqlite3 --merge --skip-invalid
 ```
 
 导入器默认整批替换快照。后续新增批次要加 `--merge`，它会先读出快照里已有的原始记录再并入本次文件，避免丢掉此前批次。大批量文件如果混入缺少商品编号或标题的记录，再加 `--skip-invalid` 跳过这些记录（`skipped_invalid` 是跳过条数）；不加则整批校验失败、快照保持不变。
@@ -30,7 +33,16 @@ Docker 可在基础 `docker-compose.yaml`、`docker-compose.cj.yaml`、`docker-c
 
 ## 数据边界
 
-已进入快照的数据来自 `products_filtered.json`：**40 个不同商品编号、40 个有页面报价**，合计 365 个规格（含变体选项）。品类为玩具与爱好 39、收藏品与艺术 1（卡牌、游戏配件、快餐赠品为主）。同批交付的 `sd_muwlfq8f2hdc6fpizv.json` 是 934 条采集失败记录（404 死链，`error_code=dead_page`），不是商品数据，导入器会按无效记录拒绝（需要继续导入同批其他文件时才用 `--skip-invalid`）。
+已进入快照的数据来自两批采集，合计 **924 个商品编号**（`/commerce/catalog?platform=ebay` 的 `total`）：
+
+| 文件 | 记录 | 入库 | 说明 |
+| --- | --- | --- | --- |
+| `D:\download\products_filtered.json` | 40 | 40 | 玩具与爱好 39、收藏品与艺术 1（卡牌、游戏配件、快餐赠品），365 个规格 |
+| `D:\sd_muwlfq8f2hdc6fpizv.json` | 934 | 884 新增（2 条与首批重复） | 38 个类目各 40 条：Electronics 201、Home & Garden 156、Sporting Goods 120、Jewelry & Watches 81、Books/Movies/Music 80 等，**逐条带 `timestamp`** |
+
+第二批被拒绝的 48 条：`--skip-invalid` 跳过 32 条**非 USD 站点**记录（`currency=HKD`，导入器只接受 eBay 美国站 USD 快照）与 16 条真正的采集失败（2 条 `dead_page` 404 + 14 条 `wait_element_timeout`）。一级类目共 13 个（Electronics、Home & Garden、Sporting Goods、Clothing/Shoes & Accessories、Health & Beauty、Jewelry & Watches、Books/Movies & Music、Business & Industrial、Pet Supplies、Toys & Hobbies、Collectibles & Art、eBay Motors 等）。
+
+同批的 `D:\sd_muwkgodm25zp7777j2.json`（66 条，其中 40 条有效）与首批 40 条完全重合，无需再导入。中文展示覆盖 **882 / 924** 条商品，其余 42 条因事实检查未通过保留英文原文。
 
 `price` 仅为采集时页面报价，`sale_price` 更低时记为待核实促销；卖家优惠、运费与最终结算价需再核对。页面的 `ships_to`（预估送达）与 `excludes_shipping`（不配送地区）只是页面文案，未解析为可配送国家列表，因此配送至中国等跨境目的地的范围、运费、税费、时效仍未取得。`availability=in_stock` / `is_sold` 只记录采集时页面状态；`quantity_available`、`available_count` 是页面可售数量，**不作为库存暴露**（与 Amazon 一致：`stock_known=false`、规格库存 0）。缺失报价展示“报价待核实”，不显示为免费；未返回价格的变体不补造价格。原产地取自 `item_location` 的末段国家，缺失时保持未知。
 
