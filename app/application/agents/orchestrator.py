@@ -620,7 +620,9 @@ class MainAgentOrchestrator:
 
     def _publish_compression(self, session_id: str, agent: Agent, summary_before: str | None) -> None:
         summary_after = agent.state.summary
-        governance = getattr(agent.state, 'middle_context', {}).get('globex_context', {})
+        middle = getattr(agent.state, 'middle_context', {}) or {}
+        # 兼容改名前的旧键，避免历史会话的治理状态读不到
+        governance = middle.get('findora_context') or middle.get('globex_context') or {}
         report = governance.get('last_compaction', {})
         if summary_after == summary_before and not report.get('archived_results'):
             return

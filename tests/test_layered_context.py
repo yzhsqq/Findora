@@ -162,7 +162,7 @@ async def test_checkpoint_and_state_atomic_fenced_and_operation_idempotent(tmp_p
     store=SqlFencedSessionStore(engine)
     try:
         claim=await store.claim('s',buyer_id='b')
-        state=AgentState(middle_context={'globex_context':{'checkpoint_id':'cp1','working':{'goal':'背包'}}})
+        state=AgentState(middle_context={'findora_context':{'checkpoint_id':'cp1','working':{'goal':'背包'}}})
         newer=await store.claim('s',buyer_id='b')
         with pytest.raises(StaleSessionWrite):await store.save_claim(claim,state.model_dump_json())
         async with engine.connect() as db:assert (await db.execute(select(ContextCheckpointRow))).first() is None
@@ -178,6 +178,16 @@ async def test_checkpoint_and_state_atomic_fenced_and_operation_idempotent(tmp_p
         await store.recover_context_operations()
         assert (await store.context_operation(op['operation_id'],'b'))['status']=='interrupted'
     finally:await engine.dispose()
+
+async def test_legacy_governance_key_migrates_to_findora_context():
+    """改名前的 globex_context 快照必须继续可用，不能丢治理状态。"""
+    agent=fixture_agent(count=1)
+    agent.state.middle_context['globex_context']={'checkpoint_id':'cp-old','working':{'goal':'背包'}}
+    state=governance(agent)
+    assert state['checkpoint_id']=='cp-old'
+    assert 'globex_context' not in agent.state.middle_context
+    assert agent.state.middle_context['findora_context'] is state
+
 
 async def test_real_agentscope_summary_keeps_whole_tail_and_persists_checkpoint(tmp_path):
     from tests.test_native_memory_confirmation import Model

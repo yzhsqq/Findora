@@ -42,7 +42,8 @@ def package(source: Path, output: Path):
                             saved=db.execute('select state_json from '+table+' limit 1').fetchone()
                             if saved:state=json.loads(saved[0])
                             break
-            context=state.get('middle_context',{}).get('globex_context',{})
+            middle=state.get('middle_context',{}) or {}
+            context=middle.get('findora_context') or middle.get('globex_context') or {}
             snapshots.append({'case_id':row['case_id'],'strategy':row['strategy'],'repetition':row['repetition'],
                               'answer':row['answer'],'checks':row['checks'],'association_check':row.get('association_check'),
                               'summary':state.get('summary'),'working':context.get('working'),

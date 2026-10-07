@@ -21,7 +21,16 @@ class ContextCapacityError(ValueError):
 
 
 def governance(agent):
-    state = agent.state.middle_context.setdefault('globex_context', {})
+    """上下文治理状态。
+
+    键名从 globex_context 改为 findora_context：老快照里的旧键在这里就地迁移，
+    读不到新键时沿用旧值，避免已保存会话的治理状态被丢弃。
+    """
+    middle = agent.state.middle_context
+    legacy = middle.pop('globex_context', None)
+    if not middle.get('findora_context') and isinstance(legacy, dict):
+        middle['findora_context'] = legacy
+    state = middle.setdefault('findora_context', {})
     if state.get('policy_version') != POLICY_VERSION:
         state.update(policy_version=POLICY_VERSION, failures=0)
     return state
