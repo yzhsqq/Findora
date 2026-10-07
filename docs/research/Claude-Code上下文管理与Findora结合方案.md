@@ -1,10 +1,10 @@
 # Claude Code 消息压缩与上下文管理调研
 
-## ——以及在 Globex 电商搜索 Agent 中的落地方案
+## ——以及在 Findora 电商搜索 Agent 中的落地方案
 
 > 调研日期：2026-09-05  
-> 调研范围：Claude Code 官方产品文档、Anthropic API 官方文档、阿里云百炼/Qwen 官方文档、Globex 当前代码与本地 AgentScope 运行时源码。  
-> 结论口径：文中明确区分“官方已公开事实”“基于公开行为的推断”和“对 Globex 的设计建议”。
+> 调研范围：Claude Code 官方产品文档、Anthropic API 官方文档、阿里云百炼/Qwen 官方文档、Findora 当前代码与本地 AgentScope 运行时源码。  
+> 结论口径：文中明确区分“官方已公开事实”“基于公开行为的推断”和“对 Findora 的设计建议”。
 
 ## 1. 执行摘要
 
@@ -17,7 +17,7 @@ Claude Code 并不是只靠一次 `/compact` 解决上下文问题，而是使�
 5. **完整历史另存**：活跃上下文可以被压缩，但原始 transcript 仍持久化，支持恢复、审计和定点 rewind。
 6. **Prompt Cache 独立优化**：把稳定内容放在请求前部，通过精确前缀复用降低重复计算。缓存不缩短上下文，也不替代压缩。
 
-对 Globex 最重要的结论是：**不要把订单、确认卡、商品标识、价格等精确业务事实托付给自然语言摘要。** 应将它们放进由业务代码维护的结构化 `ShoppingTaskState`；摘要只保存对话语义和选择理由。完整工具结果进入冷存储/事件流水，模型只接收决策所需的字段投影。
+对 Findora 最重要的结论是：**不要把订单、确认卡、商品标识、价格等精确业务事实托付给自然语言摘要。** 应将它们放进由业务代码维护的结构化 `ShoppingTaskState`；摘要只保存对话语义和选择理由。完整工具结果进入冷存储/事件流水，模型只接收决策所需的字段投影。
 
 当前项目已经有不错的基础：AgentScope 自动压缩、`AgentState` 持久化、长期偏好 Store、子 Agent 隔离、语义缓存都已存在。最值得优先补齐的不是另造一套压缩框架，而是：
 
@@ -37,7 +37,7 @@ Claude Code 并不是只靠一次 `/compact` 解决上下文问题，而是使�
 
 Anthropic 官方明确指出，Prompt Cache 不会减少模型所见 token，只降低稳定前缀在后续请求中的处理成本；旧 `tool_result` 应由 context editing 清理，完整历史则由 compaction 替换为摘要。[Manage tool context](https://platform.claude.com/docs/en/agents-and-tools/tool-use/manage-tool-context)
 
-因此，“隐式缓存”指的是供应商在服务端自动识别重复前缀并复用计算结果；应用不负责保存 KV，也拿不到缓存内容。Globex 当前使用的 Qwen 百炼接口默认具有隐式缓存，无需传参数且不能关闭，但是否命中不确定。显式缓存才需要在消息 `content` 上写 `cache_control`。[百炼上下文缓存](https://help.aliyun.com/zh/model-studio/context-cache)
+因此，“隐式缓存”指的是供应商在服务端自动识别重复前缀并复用计算结果；应用不负责保存 KV，也拿不到缓存内容。Findora 当前使用的 Qwen 百炼接口默认具有隐式缓存，无需传参数且不能关闭，但是否命中不确定。显式缓存才需要在消息 `content` 上写 `cache_control`。[百炼上下文缓存](https://help.aliyun.com/zh/model-studio/context-cache)
 
 ## 3. Claude Code 的上下文到底由什么组成
 
@@ -95,7 +95,7 @@ Claude Code 的产品文档公开了如下过程：
 
 如果原会话的 Prompt Cache 仍然热，摘要请求可以命中旧前缀，因此主要成本在摘要生成；若恢复的是一个缓存已过期的老会话，则压缩请求需要重新处理完整历史，成本更高。[How Claude Code uses prompt caching](https://code.claude.com/docs/en/prompt-caching)
 
-Claude Platform 现在还提供服务端 `compact_20260112` beta：达到输入 token 阈值后生成 `compaction` block，后续请求传回该 block，API 会忽略它之前的内容。[Compaction API](https://platform.claude.com/docs/en/build-with-claude/compaction) 这可作为自建 Claude Agent 的实现选择，但 Globex 当前是 Qwen + OpenAI 兼容接口，不能直接照搬该参数。
+Claude Platform 现在还提供服务端 `compact_20260112` beta：达到输入 token 阈值后生成 `compaction` block，后续请求传回该 block，API 会忽略它之前的内容。[Compaction API](https://platform.claude.com/docs/en/build-with-claude/compaction) 这可作为自建 Claude Agent 的实现选择，但 Findora 当前是 Qwen + OpenAI 兼容接口，不能直接照搬该参数。
 
 ### 4.4 压缩后不是只剩摘要
 
@@ -114,7 +114,7 @@ Claude Code 会按内容类型决定压缩后如何恢复：
 
 也就是说，Claude Code 的摘要只是一个**连续性载体**，权威规则、持久记忆和当前工作材料有独立来源。[Explore the context window](https://code.claude.com/docs/en/context-window)
 
-这正是 Globex 应吸收的核心：把“可重新读取的真相”留在外部状态，只把不可结构化的对话语义交给摘要。
+这正是 Findora 应吸收的核心：把“可重新读取的真相”留在外部状态，只把不可结构化的对话语义交给摘要。
 
 ### 4.5 长期记忆采用“小索引 + 按需详情”
 
@@ -131,13 +131,13 @@ Claude Code 区分：
 常驻小索引 → 找到相关主题 → 按需读取详情
 ```
 
-Globex 的 `PreferenceSelector` 已经在做相似的事情：所有 dislike 作为安全底线保留，like 再按相关性/时间取 Top-K。这一设计应保留并扩展到“会话事实索引”。
+Findora 的 `PreferenceSelector` 已经在做相似的事情：所有 dislike 作为安全底线保留，like 再按相关性/时间取 Top-K。这一设计应保留并扩展到“会话事实索引”。
 
 ### 4.6 Subagent 是上下文隔离器，不只是并发器
 
 Claude Code 建议把测试日志、文档调研、大文件搜索等高体积但自包含的工作交给 subagent。subagent 有独立上下文与工具调用轨迹，主会话只收到结果摘要。其 transcript 独立保存，主会话压缩不影响它，subagent 自己也能自动压缩。[Create custom subagents](https://code.claude.com/docs/en/sub-agents)
 
-这与 Globex 现有 `task_dispatch` 方向一致：检索子 Agent 每次新建独立 `AgentState`，中间工具过程不进入主 Agent，只回传最终结果。后续需要改进的是回传协议：从自由文本 JSON 升级为固定、可验证的 `SearchDecision`，避免把一大批候选再次灌回主上下文。
+这与 Findora 现有 `task_dispatch` 方向一致：检索子 Agent 每次新建独立 `AgentState`，中间工具过程不进入主 Agent，只回传最终结果。后续需要改进的是回传协议：从自由文本 JSON 升级为固定、可验证的 `SearchDecision`，避免把一大批候选再次灌回主上下文。
 
 ### 4.7 活跃上下文、完整历史和检查点相互独立
 
@@ -191,7 +191,7 @@ cache point 3（可选）
 
 ### 5.3 Qwen 下的实际约束
 
-Globex 默认使用 `qwen3-max`。百炼官方当前规则包括：
+Findora 默认使用 `qwen3-max`。百炼官方当前规则包括：
 
 - 无标记时使用隐式缓存；
 - 显式缓存通过消息 `content` 的 `cache_control: {"type": "ephemeral"}`；
@@ -206,7 +206,7 @@ Globex 默认使用 `qwen3-max`。百炼官方当前规则包括：
 
 当前 AgentScope `OpenAIChatFormatter` 会重新构造标准消息块，未提供把任意 `cache_control` 从 `Msg` 透传到 content 的通道。因此显式缓存不能只改业务 prompt，需要在 Formatter/Model 适配层实现，并补充回归测试。
 
-## 6. Globex 当前实现审计
+## 6. Findora 当前实现审计
 
 ### 6.1 已经做对的部分
 
@@ -248,7 +248,7 @@ Globex 默认使用 `qwen3-max`。百炼官方当前规则包括：
 
 #### 风险三：`TOOL_RESULT_LIMIT` 单位认知不一致
 
-Globex 配置注释写“字符上限”，AgentScope 实际用模型 token counter 与 `tool_result_limit` 比较。当前默认 `20000` 实际接近 2 万 token，不是 2 万字符。这会让容量估算偏差很大。
+Findora 配置注释写“字符上限”，AgentScope 实际用模型 token counter 与 `tool_result_limit` 比较。当前默认 `20000` 实际接近 2 万 token，不是 2 万字符。这会让容量估算偏差很大。
 
 #### 风险四：压缩只有“发生了”，没有“压得对不对”
 
@@ -271,7 +271,7 @@ Globex 配置注释写“字符上限”，AgentScope 实际用模型 token coun
 
 项目当前没有 `cache_control`，依赖百炼隐式缓存。AgentScope 已能读取 `cached_tokens`，但业务层没有输出该指标；`cache_creation_input_tokens` 也未被当前 OpenAI Chat 适配器采集。没有数据前，无法证明显式缓存比隐式缓存更优。
 
-## 7. 推荐的 Globex 六层上下文架构
+## 7. 推荐的 Findora 六层上下文架构
 
 ```text
                          每轮由 ContextAssembler 重新组装
@@ -437,7 +437,7 @@ trigger_tokens
 - 恢复长时间未活跃且缓存已冷的超长会话：先压缩再继续；
 - 连续两次压缩后很快再次越线：停止抖动并报 `context.thrashing`，检查单个超大工具结果。
 
-## 10. Prompt Cache 在 Globex 中如何落位
+## 10. Prompt Cache 在 Findora 中如何落位
 
 ### 10.1 第一阶段：先测隐式缓存
 
@@ -628,13 +628,13 @@ trigger_tokens
 2. 删除“Breakpoint 之前永远不动”的绝对说法，说明全量 compaction 会重建 conversation cache。
 3. 不再把“最近 K 个工具调用”描述为通用最优位置，改为按内容稳定性、TTL 和复用次数决策。
 4. 将示例中的压缩方向、缓存区域和可变尾部统一，避免“最近 K 轮到底在断点前还是后”的文字矛盾。
-5. 未附原始实验记录前，把“85%→15%”“降低 35%”标成示例值，而非 Globex 实测事实。
+5. 未附原始实验记录前，把“85%→15%”“降低 35%”标成示例值，而非 Findora 实测事实。
 6. 将 AgentScope `tool_result_limit` 明确写成 token 上限。
 7. 增加 Claude Code 的“旧工具结果先清理、结构化事实重注入、subagent 隔离、完整 transcript 另存”四个关键机制。
 
 ## 15. 最终建议
 
-Globex 不需要复制 Claude Code 的产品细节，而应复制它的治理原则：
+Findora 不需要复制 Claude Code 的产品细节，而应复制它的治理原则：
 
 > **稳定规则可缓存，精确事实结构化，长期知识按需取，近期消息原样留，旧工具结果先清，旧对话低频摘要，完整轨迹永远另存。**
 

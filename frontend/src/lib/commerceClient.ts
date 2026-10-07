@@ -19,6 +19,7 @@ import { readConfirmations, mergeConfirmations } from "./confirmations";
 import { recoveringFetch } from "./recoveringFetch";
 import { isSelectedSkill, readPublishedSkills, readSkillUsages } from "./skills";
 import { readDecisionReport } from "./decisions";
+import { productPurchaseUrl } from "./productPurchaseUrl";
 
 const STORAGE_KEY = "findora.agui.sessions.v1";
 const BUYER_KEY = "findora.buyer";
@@ -144,6 +145,7 @@ export function readProducts(value: unknown): ProductCard[] {
         sku_id: sku.sku_id,
         ...(typeof sku.variant_id === "string" ? { variant_id: sku.variant_id } : {}),
         spec: sku.spec,
+        ...(typeof sku.source_spec === "string" ? { source_spec: sku.source_spec } : {}),
         price_major: sku.price_major,
         currency: sku.currency,
         stock: sku.stock,
@@ -167,12 +169,21 @@ export function readProducts(value: unknown): ProductCard[] {
     // 可选展示字段单独清洗，坏的评分/图片信息不能拖垮仍可展示的有效商品。
     for (const key of [
       "description",
+      "source_description",
+      "source_title",
+      "source_category",
       "updated_at",
       "image_alt",
       "source_platform",
       "canonical_product_id",
       "price_text",
       "supplier_name",
+      "external_product_id",
+      "source_region",
+      "delivery_zipcode",
+      "seller_name",
+      "availability_text",
+      "condition",
     ] as const) {
       if (typeof item[key] === "string") card[key] = item[key];
     }
@@ -182,7 +193,18 @@ export function readProducts(value: unknown): ProductCard[] {
       card.image_kind = item.image_kind;
     if (item.price_kind === "range" || item.price_kind === "listing" || item.price_kind === "unknown") card.price_kind = item.price_kind;
     if (typeof item.stock_known === "boolean") card.stock_known = item.stock_known;
+    if (typeof item.snapshot_available === "boolean") card.snapshot_available = item.snapshot_available;
+    if (item.match_status === "unverified") card.match_status = item.match_status;
     if (typeof item.detail_available === "boolean") card.detail_available = item.detail_available;
+    if (item.source_url_status === "observed" || item.source_url_status === "page_verified") {
+      const link = productPurchaseUrl({ ...card, source_url_status: item.source_url_status,
+        source_url: typeof item.source_url === "string" ? item.source_url : undefined });
+      if (link) {
+        card.source_url = link;
+        card.source_url_status = item.source_url_status;
+        if (typeof item.source_url_checked_at === "string") card.source_url_checked_at = item.source_url_checked_at;
+      }
+    }
     if (typeof item.inventory_checked_at === "string" || item.inventory_checked_at === null) card.inventory_checked_at = item.inventory_checked_at;
     if (typeof item.rating_is_live === "boolean")
       card.rating_is_live = item.rating_is_live;
@@ -198,7 +220,7 @@ export function readProducts(value: unknown): ProductCard[] {
         review_count: item.rating_summary.review_count,
       };
     }
-    for (const key of ["ships_to", "material_tags"] as const) {
+    for (const key of ["ships_to", "material_tags", "price_conditions", "source_highlights", "source_price_conditions"] as const) {
       if (isStringArray(item[key])) card[key] = [...item[key]];
     }
     if (isStringArray(item.ship_from_warehouses)) card.ship_from_warehouses = [...item.ship_from_warehouses];
@@ -224,6 +246,7 @@ export function readProducts(value: unknown): ProductCard[] {
     ) {
       card.default_sku_id = item.default_sku_id;
     }
+    if (typeof item.quote_sku_id === "string" && skus.some(sku => sku.sku_id === item.quote_sku_id)) card.quote_sku_id = item.quote_sku_id;
     if (isAmount(item.source_price_major) && isCurrency(item.source_currency)) {
       card.source_price_major = item.source_price_major;
       card.source_currency = item.source_currency;

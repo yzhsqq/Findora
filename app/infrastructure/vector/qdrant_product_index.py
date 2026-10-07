@@ -10,6 +10,7 @@ point id 用 product_id 的确定性 UUID5，payload 存 product_id，upsert 幂
 from __future__ import annotations
 
 import uuid
+from pathlib import Path
 
 from qdrant_client import AsyncQdrantClient
 from qdrant_client import models
@@ -25,14 +26,17 @@ def _point_id(product_id: str) -> str:
 
 
 class QdrantProductIndex(ProductVectorIndex):
-    def __init__(self, settings: Settings, *, collection: str | None = None) -> None:
+    def __init__(self, settings: Settings, *, collection: str | None = None,
+                 local_path: Path | None = None) -> None:
         self._server_side_bm25 = bool(settings.qdrant_url)
         if settings.qdrant_url:
             # Dense vectors are supplied by text-embedding-v4; Document is only
             # used for Qdrant's built-in BM25 and must reach the server as text.
             self._client = AsyncQdrantClient(url=settings.qdrant_url, cloud_inference=True)
         else:
-            local_path = settings.data_dir / "qdrant"
+            # Embedded mode locks its storage directory, so every collection
+            # that lives in a separate index object needs its own path.
+            local_path = local_path or settings.data_dir / "qdrant"
             local_path.parent.mkdir(parents=True, exist_ok=True)
             self._client = AsyncQdrantClient(path=str(local_path))
         self._collection = collection or settings.qdrant_collection
@@ -63,10 +67,24 @@ class QdrantProductIndex(ProductVectorIndex):
 
     async def ensure_ready(self, vector_dim: int) -> None:
         if not await self._client.collection_exists(self._collection):
-            await self._client.create_collection(
-                collection_name=self._collection,
-                vectors_config=VectorParams(size=vector_dim, distance=Distance.COSINE),
-            )
+            # A server-side collection is created hybrid-ready (named dense +
+            # BM25 sparse), the same shape CJ's hybrid collection uses. Local
+            # embedded mode has no sparse vectors and stays dense-only.
+            if self._server_side_bm25:
+                await self._client.create_collection(
+                    collection_name=self._collection,
+                    vectors_config={"dense": VectorParams(size=vector_dim, distance=Distance.COSINE)},
+                    sparse_vectors_config={"bm25": models.SparseVectorParams(modifier=models.Modifier.IDF)},
+                )
+                self._dense_vector_name = "dense"
+                self._bm25_available = True
+            else:
+                await self._client.create_collection(
+                    collection_name=self._collection,
+                    vectors_config=VectorParams(size=vector_dim, distance=Distance.COSINE),
+                )
+                self._dense_vector_name = None
+                self._bm25_available = False
             self._schema_checked = True
             return
         info = await self._client.get_collection(self._collection)

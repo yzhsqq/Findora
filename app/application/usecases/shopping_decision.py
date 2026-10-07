@@ -12,6 +12,10 @@ import math
 
 
 _MAX_CANDIDATES = 5
+# Marketplace snapshots: display name and the evidence kind used in checks.
+SNAPSHOT_PLATFORMS = {"CJdropshipping": ("CJdropshipping", "cj_snapshot"),
+                      "Amazon": ("Amazon 美国站", "amazon_snapshot"),
+                      "eBay": ("eBay 美国站", "ebay_snapshot")}
 _REJECTION_LABELS = {
     "requested_sku_out_of_stock": "指定规格无库存",
     "out_of_stock": "无可售库存",
@@ -130,36 +134,49 @@ def build_decision_report(result: dict, *, budget_basis: str = "product") -> dic
                 "evidence": {"kind": kind, "ref": ref, "field": field, "observed_at": observed_at},
             })
 
-        if card.get("source_platform") == "CJdropshipping":
+        if card.get("source_platform") in SNAPSHOT_PLATFORMS:
             # CJ list data identifies a product and quotes a price. It does not
             # establish a sellable SKU, destination shipping or landed cost.
-            check("product_id", "商品来源", "CJdropshipping 商品快照", kind="cj_snapshot")
+            platform, snapshot_kind = SNAPSHOT_PLATFORMS[card["source_platform"]]
+            amazon = card.get("source_platform") == "Amazon"
+            ebay = card.get("source_platform") == "eBay"
+            if (amazon or ebay) and card.get("snapshot_available") is False:
+                reject(f"{platform} 采集时页面标记不可购买")
+                continue
+            check("product_id", "商品来源", platform + " 商品快照", kind=snapshot_kind)
             price = _amount(card.get("price_major"))
             price_kind = _string(card.get("price_kind"))
             if price is not None and price_kind != "unknown":
-                check("price_text", "列表报价", _string(card.get("price_text")) + " USD；非最终结算价", kind="cj_snapshot")
+                check("price_text", "列表报价", _string(card.get("price_text")) + " USD；非最终结算价", kind=snapshot_kind)
             else:
-                unknowns.append("CJ 列表报价缺失")
-            check("skus.stock", "可售库存", "库存快照不能替代下单时的实时确认", kind="cj_snapshot", known=False)
-            check("ships_to", "配送目的地", "尚未查询目的地运费与可配送范围", kind="cj_snapshot", known=False)
+                unknowns.append(platform + " 列表报价缺失")
+            check("skus.stock", "可售库存", "库存快照不能替代下单时的实时确认", kind=snapshot_kind, known=False)
+            check("ships_to", "配送目的地", "尚未查询目的地运费与可配送范围", kind=snapshot_kind, known=False)
             unknowns.extend(["实时可售库存未确认", "目的地配送和运费未确认", "到手价未确认"])
+            if amazon:
+                check("delivery_zipcode", "报价配送地区", "美国邮编 " + _string(card.get("delivery_zipcode")) + "；不代表可寄往中国", kind=snapshot_kind)
+            if amazon or ebay:
+                check("updated_at", "采集时间", _string(card.get("updated_at")), kind=snapshot_kind)
+                if ebay:
+                    check("condition", "页面成色", "页面成色：" + (_string(card.get("condition")) or "未提供") + "；以商品页为准", kind=snapshot_kind)
+                unknowns.extend(["优惠资格与结算价未确认", "与其他平台候选未确认同款"])
             if request["required_material_tags"] or request["excluded_material_tags"]:
                 unknowns.append("材质条件尚未核验")
             if cap is not None:
                 if (request["target_currency"] == "USD" and basis == "product"
                         and price is not None and price_kind != "unknown" and price > cap):
-                    reject(f"CJ 列表起价 {price:g} USD 已超出预算 {cap:g} USD")
+                    reject(f"{platform} 列表起价 {price:g} USD 已超出预算 {cap:g} USD")
                     continue
-                check("price_max_major", "预算", "报价币种、规格或到手价条件不足，不能核验预算", kind="cj_snapshot", known=False)
+                check("price_max_major", "预算", "报价币种、规格或到手价条件不足，不能核验预算", kind=snapshot_kind, known=False)
                 unknowns.append("预算是否满足尚未核验")
             if request["category"] and _string(card.get("category")) not in {request["category"], ""}:
-                unknowns.append("CJ 品类与请求品类采用不同分类体系，需人工核对")
+                unknowns.append(platform + " 品类与请求品类采用不同分类体系，需人工核对")
             if not ref:
                 unknowns.append("检索证据引用缺失")
             if len(candidates) < _MAX_CANDIDATES:
                 candidates.append({
                     "product": deepcopy(card), "sku_id": _string(card.get("default_sku_id")),
-                    "checks": checks, "reasons": ["来自 CJdropshipping 商品快照"],
+                    "checks": checks, "reasons": ["来自 " + platform + " 商品快照"],
                     "tradeoffs": ["列表报价与具体规格售价可能不同"], "unknowns": unknowns,
                 })
             continue
@@ -273,10 +290,12 @@ def build_decision_report(result: dict, *, budget_basis: str = "product") -> dic
 
     return {
         "version": 2, "request": request,
-        "catalog_source": "cj" if result.get("source") == "cj" or any(
+        "catalog_source": "multi" if result.get("source") in {"multi", "amazon", "ebay"} else "cj" if result.get("source") == "cj" or any(
             isinstance(hit, dict) and hit.get("source_platform") == "CJdropshipping" for hit in hits
         ) else "fixture",
         "status": "ready" if candidates else "no_match",
+        **({"partial_results": bool(result.get("partial_results")),
+            "source_status": result.get("source_status", {})} if result.get("source") == "multi" else {}),
         "candidates": candidates, "excluded": excluded,
         "evidence_refs": refs,
         "generated_at": datetime.now(timezone.utc).isoformat(),

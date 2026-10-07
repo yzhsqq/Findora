@@ -28,7 +28,7 @@ class ProductSearchSpec:
     required_material_tags: list[str] | tuple[str, ...] = ()
     # 预算可以针对商品价，也可以针对运费与关税规则估算后的到手价。
     budget_basis: str = "product"
-    # 本轮买家原话只用于语义召回；CJ 关键词支路只能使用英文改写词。
+    # 本轮买家原话用于语义召回与 CJ 精排；CJ 关键词支路只能使用英文改写词。
     raw_query: str = ""
 
     def __post_init__(self) -> None:

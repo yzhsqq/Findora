@@ -130,6 +130,11 @@ def build_app() -> FastAPI:
     from app.infrastructure.buyer_favorites import BuyerFavoriteStore
     register_favorite_routes(api, lambda: BuyerFavoriteStore(container().settings.data_dir / "buyer_favorites.db"),
                              lambda: container().catalog_search)
+    from app.presentation.purchase_records import register_purchase_record_routes
+    from app.infrastructure.purchase_records import PurchaseRecordStore
+    register_purchase_record_routes(api,
+        lambda: PurchaseRecordStore(container().settings.data_dir / "purchase_records.sqlite3"),
+        lambda: container().catalog_search, lambda: container().cj_live_quote)
 
     @api.get("/health")
     async def health() -> dict:

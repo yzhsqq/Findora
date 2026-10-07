@@ -1,0 +1,14 @@
+# Optional overlay, applied after docker-compose.cj.yaml once the snapshot exists.
+services:
+  app:
+    environment:
+      EBAY_CATALOG_PATH: /app/data/ebay_catalog.sqlite3
+    volumes:
+      - type: bind
+        source: ../data/ebay_catalog.sqlite3
+        target: /app/data/ebay_catalog.sqlite3
+        read_only: true
+      - type: bind
+        source: ../data/ebay_localization.sqlite3
+        target: /app/data/ebay_localization.sqlite3
+        read_only: true

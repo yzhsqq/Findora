@@ -34,7 +34,7 @@ def unique_description(text):
 FIELD_GROUPS = {
     'identity': {'product_id', 'title', 'default_sku_id', 'canonical_product_id'},
     'specs': {'product_id', 'title', 'skus', 'material_tags', 'description', 'highlights', 'dimensions_cm', 'weight_kg'},
-    'price': {'product_id', 'title', 'skus', 'price_major', 'currency', 'landed_price', 'ships_to'},
+    'price': {'product_id', 'title', 'skus', 'price_major', 'currency', 'price_text', 'price_kind', 'landed_price', 'ships_to', 'source_platform', 'updated_at', 'delivery_zipcode', 'source_region', 'price_conditions', 'seller_name', 'match_status'},
     'stock': {'product_id', 'title', 'skus', 'stock'},
 }
 

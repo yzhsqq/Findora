@@ -103,3 +103,50 @@ it("多规格商品先让用户选择，再用所选 SKU 请求试算", async ()
   expect(host.textContent).toContain("US$27.00");
   expect(host.textContent).toContain("跨境物流试算");
 });
+
+it("保存待购记录保留所选规格，未知库存不阻止保存", async () => {
+  const request = vi.fn(async () => ({record: {record_id: "pending-1"}, created: false}));
+  const saved = vi.fn();
+  await act(async () => root.render(<ProductDetail product={{...listed, detail_available: true,
+    skus: [{...variant("SKU-1"), stock: 0, stock_known: false}, variant("SKU-2")]}}
+    busy={false} request={request} onClose={() => {}} onCompare={() => {}} onAsk={() => {}}
+    onPrepare={() => {}} onPurchaseSaved={saved} />));
+  await act(async () => host.querySelector<HTMLInputElement>('input[value="SKU-1"]')!.click());
+  await click("加入待购记录");
+  expect(request).toHaveBeenCalledWith("/purchase-records", "PUT", {product_id: "CJ-100", sku_id: "SKU-1"});
+  expect(saved).toHaveBeenCalledWith(false);
+});
+
+it("无购买链接也可保存待购记录，并允许失败后重试", async () => {
+  const request = vi.fn().mockRejectedValueOnce(new Error("保存失败"))
+    .mockResolvedValue({record: {record_id: "pending-1"}, created: true});
+  const saved = vi.fn();
+  await act(async () => root.render(<ProductDetail product={listed} busy={false} request={request}
+    onClose={() => {}} onCompare={() => {}} onAsk={() => {}} onPrepare={() => {}} onPurchaseSaved={saved} />));
+  await click("加入待购记录");
+  expect(host.textContent).toContain("保存失败");
+  expect(saved).not.toHaveBeenCalled();
+  await click("加入待购记录");
+  expect(request).toHaveBeenLastCalledWith("/purchase-records", "PUT", {product_id: "CJ-100", sku_id: ""});
+  expect(saved).toHaveBeenCalledWith(true);
+  expect(host.textContent).toContain("已保存到“我的订单”");
+});
+
+it("购买选项打开 CJ 页面，界面不显示裸链接，也不请求下单", async () => {
+  const pid = "05B050F6-9DF5-4488-9218-B1D919650ADE";
+  const url = `https://cjdropshipping.com/product/green-sandalwood-hair-comb-p-${pid}.html`;
+  const request = vi.fn();
+  const props = { busy: false, request, onClose: () => {}, onCompare: () => {}, onAsk: () => {}, onPrepare: () => {} };
+  await act(async () => root.render(<ProductDetail {...props} product={{ ...listed, product_id: pid,
+    source_url: url, source_url_status: "observed", source_description: "Full supplier details" }} />));
+  const link = host.querySelector<HTMLAnchorElement>(".cj-purchase-button")!;
+  expect(link.textContent).toContain("前往商品购买页面");
+  expect(link.href).toBe(url);
+  expect(link.target).toBe("_blank");
+  expect(link.rel).toBe("noopener noreferrer");
+  expect(host.textContent).not.toContain(url);
+  expect(host.textContent).toContain("Full supplier details");
+  expect(request).not.toHaveBeenCalled();
+  await act(async () => root.render(<ProductDetail {...props} key="missing" product={listed} />));
+  expect(host.querySelector(".cj-purchase-button")).toBeNull();
+});

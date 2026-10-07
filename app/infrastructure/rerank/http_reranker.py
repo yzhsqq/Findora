@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 """HttpReranker
 
-HTTP 精排客户端（对接 Qwen3-Reranker 等 /rerank 协议服务）。
+HTTP 精排客户端（兼容 /rerank 网关及百炼 qwen3-rerank 的 /reranks）。
 RERANKER_BASE_URL 未配置时组装根不会实例化本类；调用失败抛异常，
 由 CatalogSearchUseCase 降级为按向量分排序并标注 rerank_applied=false。
 """
 from __future__ import annotations
+
+import math
 
 import httpx
 
@@ -20,10 +22,10 @@ class HttpReranker(Reranker):
         # 仍兼容补上 /rerank。
         self._url = (
             endpoint
-            if endpoint.endswith(("/rerank", "/reranker"))
+            if endpoint.endswith(("/rerank", "/reranker", "/reranks"))
             else f"{endpoint}/rerank"
         )
-        self._api_key = settings.llm_api_key
+        self._api_key = settings.reranker_api_key or settings.llm_api_key
         self._model = settings.reranker_model
         self._timeout = timeout_seconds
 
@@ -39,10 +41,23 @@ class HttpReranker(Reranker):
             response.raise_for_status()
             body = response.json()
         # 兼容 {results:[{index, relevance_score}]} 协议（Jina/TEI/vLLM rerank 通用形态）
-        results = body.get("results")
+        results = body.get("results") if isinstance(body, dict) else None
         if not isinstance(results, list) or len(results) != len(documents):
-            raise RuntimeError(f"rerank 响应异常：{str(body)[:200]}")
+            raise RuntimeError("rerank 响应缺少完整的候选分数")
         scores = [0.0] * len(documents)
+        seen: set[int] = set()
         for item in results:
-            scores[item["index"]] = float(item.get("relevance_score", item.get("score", 0.0)))
+            if not isinstance(item, dict):
+                raise RuntimeError("rerank 结果项格式非法")
+            index = item.get("index")
+            if type(index) is not int or not 0 <= index < len(documents) or index in seen:
+                raise RuntimeError("rerank 候选索引非法或重复")
+            try:
+                score = float(item.get("relevance_score", item.get("score")))
+            except (TypeError, ValueError) as error:
+                raise RuntimeError("rerank 候选分数非法") from error
+            if not math.isfinite(score):
+                raise RuntimeError("rerank 候选分数必须有限")
+            seen.add(index)
+            scores[index] = score
         return scores

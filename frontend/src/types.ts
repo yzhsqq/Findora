@@ -42,6 +42,7 @@ export interface ProductCard {
     sku_id: string;
     variant_id?: string;
     spec: string;
+    source_spec?: string;
     price_major: number;
     currency: string;
     stock: number;
@@ -58,10 +59,19 @@ export interface ProductCard {
   dimensions_cm?: { length?: number; width?: number; height?: number };
   updated_at?: string;
   default_sku_id?: string;
+  quote_sku_id?: string;
   image_url?: string | null;
   image_kind?: "illustration" | "placeholder" | "source";
   image_alt?: string;
   source_platform?: string;
+  source_url?: string;
+  source_url_status?: "observed" | "page_verified";
+  source_url_checked_at?: string;
+  source_description?: string;
+  source_title?: string;
+  source_category?: string;
+  source_highlights?: string[];
+  source_price_conditions?: string[];
   source_price_major?: number;
   source_currency?: string;
   canonical_product_id?: string;
@@ -75,6 +85,25 @@ export interface ProductCard {
   supplier_name?: string;
   ship_from_warehouses?: string[];
   factory_inventory_countries?: string[];
+  external_product_id?: string;
+  source_region?: string;
+  delivery_zipcode?: string;
+  seller_name?: string;
+  availability_text?: string;
+  snapshot_available?: boolean;
+  price_conditions?: string[];
+  match_status?: "unverified";
+  /** eBay listing condition as stated by the collected page. */
+  condition?: string;
+}
+
+export interface PurchaseRecord {
+  record_id: string;
+  status: "PENDING_PURCHASE";
+  product: ProductCard;
+  sku_id: string;
+  quantity: number;
+  created_at: string;
 }
 
 export interface CJFreightQuote {
@@ -140,7 +169,9 @@ export interface DecisionCandidate {
 
 export interface DecisionReport {
   version: 2;
-  catalog_source?: "cj" | "fixture";
+  catalog_source?: "cj" | "multi" | "fixture";
+  partial_results?: boolean;
+  source_status?: Partial<Record<"cj" | "amazon" | "ebay", "ok" | "unavailable">>;
   request: DecisionRequest;
   status: "ready" | "no_match";
   candidates: DecisionCandidate[];

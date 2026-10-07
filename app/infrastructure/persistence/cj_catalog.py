@@ -1,7 +1,8 @@
 """Read-only CJ snapshot used by both the catalog page and agent search.
 
-The collector owns writes. This adapter never calls CJ or an embedding API while
-serving a request, and does not turn missing fulfillment facts into product facts.
+The collector owns writes. Direct browsing stays local; Agent hybrid search may
+call embedding and rerank services, but never CJ. Missing fulfillment facts stay
+unknown.
 """
 from __future__ import annotations
 
@@ -11,14 +12,17 @@ from dataclasses import dataclass, replace
 import html
 import json
 import logging
+import math
 import re
 import sqlite3
 from pathlib import Path
 from typing import Any
 
 from app.domain.catalog.product_search_spec import ProductSearchSpec
-from app.domain.catalog.ports.retrieval_ports import EmbeddingClient, ProductVectorIndex
+from app.domain.catalog.ports.retrieval_ports import EmbeddingClient, ProductVectorIndex, Reranker
 from app.infrastructure.context import ShoppingContext
+from app.infrastructure.cj_product_links import product_link_fields
+from app.infrastructure.cj_catalog_snapshot import resolve_catalog_snapshot
 from app.infrastructure.persistence.cj_localization import CJLocalization
 
 
@@ -53,6 +57,7 @@ _AMOUNT = re.compile(r"\d+(?:\.\d+)?")
 _HTML_TAG = re.compile(r"<[^>]+>")
 _HYBRID_CANDIDATES = 80
 _CATEGORY_BOOST = 0.005
+_RERANK_TIMEOUT_SECONDS = 3.0
 logger = logging.getLogger(__name__)
 
 
@@ -129,6 +134,7 @@ class CJCatalog:
         experimental_lexicon: bool = False,
         embedder: EmbeddingClient | None = None,
         vector_index: ProductVectorIndex | None = None,
+        reranker: Reranker | None = None,
         hybrid_enabled: bool = False,
         localization: CJLocalization | None = None,
     ):
@@ -136,6 +142,7 @@ class CJCatalog:
         self.experimental_lexicon = experimental_lexicon
         self.embedder = embedder
         self.vector_index = vector_index
+        self.reranker = reranker
         self.hybrid_enabled = hybrid_enabled
         self.localization = localization
         self.vector_available = False
@@ -143,9 +150,10 @@ class CJCatalog:
         self._documents_by_id: dict[str, CJSearchDocument] = {}
 
     def _db(self) -> sqlite3.Connection:
-        if not self.path.is_file():
+        snapshot = resolve_catalog_snapshot(self.path)
+        if not snapshot.is_file():
             raise ValueError("CJ 商品快照不存在，请先运行采集脚本")
-        db = sqlite3.connect(f"file:{self.path.as_posix()}?mode=ro", uri=True, timeout=5)
+        db = sqlite3.connect(f"file:{snapshot.as_posix()}?mode=ro", uri=True, timeout=5)
         db.row_factory = sqlite3.Row
         return db
 
@@ -209,6 +217,8 @@ class CJCatalog:
             "score": score, "source_platform": "CJdropshipping", "image_url": image,
             "image_kind": "source" if image else "placeholder", "image_alt": str(listing.get("nameEn") or "CJ 商品"),
             "description": _plain(detail.get("description") or listing.get("description")),
+            "source_description": _plain(detail.get("description")),
+            **product_link_fields(row),
             "ships_to": [], "ship_from_warehouses": list(dict.fromkeys(warehouses)),
             "factory_inventory_countries": list(dict.fromkeys(factory_countries)),
             "material_tags": material, "weight_kg": weight_kg,
@@ -299,6 +309,12 @@ class CJCatalog:
 
     async def browse(self, query: str = "", category: str = "", page: int = 1, page_size: int = 24) -> dict:
         return await asyncio.to_thread(self._browse, query, category, page, page_size)
+
+    async def cards_by_ids(self, product_ids: list[str]) -> list[dict]:
+        def read():
+            rows = self._rows_by_ids(list(dict.fromkeys(product_ids)))
+            return self._localized_cards(list(rows.values()))
+        return await asyncio.to_thread(read)
 
     async def localize_saved_cards(self, cards: list[dict]) -> list[dict]:
         if self.localization is None or not cards:
@@ -412,6 +428,28 @@ class CJCatalog:
             for score, document in fused
         ]
         rescored.sort(key=lambda item: (-item[0], item[1].product_id))
+        strategy = "cj_qdrant_rrf" if english_query else "cj_qdrant_dense"
+        rerank_applied = False
+        if self.reranker is not None and rescored:
+            try:
+                scores = await asyncio.wait_for(
+                    self.reranker.rerank(raw_query, [document.searchable_text() for _, document in rescored]),
+                    timeout=_RERANK_TIMEOUT_SECONDS,
+                )
+                if len(scores) != len(rescored):
+                    raise ValueError("重排分数数量与候选数量不一致")
+                scores = [float(score) for score in scores]
+                if not all(math.isfinite(score) for score in scores):
+                    raise ValueError("重排分数必须有限")
+                # Replace retrieval scores only after validating the whole response.
+                # Rerank all candidates before budget filtering and final top_k.
+                ranked = [(score, document) for score, (_, document) in zip(scores, rescored)]
+                ranked.sort(key=lambda item: (-item[0], item[1].product_id))
+                rescored = ranked
+                strategy += "_rerank"
+                rerank_applied = True
+            except Exception as error:  # noqa: BLE001 - keep the successful recall on rerank failure.
+                logger.warning("CJ rerank 不可用，保留召回排序：%s", error)
         candidate_ids = [document.product_id for _, document in rescored]
         rows = self._rows_by_ids(candidate_ids)
         localized = self.localization.lookup_many(candidate_ids) if self.localization else {}
@@ -431,12 +469,12 @@ class CJCatalog:
             "source": "cj",
             "hits": cards,
             "total_candidates": len(rescored),
-            "recall_strategy": "cj_qdrant_rrf" if english_query else "cj_qdrant_dense",
+            "recall_strategy": strategy,
             "retrieval_variant": "cj_qdrant_dense_bm25_rrf_v2",
             "vector_available": True,
-            "category_mode": "soft_boost",
+            "category_mode": "rerank" if rerank_applied else "soft_boost",
             "query_variants": {"dense": dense_texts, "bm25": english_query},
-            "rerank_applied": False,
+            "rerank_applied": rerank_applied,
             "data_scope": "CJ 快照混合检索；USD 列表参考价。库存、目的地配送、运费、税费和最终到手价未实时核验，不能当作已满足的筛选条件。",
             "filtered_out": [],
         }

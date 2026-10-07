@@ -4,6 +4,7 @@ services:
   app:
     environment:
       CATALOG_SOURCE: cj
+      CJ_CATALOG_PATH: /app/data/cj_catalog/cj_catalog.sqlite3
       HYBRID_RECALL_ENABLED: "1"
       QDRANT_COLLECTION: ${QDRANT_COLLECTION:-globex_products_cj_hybrid}
       EMBEDDING_BASE_URL: ${EMBEDDING_BASE_URL:?EMBEDDING_BASE_URL is required}
@@ -22,8 +23,8 @@ services:
         target: /app/app
         read_only: true
       - type: bind
-        source: ../data/cj_catalog.sqlite3
-        target: /app/data/cj_catalog.sqlite3
+        source: ../data/cj_published
+        target: /app/data/cj_catalog
         read_only: true
       # Chinese projection of the snapshot above. Read-only: the app opens it
       # with mode=ro and falls back to English listings if the file is absent.

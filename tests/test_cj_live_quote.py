@@ -61,7 +61,7 @@ def test_live_quote_uses_writable_copy_without_changing_snapshot(tmp_path):
     CJLiveQuoteService.from_snapshot(snapshot, working)
     db = open_db(working)
     try:
-        assert db.execute("SELECT name FROM sqlite_master WHERE name='cj_pilot_calls'").fetchone() is None
+        assert db.execute("SELECT COUNT(*) FROM cj_pilot_calls").fetchone()[0] == 1
     finally:
         db.close()
 

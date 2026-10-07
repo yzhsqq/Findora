@@ -2098,6 +2098,27 @@ main {
   width: 14px;
   height: 14px;
 }
+.cj-purchase-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px;
+  margin-top: 12px;
+  border: 1px solid #b8c8b8;
+  border-radius: 12px;
+  background: #eff5ee;
+  color: #36573c;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.cj-purchase-button:hover { background: #e3eddf; }
+.cj-purchase-button:focus-visible { outline: 2px solid #36573c; outline-offset: 3px; }
+.cj-purchase-button svg { width: 16px; height: 16px; }
+.cj-source-description { margin-bottom: 18px; color: #626873; font-size: 12px; }
+.cj-source-description summary { cursor: pointer; padding: 8px 0; }
+.cj-source-description p { line-height: 1.8; overflow-wrap: anywhere; }
 .comparison-scroll {
   overflow: auto;
 }

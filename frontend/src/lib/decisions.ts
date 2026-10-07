@@ -80,7 +80,9 @@ export function readDecisionReport(value: unknown): DecisionReport | null {
       : []);
   return {
     version: 2,
-    catalog_source: value.catalog_source === "cj" ? "cj" : "fixture",
+    catalog_source: value.catalog_source === "multi" ? "multi" : value.catalog_source === "cj" ? "cj" : "fixture",
+    partial_results: value.partial_results === true,
+    source_status: record(value.source_status) ? Object.fromEntries(Object.entries(value.source_status).filter(([name, status]) => ["cj", "amazon", "ebay"].includes(name) && ["ok", "unavailable"].includes(String(status)))) as DecisionReport["source_status"] : undefined,
     request,
     status: value.status,
     candidates,

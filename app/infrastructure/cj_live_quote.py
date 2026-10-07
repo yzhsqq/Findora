@@ -8,11 +8,10 @@ from __future__ import annotations
 import asyncio
 import json
 import os
-import shutil
 import sqlite3
 import time
 from tempfile import NamedTemporaryFile
-from contextlib import contextmanager
+from contextlib import closing, contextmanager
 from datetime import datetime, timezone
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
@@ -22,6 +21,8 @@ from dotenv import dotenv_values
 
 from app.infrastructure.persistence.cj_catalog import CJCatalog
 from app.infrastructure.persistence.cj_localization import CJLocalization
+from app.infrastructure.cj_product_links import product_link_fields
+from app.infrastructure.cj_catalog_snapshot import resolve_catalog_snapshot
 from app.infrastructure.settings import PROJECT_ROOT
 
 
@@ -78,25 +79,44 @@ class CJLiveQuoteService:
     def from_snapshot(cls, snapshot_path: Path, working_path: Path,
                       localization: CJLocalization | None = None) -> "CJLiveQuoteService":
         """Keep the frozen catalog read-only while persisting live details and quotes."""
-        source_stat = snapshot_path.stat()
+        current_snapshot = resolve_catalog_snapshot(snapshot_path)
+        source_stat = current_snapshot.stat()
         signature = f"{source_stat.st_size}:{source_stat.st_mtime_ns}"
         marker_path = working_path.with_name(working_path.name + ".source")
         previous = marker_path.read_text() if marker_path.is_file() else None
         if not working_path.is_file() or previous != signature:
+            pilot_calls = None
+            if working_path.is_file():
+                with closing(sqlite3.connect(f"file:{working_path.as_posix()}?mode=ro", uri=True)) as old:
+                    if old.execute("SELECT 1 FROM sqlite_master WHERE name='cj_pilot_calls'").fetchone():
+                        pilot_calls = old.execute("SELECT called_at,endpoint,points,result_code FROM cj_pilot_calls").fetchall()
             working_path.parent.mkdir(parents=True, exist_ok=True)
             with NamedTemporaryFile(dir=working_path.parent, prefix="cj-live-", delete=False) as staging:
                 staged_path = Path(staging.name)
             try:
-                shutil.copy2(snapshot_path, staged_path)
+                # SQLite backup includes committed WAL pages during enrichment.
+                with closing(sqlite3.connect(f"file:{current_snapshot.as_posix()}?mode=ro", uri=True)) as source, closing(sqlite3.connect(staged_path)) as target:
+                    source.backup(target)
+                    if pilot_calls is not None:
+                        # Publication changes invalidate quotes, but must not reset the daily point ledger.
+                        with target:
+                            target.execute("""CREATE TABLE IF NOT EXISTS cj_pilot_calls (
+                                id INTEGER PRIMARY KEY AUTOINCREMENT,called_at TEXT NOT NULL,
+                                endpoint TEXT NOT NULL,points INTEGER NOT NULL,result_code TEXT NOT NULL)""")
+                            target.execute("DELETE FROM cj_pilot_calls")
+                            target.executemany("INSERT INTO cj_pilot_calls(called_at,endpoint,points,result_code) VALUES(?,?,?,?)", pilot_calls)
                 os.replace(staged_path, working_path)
                 marker_path.write_text(signature)
             finally:
                 staged_path.unlink(missing_ok=True)
-        return cls(working_path, localization=localization)
+        service = cls(working_path, localization=localization)
+        service.snapshot_path = snapshot_path
+        return service
 
     def __init__(self, db_path: Path, *, daily_point_limit: int = 1000,
                  localization: CJLocalization | None = None):
         self.db_path = db_path
+        self.snapshot_path: Path | None = None
         self.localization = localization
         self.daily_point_limit = daily_point_limit
         self._lock = asyncio.Lock()
@@ -200,6 +220,18 @@ class CJLiveQuoteService:
         row = db.execute("SELECT * FROM products WHERE pid=?", (product_id,)).fetchone()
         if row is None:
             raise CJQuoteError("商品不在当前 CJ 快照中")
+        if self.snapshot_path is not None:
+            snapshot = resolve_catalog_snapshot(self.snapshot_path)
+            with closing(sqlite3.connect(f"file:{snapshot.as_posix()}?mode=ro", uri=True, timeout=10)) as source:
+                source.row_factory = sqlite3.Row
+                latest = source.execute("SELECT * FROM products WHERE pid=?", (product_id,)).fetchone()
+            if latest is not None and latest["detail_json"] and (
+                not row["detail_json"] or (latest["detail_fetched_at"] or "") > (row["detail_fetched_at"] or "")
+            ):
+                with db:
+                    db.execute("UPDATE products SET detail_json=?,detail_fetched_at=?,detail_status='ok' WHERE pid=?",
+                               (latest["detail_json"], latest["detail_fetched_at"], product_id))
+                row = db.execute("SELECT * FROM products WHERE pid=?", (product_id,)).fetchone()
         return row
 
     def _ensure_detail(self, db: sqlite3.Connection, client: httpx.Client, token: str,
@@ -226,22 +258,36 @@ class CJLiveQuoteService:
                        (json.dumps(stock, ensure_ascii=False), datetime.now(timezone.utc).isoformat(), row["pid"]))
         return self._product(db, row["pid"])
 
-    def _detail(self, product_id: str) -> dict:
+    def _detail(self, product_id: str, fetch_missing: bool = True) -> dict:
         with self._db() as db:
             row = self._product(db, product_id)
-            if not row["detail_json"]:
+            if not row["detail_json"] and fetch_missing:
                 client, token = self._client()
                 try:
                     row = self._ensure_detail(db, client, token, row, refresh=False)
                 finally:
                     client.close()
             card = CJCatalog._card(row)
+            if self.snapshot_path is not None:
+                snapshot = resolve_catalog_snapshot(self.snapshot_path)
+                with closing(sqlite3.connect(f"file:{snapshot.as_posix()}?mode=ro", uri=True, timeout=10)) as source:
+                    source.row_factory = sqlite3.Row
+                    latest = source.execute("SELECT * FROM products WHERE pid=?", (product_id,)).fetchone()
+                # Read current link provenance even if the writable quote copy predates it.
+                card.pop("source_url", None)
+                if latest is not None:
+                    card.update(product_link_fields(latest))
             localized = self.localization.lookup_many([product_id]).get(product_id) if self.localization else None
             return CJLocalization.apply_card(row, card, localized)
 
     async def detail(self, product_id: str) -> dict:
         async with self._lock:
             return await asyncio.to_thread(self._detail, product_id)
+
+    async def cached_detail(self, product_id: str) -> dict:
+        """Read already collected specifications without calling any CJ endpoint."""
+        async with self._lock:
+            return await asyncio.to_thread(self._detail, product_id, False)
 
     def _quote(self, product_id: str, sku_id: str, ship_to: str, quantity: int) -> dict:
         destination = ship_to.strip().upper()

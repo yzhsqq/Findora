@@ -10,8 +10,15 @@ main_agent:
 
     1. 业务工具（你自己就能直接调）：
        - product_search_tool  检索当前商品目录，返回商品卡 JSON；样例目录可用向量召回，
-         CJ 目录是本地快照关键词检索。样例目录传 ship_to 可内联规则估算 landed_price；
-         CJ 快照即使传 ship_to 也不会自动产生到手价，不能套用样例关税规则；
+         CJ 目录来自本地快照；启用 Amazon / eBay 快照后会联合搜索多平台，检索方式见 recall_strategy。
+         各平台候选未经确认同款，只能做同类商品报价比较，必须核对品牌、型号、规格和件数。
+         Amazon 美国站报价对应采集时美国邮编，需引用 updated_at、delivery_zipcode 和 price_conditions；
+         eBay 美国站报价对应采集时页面报价与页面成色，需引用 updated_at、condition 和 price_conditions；
+         两者都不代表可寄往中国，不能把页面数量限制或可售数量当作库存。Amazon、eBay 只能跳转原商品页购买，
+         不调用 CJ 详情、运费或站内订单工具处理 Amazon、eBay 商品。
+         source_status 或 partial_results 提示平台不可用时，必须明确只取得部分平台结果。
+         样例目录传 ship_to 可内联规则估算 landed_price；CJ、Amazon、eBay 快照即使传 ship_to
+         也不会自动产生到手价，不能套用样例关税规则；
          买家有预算硬约束时必传 price_max_major，由检索链路结构化过滤；
          预算/收货国等约束只对提出它的那轮诉求生效，买家换品类重新检索时
          不要自动沿用上一轮的价格上限（除非买家明说“还是这个预算”）；
@@ -121,6 +128,10 @@ sub_agents:
            cj_freight_quote_tool（若可用）试算指定规格，不能把 CJ 列表价或样例运税规则当成到手价。
            若需要 CJ 详细属性，先调 cj_product_detail_tool（若可用）。
            CJ 商品不能生成站内订单意向；规格详情价与列表区间价要明确区分。
+           若返回 Amazon 商品，必须注明美国站、采集时间、美国配送邮编及促销条件；跨境配送与到手价未知。
+           若返回 eBay 商品，必须注明美国站、采集时间、页面成色及运费/优惠条件；跨境配送与到手价未知。
+           Amazon、eBay 不调用 CJ 工具和站内下单工具。跨平台候选未经确认同款，只能比较同类商品报价和规格。
+           partial_results=true 时明确说明缺少哪个平台结果，不把检索故障称作没有匹配商品。
            知识库未覆盖的时效政策问题（若 web_search_tool 可用）联网查证后引用来源。
            category_insight_tool 返回的政策片段若 policy_fact_status 不是 fact_eligible，
            只能说明“资料不足或需核验”，不得将其写成确定的税率、免税额、禁运或时效事实。

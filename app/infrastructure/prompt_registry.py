@@ -40,7 +40,7 @@ def toolset_contract(root: Path, *, web_search_enabled: bool = False) -> dict:
     # Skill/策略白名单放入这个目录后自动参与契约，未安装时不会宣称有能力。
     capability_paths = [*sorted((root / "app/application/skills").rglob("*.py")),
                         *sorted((root / "app/application/strategies").rglob("*.py"))]
-    files = {str(path.relative_to(root)): sha256(path.read_bytes()) for path in [*paths, *capability_paths] if path.is_file()}
+    files = {path.relative_to(root).as_posix(): sha256(path.read_bytes()) for path in [*paths, *capability_paths] if path.is_file()}
     return {"schema": 1, "web_search_enabled": web_search_enabled, "source_files": files}
 
 

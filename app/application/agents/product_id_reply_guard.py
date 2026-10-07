@@ -11,7 +11,7 @@ def _words(value: str) -> list[str]:
 def attach_visible_product_ids(text: str, search_result: dict | None) -> str:
     """Add grounded IDs without turning unseen search hits into recommendations."""
     strategy = search_result.get("recall_strategy") if isinstance(search_result, dict) else ""
-    if not text or not isinstance(strategy, str) or not strategy.startswith("cj_"):
+    if not text or not isinstance(strategy, str) or not strategy.startswith(("cj_", "amazon_", "ebay_", "multi_")):
         return text
     hits = search_result.get("hits")
     if not isinstance(hits, list):

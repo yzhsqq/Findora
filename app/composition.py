@@ -14,6 +14,8 @@ from __future__ import annotations
 import hashlib
 import asyncio
 import logging
+import os
+from app.infrastructure.cj_catalog_snapshot import resolve_catalog_snapshot
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Optional
@@ -45,6 +47,9 @@ from app.infrastructure.persistence.in_memory_repositories import (
     InMemoryProductRepository,
 )
 from app.infrastructure.persistence.cj_catalog import CJCatalog
+from app.infrastructure.persistence.amazon_catalog import AmazonCatalog
+from app.infrastructure.persistence.ebay_catalog import EbayCatalog
+from app.infrastructure.persistence.multi_platform_catalog import MultiPlatformCatalog
 from app.infrastructure.persistence.cj_localization import CJLocalization
 from app.infrastructure.persistence.json_file_stores import (
     JsonFileConversationStore,
@@ -158,6 +163,17 @@ class Container:
                 )
                 self.catalog_search.set_vector_available(index_ready)
                 self.runtime["product_index"] = "ready" if index_ready else "bm25_only"
+                # Every non-CJ snapshot owns its own collection and is synced here.
+                for name, catalog in getattr(self.catalog_search, "extra_sources", list)():
+                    if catalog.vector_index is None:
+                        continue
+                    ready = await bootstrap_product_index(
+                        catalog, self.embedder, catalog.vector_index,
+                        self.settings.embedding_model, self.settings.embedding_dim,
+                        batch_size=1000,
+                    )
+                    catalog.set_vector_available(ready)
+                    self.runtime[f"{name}_product_index"] = "ready" if ready else "keyword_only"
             else:
                 self.runtime["product_index"] = "disabled_for_cj_snapshot"
         else:
@@ -178,6 +194,9 @@ class Container:
         if isinstance(self.session_store, JsonFileSessionStore):
             await self.session_store.close()
         await self.vector_index.close()
+        for _, catalog in getattr(self.catalog_search, "extra_sources", list)():
+            if getattr(catalog, "vector_index", None) is not None:
+                await catalog.vector_index.close()
         await self.cache.close()
         if self.trade_db_engine is not None and self.trade_db_engine is not self.db_engine:
             await self.trade_db_engine.dispose()
@@ -189,6 +208,7 @@ class Container:
 async def build_container() -> Container:
     source_fingerprint = app_source_fingerprint()
     settings = load_settings()
+    cj_catalog_path = Path(os.getenv("CJ_CATALOG_PATH") or str(settings.data_dir / "cj_catalog.sqlite3"))
     identity_policy = IdentityPolicy.from_settings(settings)
     project_root = Path(__file__).resolve().parent.parent
     prompt_registry = PromptRegistry(settings.data_dir / "prompts" / "registry.sqlite3",
@@ -199,7 +219,7 @@ async def build_container() -> Container:
     # ---- Infrastructure ----
     if settings.catalog_source not in {"fixture", "cj"}:
         raise ValueError("CATALOG_SOURCE 仅支持 fixture 或 cj")
-    if settings.catalog_source == "cj" and not (settings.data_dir / "cj_catalog.sqlite3").is_file():
+    if settings.catalog_source == "cj" and not resolve_catalog_snapshot(cj_catalog_path).is_file():
         raise RuntimeError("CJ 商品快照不存在，请先运行 scripts/sync_cj_catalog.py")
     product_repo = InMemoryProductRepository([] if settings.catalog_source == "cj" else None)
     bus = TradeEventBus()
@@ -209,6 +229,15 @@ async def build_container() -> Container:
         else settings.qdrant_collection
     )
     vector_index = QdrantProductIndex(settings, collection=vector_collection)
+    # Amazon keeps a separate collection: CJ's index is owned by the CJ snapshot
+    # and must not be mixed with another platform's points.
+    amazon_vector_index = (QdrantProductIndex(settings, collection=f"{settings.qdrant_collection}_amazon_snapshot",
+                                              local_path=settings.data_dir / "qdrant_amazon")
+                           if settings.amazon_catalog_path else None)
+    # Same rule as Amazon: a marketplace snapshot never shares CJ's collection.
+    ebay_vector_index = (QdrantProductIndex(settings, collection=f"{settings.qdrant_collection}_ebay_snapshot",
+                                            local_path=settings.data_dir / "qdrant_ebay")
+                         if settings.ebay_catalog_path else None)
     reranker = HttpReranker(settings) if settings.reranker_base_url else None
 
     cache = RedisCache(settings.redis_url)
@@ -299,9 +328,10 @@ async def build_container() -> Container:
     # ---- Application ----
     cj_localization = (CJLocalization(settings.data_dir / "cj_localization.sqlite3")
                        if settings.catalog_source == "cj" else None)
-    catalog_search = (CJCatalog(settings.data_dir / "cj_catalog.sqlite3",
+    catalog_search = (CJCatalog(cj_catalog_path,
                                 experimental_lexicon=settings.cj_experimental_lexicon,
                                 embedder=embedder, vector_index=vector_index,
+                                reranker=None if (settings.amazon_catalog_path or settings.ebay_catalog_path) else reranker,
                                 hybrid_enabled=settings.hybrid_recall_enabled,
                                 localization=cj_localization)
                       if settings.catalog_source == "cj" else
@@ -309,8 +339,21 @@ async def build_container() -> Container:
             product_repo, embedder=embedder, vector_index=vector_index, reranker=reranker,
             hybrid_enabled=settings.hybrid_recall_enabled,
         ))
+    if settings.amazon_catalog_path or settings.ebay_catalog_path:
+        if settings.catalog_source != "cj":
+            raise ValueError("AMAZON_CATALOG_PATH / EBAY_CATALOG_PATH 需要同时设置 CATALOG_SOURCE=cj")
+        # A single rerank pass runs after every source recalled candidates, so
+        # no marketplace snapshot reranks on its own.
+        catalog_search = MultiPlatformCatalog(
+            catalog_search,
+            AmazonCatalog(settings.amazon_catalog_path, embedder=embedder, vector_index=amazon_vector_index,
+                          hybrid_enabled=settings.hybrid_recall_enabled) if settings.amazon_catalog_path else None,
+            reranker,
+            EbayCatalog(settings.ebay_catalog_path, embedder=embedder, vector_index=ebay_vector_index,
+                        hybrid_enabled=settings.hybrid_recall_enabled) if settings.ebay_catalog_path else None,
+        )
     cj_live_quote = (CJLiveQuoteService.from_snapshot(
-        settings.data_dir / "cj_catalog.sqlite3",
+        cj_catalog_path,
         settings.data_dir / "cj_live_quote.sqlite3", localization=cj_localization)
                      if settings.catalog_source == "cj" else None)
     place_order = PlaceOrderUseCase(confirmations)
@@ -375,7 +418,8 @@ async def build_container() -> Container:
         confirmations=confirmations,
         trade_store=trade_store,
         trade_db_engine=trade_db_engine,
-        runtime={"app_source_sha256": source_fingerprint, "catalog_source": settings.catalog_source,
+        runtime={"app_source_sha256": source_fingerprint,
+                 "catalog_source": "multi" if (settings.amazon_catalog_path or settings.ebay_catalog_path) else settings.catalog_source,
                  "cj_experimental_lexicon": settings.cj_experimental_lexicon,
                  "hybrid_recall_enabled": settings.hybrid_recall_enabled,
                  "product_vector_collection": vector_collection},

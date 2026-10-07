@@ -38,14 +38,15 @@ function readView(): View {
 export default function App() {
   const agent = useCommerceAgent();
   const [selectedSkill, setSelectedSkill] = useState<PublishedSkill | null>(null);
-  const [catalogSource, setCatalogSource] = useState<"cj" | "fixture" | null>(null);
+  const [catalogSource, setCatalogSource] = useState<"cj" | "multi" | "fixture" | null>(null);
+  const [purchaseRevision, setPurchaseRevision] = useState(0);
   const [planPickerOpen, setPlanPickerOpen] = useState(false);
   const [slashMenuOpen, setSlashMenuOpen] = useState(false);
   const [view, setView] = useState<View>(readView),
     [input, setInput] = useState("");
   const [favorites, setFavorites] = useState<ProductCard[]>([]),
     [compared, setCompared] = useState<ProductCard[]>([]);
-  const visibleFavorites = catalogSource === "cj" ? favorites.filter(product => product.source_platform === "CJdropshipping") : favorites;
+  const visibleFavorites = catalogSource === "cj" ? favorites.filter(product => product.source_platform === "CJdropshipping") : catalogSource === "multi" ? favorites.filter(product => ["CJdropshipping", "Amazon", "eBay"].includes(product.source_platform || "")) : favorites;
   const [detail, setDetail] = useState<ProductCard | null>(null),
     [showCompare, setShowCompare] = useState(false),
     [toast, setToast] = useState("");
@@ -64,9 +65,9 @@ export default function App() {
     let active = true;
     void agent.workspaceRequest("/catalog?page_size=1").then(data => {
       if (!active) return;
-      const source = data.source === "cj" ? "cj" : "fixture";
+      const source = data.source === "multi" ? "multi" : data.source === "cj" ? "cj" : "fixture";
       setCatalogSource(source);
-      if (source === "cj" && readView() === "shopping") {
+      if (source !== "fixture" && readView() === "shopping") {
         setView("catalog");
         window.scrollTo({ top: 0 });
       }
@@ -306,7 +307,7 @@ export default function App() {
   </div>;
   const navItems: { id: View; label: string; icon: string }[] = [
     { id: "shopping", label: "我的选购", icon: "bag" },
-    ...(catalogSource === "cj" ? [{ id: "catalog" as View, label: "CJ 商品库", icon: "globe" }] : []),
+    ...(catalogSource === "cj" || catalogSource === "multi" ? [{ id: "catalog" as View, label: catalogSource === "multi" ? "多平台商品库" : "CJ 商品库", icon: "globe" }] : []),
     { id: "orders", label: "我的订单", icon: "bag" },
     { id: "history", label: "对话历史", icon: "chat" },
     { id: "favorites", label: "心选收藏", icon: "heart" },
@@ -385,7 +386,7 @@ export default function App() {
               <span>Findora</span>
               <span>／</span>
               <span>
-                {view === "catalog" ? "CJ 商品库" : view === "orders" ? "我的订单" : view === "skills" ? "我的 Skill" : view === "preferences" ? "长期偏好" : view === "history"
+                {view === "catalog" ? catalogSource === "multi" ? "多平台商品库" : "CJ 商品库" : view === "orders" ? "我的订单" : view === "skills" ? "我的 Skill" : view === "preferences" ? "长期偏好" : view === "history"
                   ? "选购对话历史"
                   : view === "favorites"
                     ? "心选收藏"
@@ -419,10 +420,10 @@ export default function App() {
               </button>
             ))}
           </nav>
-          {view === "orders" && <MyOrders request={agent.workspaceRequest} confirmations={agent.confirmations} busy={agent.confirmationBusy || busy} error={agent.confirmationError} onPrepare={agent.prepareCancel} onResolve={agent.resolveConfirmation} onRefresh={agent.refreshConfirmations} />}
+          {view === "orders" && <MyOrders request={agent.workspaceRequest} confirmations={agent.confirmations} busy={agent.confirmationBusy || busy} error={agent.confirmationError} onPrepare={agent.prepareCancel} onResolve={agent.resolveConfirmation} onRefresh={agent.refreshConfirmations} onViewProduct={setDetail} onBrowse={() => switchView(catalogSource === "cj" || catalogSource === "multi" ? "catalog" : "shopping")} purchaseRevision={purchaseRevision} />}
           {(view === "skills" || view === "preferences") && <BuyerWorkspace key={view} mode={view} busy={busy}
             request={agent.workspaceRequest} onSkillsChanged={agent.refreshSkills} />}
-          {view === "catalog" && catalogSource === "cj" && <CjCatalogPage request={agent.workspaceRequest} favoriteIds={favoriteIds} comparedIds={comparedIds} onFavorite={toggleFavorite} onCompare={toggleCompare} onDetail={setDetail} />}
+          {view === "catalog" && (catalogSource === "cj" || catalogSource === "multi") && <CjCatalogPage multiPlatform={catalogSource === "multi"} request={agent.workspaceRequest} favoriteIds={favoriteIds} comparedIds={comparedIds} onFavorite={toggleFavorite} onCompare={toggleCompare} onDetail={setDetail} />}
           {view === "shopping" && (
             <>
               <section className="hero">
@@ -781,6 +782,12 @@ export default function App() {
           onClose={() => setDetail(null)}
           onCompare={upsertCompare}
           onAsk={submit}
+          onPurchaseSaved={(created) => {
+            setPurchaseRevision(value => value + 1);
+            setDetail(null);
+            setView("orders");
+            setToast(created ? "已加入待购记录，可在这里前往 CJ 购买。" : "这件商品和规格已在待购记录中。" );
+          }}
           onPrepare={(product, skuId) => {
             setDetail(null);
             setOrderIntent({ product, skuId });

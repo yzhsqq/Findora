@@ -24,6 +24,9 @@ node_modules/
 /.codex/
 /.npm-cache/
 /eval/verification/*-server.*.log
+# 本地临时产物：pytest 临时目录与调试/采集输出，不入库
+/.pytest-tmp/
+/output/
 
 # 课程仓库内容（根目录）：只保留在本地 main 分支，不入工程仓库
 /*.md
@@ -37,6 +40,8 @@ node_modules/
 /.env-example
 /.husky/
 /.vscode/
+/.playwright-cli/
+/output/playwright/
 /lib/
 /odps_task/
 /案例与源码-*/

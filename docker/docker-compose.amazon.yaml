@@ -1,0 +1,14 @@
+# Optional overlay, applied after docker-compose.cj.yaml once the snapshot exists.
+services:
+  app:
+    environment:
+      AMAZON_CATALOG_PATH: /app/data/amazon_catalog.sqlite3
+    volumes:
+      - type: bind
+        source: ../data/amazon_catalog.sqlite3
+        target: /app/data/amazon_catalog.sqlite3
+        read_only: true
+      - type: bind
+        source: ../data/amazon_localization.sqlite3
+        target: /app/data/amazon_localization.sqlite3
+        read_only: true

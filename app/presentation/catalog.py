@@ -8,6 +8,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from app.infrastructure.cj_live_quote import CJQuoteError
 from app.infrastructure.persistence.cj_catalog import CJCatalog
+from app.infrastructure.persistence.multi_platform_catalog import MultiPlatformCatalog
 from app.presentation.identity import require_buyer
 
 
@@ -27,15 +28,22 @@ def register_catalog_routes(api: FastAPI, get_catalog: Callable, get_live: Calla
     async def browse_catalog(
         query: str = Query(default="", max_length=120),
         category: str = Query(default="", max_length=80),
+        platform: str = Query(default="", pattern="^(cj|amazon|ebay)?$"),
         page: int = Query(default=1, ge=1),
         page_size: int = Query(default=24, ge=1, le=60),
     ) -> dict:
         catalog = get_catalog()
-        if not isinstance(catalog, CJCatalog):
+        if not isinstance(catalog, (CJCatalog, MultiPlatformCatalog)):
             return {"source": "fixture", "total": 0, "all_count": 0, "detail_count": 0,
                     "inventory_count": 0, "page": page, "page_size": page_size,
                     "categories": [], "products": []}
         try:
+            if isinstance(catalog, MultiPlatformCatalog):
+                return await catalog.browse(query, category, page, page_size, platform)
+            if platform == "amazon":
+                return {"source": "cj", "total": 0, "all_count": 0, "detail_count": 0,
+                        "inventory_count": 0, "page": page, "page_size": page_size,
+                        "categories": [], "products": []}
             return await catalog.browse(query, category, page, page_size)
         except ValueError as error:
             raise HTTPException(status_code=503, detail=str(error)) from error

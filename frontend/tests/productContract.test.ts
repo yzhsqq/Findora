@@ -49,6 +49,18 @@ const card = {
 };
 
 describe("商品展示契约边界", () => {
+  it("购买链接必须来自已观察的 CJ 商品页并匹配商品 ID", () => {
+    const pid = "05B050F6-9DF5-4488-9218-B1D919650ADE";
+    const url = `https://cjdropshipping.com/product/green-sandalwood-hair-comb-p-${pid}.html`;
+    const input = { ...card, product_id: pid, source_platform: "CJdropshipping", source_url: url, source_url_status: "observed" };
+    expect(readProducts([input])[0].source_url).toBe(url);
+    for (const unsafe of [url.replace("https:", "javascript:"), url.replace("cjdropshipping.com", "cjdropshipping.com.evil.test"),
+      url.replace(pid, "999999"), url + "?redirect=evil", url.replace("https://", "https://user:pass@")]) {
+      expect(readProducts([{ ...input, source_url: unsafe }])[0].source_url).toBeUndefined();
+    }
+    expect(readProducts([{ ...input, source_url_status: "derived" }])[0].source_url).toBeUndefined();
+    expect(readProducts([{ ...input, source_url_status: "api_verified" }])[0].source_url).toBeUndefined();
+  });
   it("目录 DTO 原样保留，评分不升级为实时，清洗不修改来源对象", () => {
     const input = structuredClone(card);
     const [result] = readProducts([input]);

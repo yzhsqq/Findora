@@ -29,13 +29,19 @@ python scripts/sync_cj_catalog.py --phase stock --max-stock 500 --max-points 500
 
 CJ 模式的商品目录使用本地 SQLite；启用 `HYBRID_RECALL_ENABLED=1` 时，Agent 在启动阶段按检索文本指纹同步 CJ 专用 Qdrant 集合，普通搜索不会批量重新向量化。
 
+Agent 混合检索支持复用现有 HTTP reranker：同时配置 `RERANKER_BASE_URL` 和 `RERANKER_MODEL`，认证优先使用独立的 `RERANKER_API_KEY`；未配置该密钥时兼容原有 `LLM_API_KEY`。使用买家原始需求（缺失时用标准化查询）与候选商品检索文本进行精排，随后执行已有商品价预算过滤并截取 `top_k`；未知的库存、配送和到手价仍不视为已满足。成功时 `recall_strategy` 为 `cj_qdrant_rrf_rerank`（仅向量时为 `cj_qdrant_dense_rerank`），`rerank_applied=true`。未配置、超时或返回无效分数时保留原有召回及品类软加权排序，`rerank_applied=false`。代码接入不代表服务已配置或效果收益已验证。
+
+百炼北京地域 `qwen3-rerank` 的完整接口地址为 `https://dashscope.aliyuncs.com/compatible-api/v1/reranks`（其他地域或业务空间以[官方接口说明](https://help.aliyun.com/zh/model-studio/text-rerank-api)为准）。对话模型与百炼来自不同服务商时，不要替换 `LLM_API_KEY`；若已有百炼 embedding 密钥具有重排权限，可以在本地 `.env` 写 `RERANKER_API_KEY=${EMBEDDING_API_KEY}` 复用。运行 `python scripts/check_reranker.py` 可用两个固定候选检查连通性和排序；这不代表全量检索质量验收。
+
+目录页直接搜索（`GET /commerce/catalog` → `browse()`）、商品 ID/SKU 精确查询，以及关闭混合检索后的关键词路径不调用 reranker。接入精排无需迁移或重建 Qdrant 集合。
+
 ## 中文目录与中文直接搜索
 
 先采集主快照，再运行 `python scripts/localize_cj_catalog.py`。脚本使用 `.env` 中的 `LLM_BASE_URL`、`LLM_API_KEY`、`LLM_MODEL` 离线生成中文标题、简短描述、分类和搜索叫法，结果写入 `data/cj_localization.sqlite3`。中断时保留 `.build` 文件，下次运行续接；全部完成后才切换正式文件。CJ 原始 `cj_catalog.sqlite3` 不会被改写。
 
 目录中文查询直接读取本地派生库的 FTS5 字符二元组索引，商品 ID、CJ 列表 SKU、规格 SKU 和规格 ID 仍走主快照精确查询。目录、Agent 商品卡及按需详情读取同一中文展示投影；Agent 的 Qdrant dense/BM25 检索文本保持原样。主快照更新后重新运行中文化脚本，只处理来源文本指纹变化的商品。若派生库不存在，目录回退到原有英文展示与关键词查询。
 
-采集程序可继续向同一个 SQLite 快照写入新详情；网页下一次请求即可读到最新已提交记录。列表价是 USD 参考价或区间；未查到详情的商品没有可售 SKU，库存快照也不等于实时可售。CJ 商品当前只支持浏览、收藏、比较、咨询和按需物流试算，不支持站内下单意向。
+采集程序可继续向同一个 SQLite 快照写入新详情；网页下一次请求即可读到最新已提交记录。列表价是 USD 参考价或区间；未查到详情的商品没有可售 SKU，库存快照也不等于实时可售。CJ 商品支持浏览、收藏、比较、咨询、按需物流试算及本地待购记录。待购记录在“我的订单”显示“待购买”，有真实链接时可跳转 CJ 商品购买页面；保存记录不会在 CJ 下单，尚未接入 CJ 订单同步。
 
 ## 小范围详情与物流试算验收
 

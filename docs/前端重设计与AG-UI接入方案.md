@@ -1,4 +1,4 @@
-# Globex 前端重设计与 AG-UI 接入方案
+# Findora 前端重设计与 AG-UI 接入方案
 
 日期：2026-09-09。用户新增要求：重新设计前端，重点改善流畅度、呼吸感和商品卡片，明确使用 AG-UI 与前端渲染结合。
 
@@ -60,7 +60,7 @@ AG-UI 负责 Agent 与页面之间的类型化事件、消息和状态同步。�
 
 ```mermaid
 flowchart LR
-  A[AgentScope 原生 reply_stream] --> B[Globex AG-UI 适配器]
+  A[AgentScope 原生 reply_stream] --> B[Findora AG-UI 适配器]
   C[业务工具与权威状态] --> B
   B --> D[RunEventStore 持久事件]
   D --> E[FastAPI SSE / 重放入口]
@@ -97,7 +97,7 @@ flowchart LR
 - `messageId` 标识展示消息；`toolCallId` 对应实际调用；主/子 Agent 并行调用必须有稳定命名空间。
 - 同一网络提交重试使用相同 runId；新意图使用新 runId。确认恢复也按锁定 SDK 的恢复合同新建外层 run，不直接复用 AgentScope reply_id。
 - 增加 `RunEventStore`，先落事件再广播，记录 sequence 和业务状态 revision；恢复时提供快照与其后的增量。
-- 游标、事件去重与重连接口是 Globex 必须实现的传输约定。现有 Redis Pub/Sub 不负责补发断线期间消息，AG-UI 也不会自动提供存储。
+- 游标、事件去重与重连接口是 Findora 必须实现的传输约定。现有 Redis Pub/Sub 不负责补发断线期间消息，AG-UI 也不会自动提供存储。
 - 前端可以提交比较列表、选中 SKU 或编辑条件；价格、库存、订单与确认状态始终由服务端计算。不能将客户端传入 state 当成权威业务事实。
 
 ## 4. 商品、报价和结果的数据契约

@@ -67,6 +67,8 @@ class Settings:
     tool_circuit_reset_seconds: float  # 熔断后多久转半开探测
     # ---- 三期：前端 ----
     cors_origins: list[str]
+    # 精排可使用独立服务商；未配置时兼容原有共享 LLM 网关认证。
+    reranker_api_key: str = field(default="", repr=False)
     # ---- 四期：模型回退与网关配额闸门 ----
     # 这组给默认值：前面几期每次扩字段都会打断测试里手工构造的 Settings，
     # 新增可选配置一律带默认值，避免同样的修改成本反复发生。
@@ -122,6 +124,8 @@ class Settings:
     identity_hmac_secret: str = field(default="", repr=False)
     hybrid_recall_enabled: bool = False  # 冻结评测证明收益后再启用实验召回
     catalog_source: str = "fixture"  # cj = 本地 CJ 快照，fixture = 原有冻结样例
+    amazon_catalog_path: Path | None = None  # 与 CJ 并行的美国站快照；空值关闭
+    ebay_catalog_path: Path | None = None  # 与 CJ 并行的 eBay 美国站快照；空值关闭
     cj_experimental_lexicon: bool = False  # 上轮未发布词典，仅显式实验时开启
 
 
@@ -146,6 +150,8 @@ def load_settings() -> Settings:
         llm_model=os.getenv("LLM_MODEL", "qwen3-max"),
         hybrid_recall_enabled=os.getenv("HYBRID_RECALL_ENABLED", "0") in ("1", "true", "True"),
         catalog_source=os.getenv("CATALOG_SOURCE", "fixture").lower(),
+        amazon_catalog_path=Path(os.environ["AMAZON_CATALOG_PATH"]) if os.getenv("AMAZON_CATALOG_PATH") else None,
+        ebay_catalog_path=Path(os.environ["EBAY_CATALOG_PATH"]) if os.getenv("EBAY_CATALOG_PATH") else None,
         cj_experimental_lexicon=os.getenv("CJ_EXPERIMENTAL_LEXICON", "0") in ("1", "true", "True"),
         port=int(os.getenv("PORT", "8000")),
         log_level=os.getenv("LOG_LEVEL", "info"),
@@ -158,6 +164,7 @@ def load_settings() -> Settings:
         qdrant_collection=os.getenv("QDRANT_COLLECTION", "globex_products"),
         reranker_base_url=os.getenv("RERANKER_BASE_URL", ""),
         reranker_model=os.getenv("RERANKER_MODEL", ""),
+        reranker_api_key=os.getenv("RERANKER_API_KEY", ""),
         tavily_api_key=os.getenv("TAVILY_API_KEY", ""),
         otlp_endpoint=os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", ""),
         data_dir=data_dir,

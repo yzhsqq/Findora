@@ -1,5 +1,6 @@
 import { memo, useState } from "react";
 import type { ProductCard } from "../types";
+import { isMarketplaceSnapshot, platformLabel, shortPlatformLabel } from "../lib/productPlatform";
 import Icon from "./Icon";
 export function money(value: number, currency: string) {
   if (!Number.isFinite(value)) return "待确认";
@@ -92,16 +93,16 @@ function ProductCards({
               <span className="visual-caption">
                 {product.image_kind === "illustration"
                   ? "商品示意图 · 非实物照片"
-                  : product.image_kind === "source" ? "CJ 商品图片" : "商品图片待补充"}
+                  : product.image_kind === "source" ? `${shortPlatformLabel(product)} 商品图片` : "商品图片待补充"}
               </span>
             </div>
             <div className="product-body">
               <div className="product-topline">
-                <span>{product.brand || (product.source_platform === "CJdropshipping" ? "CJdropshipping" : "精选商品")}</span>
+                <span>{product.source_platform === "CJdropshipping" ? `CJ · ${product.brand || "品牌未提供"}` : isMarketplaceSnapshot(product) ? `${platformLabel(product)} · ${product.brand || "品牌未提供"}` : product.brand || "精选商品"}</span>
                 {rating && (
                   <span className="rating">
                     <i>★</i> {rating.average.toFixed(1)}{" "}
-                    <span>({rating.review_count} · 样例)</span>
+                    <span>({rating.review_count} · {isMarketplaceSnapshot(product) ? "快照" : "样例"})</span>
                   </span>
                 )}
               </div>
@@ -118,8 +119,10 @@ function ProductCards({
                 <div className="price">
                   {product.price_text || money(product.price_major, product.currency)}
                 </div>
-                <span className="price-kind">{product.source_platform === "CJdropshipping" ? "CJ 列表参考价" : "商品价"}</span>
+                <span className="price-kind">{product.source_platform === "CJdropshipping" ? "CJ 列表参考价" : isMarketplaceSnapshot(product) ? `${shortPlatformLabel(product)} 参考报价` : "商品价"}</span>
               </div>
+              {product.source_platform === "Amazon" && <div className="card-landed pending">美国邮编 {product.delivery_zipcode || "未提供"} · {product.updated_at ? new Date(product.updated_at).toLocaleDateString("zh-CN") : "采集时间未提供"}<span>{product.price_conditions?.[0] || "优惠资格待核实"}</span></div>}
+              {product.source_platform === "eBay" && <div className="card-landed pending">{product.condition ? `成色 ${product.condition} · ` : ""}{product.updated_at ? new Date(product.updated_at).toLocaleDateString("zh-CN") : "采集时间未提供"}<span>{product.price_conditions?.[0] || "运费与优惠条件待核实"}</span></div>}
               {landed &&
               !landed.unavailable_reason &&
               Number.isFinite(landed.landed_total_major) ? (

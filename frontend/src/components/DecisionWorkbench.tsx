@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import type { DecisionReport, DecisionRequest, ProductCard } from "../types";
+import { isMarketplaceSnapshot, platformLabel, SOURCE_STATUS_LABELS } from "../lib/productPlatform";
 import { money, ProductImage } from "./ProductCards";
 import "./decisionWorkbench.css";
 
@@ -78,7 +79,7 @@ function Candidate({ candidate, index, onDetail }: {
     </div>
     <div className="decision-candidate-body">
       <div className="decision-price-strip">
-        <div><small>{product.source_platform === "CJdropshipping" ? "CJ 列表参考价 · USD" : "目录商品价 · 目标币种"}</small><strong>{product.price_text || money(product.price_major, product.currency)}</strong>
+        <div><small>{product.source_platform === "CJdropshipping" ? "CJ 列表参考价 · USD" : isMarketplaceSnapshot(product) ? `${platformLabel(product)}快照报价 · USD` : "目录商品价 · 目标币种"}</small><strong>{product.price_text || money(product.price_major, product.currency)}</strong>
           {originalPrice && originalPrice.currency !== product.currency && <small>原币参考 {money(originalPrice.amount, originalPrice.currency)}</small>}
         </div>
         <div><small>估算到手价 · 默认规格</small><strong>{estimate ? money(estimate.landed_total_major, estimate.currency) : "未知"}</strong></div>
@@ -130,8 +131,9 @@ export default function DecisionWorkbench({ report, busy, previewBusy, previewEr
   return <section className="decision-workbench" aria-labelledby="decision-title">
     <div className="decision-head">
       <div><span className="decision-kicker">FINDORA / DECISION NOTE 02</span><h2 id="decision-title">这份选择，<em>有据可查。</em></h2></div>
-      <div className="decision-head-meta"><span>{report.catalog_source === "cj" ? "CJ 商品快照" : "商品目录快照"}</span><span>生成于 {timeLabel(report.generated_at)}</span></div>
+      <div className="decision-head-meta"><span>{report.catalog_source === "multi" ? "CJ + Amazon + eBay 商品快照" : report.catalog_source === "cj" ? "CJ 商品快照" : "商品目录快照"}</span><span>生成于 {timeLabel(report.generated_at)}</span></div>
     </div>
+    {report.partial_results && <p className="decision-form-error" role="status">当前仅取得部分平台结果；{Object.entries(report.source_status || {}).filter(([, status]) => status === "unavailable").map(([name]) => SOURCE_STATUS_LABELS[name] || name).join("、") || "部分平台"}检索暂不可用，请稍后重试。</p>}
     <div className="decision-layout">
       <form className="decision-controls" onSubmit={submit} aria-label="调整选购条件">
         <div className="decision-controls-top"><span>01 / 选购条件</span><strong>{changed ? "有待应用的修改" : "当前已应用"}</strong></div>
@@ -162,6 +164,6 @@ export default function DecisionWorkbench({ report, busy, previewBusy, previewEr
         </>}
       </div>
     </div>
-    <p className="decision-footnote">{report.catalog_source === "cj" ? "商品来自 CJ 快照；列表报价不代表最终结算价，库存、运费与配送范围须另行核验。" : "商品信息来自目录快照；到手价为规则估算。价格、库存与配送信息以实际确认时为准。"}</p>
+    <p className="decision-footnote">{report.catalog_source === "multi" ? "CJ、Amazon 与 eBay 同类候选尚未确认同款；商品报价不代表到手价，跨境配送、运费、税费与促销资格须另行核验。" : report.catalog_source === "cj" ? "商品来自 CJ 快照；列表报价不代表最终结算价，库存、运费与配送范围须另行核验。" : "商品信息来自目录快照；到手价为规则估算。价格、库存与配送信息以实际确认时为准。"}</p>
   </section>;
 }
