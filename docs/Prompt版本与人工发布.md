@@ -6,7 +6,7 @@
 
 `DATA_DIR/prompts/registry.sqlite3` 保存不可变 Prompt 内容、工具契约、发布时间、部署历史、会话分组和紧急撤销。版本 ID 是规范化 Prompt 正文与工具契约的完整 SHA256；工具/权限/factory 源码、可选 web 工具状态、Skill/策略工具契约及 capability registry 权限实现共同参与，正文一样但工具集合不同不会共用版本。加载时复核内容 hash 和当前工具契约，不允许伪装同版本。
 
-仅注册表为空时，服务首次启动以当前 `globex.yml` 建立 `bootstrap`，保持原有行为。这是初始现状记录，不是候选发版通过。注册表存在后，修改 YAML 不会自动改变正在服务的版本，必须显式导入、评测和发布。/health 的 `prompt_registry` 返回实际部署和有效版本元数据，不返回正文。
+仅注册表为空时，服务首次启动以当前 `findora.yml` 建立 `bootstrap`，保持原有行为。这是初始现状记录，不是候选发版通过。注册表存在后，修改 YAML 不会自动改变正在服务的版本，必须显式导入、评测和发布。/health 的 `prompt_registry` 返回实际部署和有效版本元数据，不返回正文。
 
 每个新会话在数据库事务内绑定 buyer、version、deployment、variant。A/B 以 experiment 和 buyer 的 SHA256 确定分桶；同一买家新会话稳定分组，同一会话始终使用原版本。主 Agent、子 Agent 从相同 ShoppingContext 取不可变正文；语义缓存 key 带实际版本。Trace、日志上下文、事件和已持久事件流水携带 prompt_version/variant/deployment，便于关联评测。
 

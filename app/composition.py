@@ -98,7 +98,7 @@ def _prompt_fingerprint() -> str:
     prompt 一改，旧缓存的回复就不再代表当前 Agent 行为，必须作废。
     读不到文件时返回固定值，不因此阻断启动。
     """
-    path = Path(__file__).resolve().parent / "application" / "prompts" / "globex.yml"
+    path = Path(__file__).resolve().parent / "application" / "prompts" / "findora.yml"
     try:
         return hashlib.sha256(path.read_bytes()).hexdigest()[:8]
     except OSError:
@@ -213,7 +213,7 @@ async def build_container() -> Container:
     project_root = Path(__file__).resolve().parent.parent
     prompt_registry = PromptRegistry(settings.data_dir / "prompts" / "registry.sqlite3",
         toolset_contract(project_root, web_search_enabled=bool(settings.tavily_api_key)), pinned_version=settings.prompt_pin_version)
-    await asyncio.to_thread(prompt_registry.bootstrap, project_root / "app/application/prompts/globex.yml")
+    await asyncio.to_thread(prompt_registry.bootstrap, project_root / "app/application/prompts/findora.yml")
     setup_tracing(settings)
 
     # ---- Infrastructure ----

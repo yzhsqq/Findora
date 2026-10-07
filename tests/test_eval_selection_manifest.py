@@ -65,7 +65,7 @@ def test_manifest_fingerprints_uncommitted_files_prompt_and_data_without_exporti
     (tmp_path / "app/application/prompts").mkdir(parents=True)
     source = tmp_path / "app/example.py"
     source.write_text("VALUE = 1\n", encoding="utf-8")
-    (tmp_path / "app/application/prompts/globex.yml").write_text("system: original", encoding="utf-8")
+    (tmp_path / "app/application/prompts/findora.yml").write_text("system: original", encoding="utf-8")
     dataset = _dataset(tmp_path / "cases.jsonl", [{"id": "r", "split": "release"}])
     selection = select_cases([{"id": "r", "split": "release"}], "release")[1]
     monkeypatch.setenv("LLM_API_KEY", "never-export-this-key")

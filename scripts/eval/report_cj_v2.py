@@ -97,7 +97,7 @@ def main() -> None:
               "把它们再次当独立留出集。", "",
               "## 版本与有效性", "",
               f"- 基线 commit：`{known['manifests']['baseline']['commit']}`；候选 commit：`{known['manifests']['candidate']['commit']}`。",
-              f"- 基线提示词版本：`{first}`；候选提示词版本：`{second}`。两个工作树的代码差异仅 `app/application/prompts/globex.yml`。",
+              f"- 基线提示词版本：`{first}`；候选提示词版本：`{second}`。两个工作树的代码差异仅 `app/application/prompts/findora.yml`。",
               f"- CJ 快照 SHA-256：`{known['frozen']['snapshot_sha256']}`；已知题/留出题哈希均在 [freeze.json](freeze.json)。",
               "- 两侧为独立进程、数据目录、会话与 prompt registry；固定 `deepseek-v4-flash`，关闭语义缓存、队列与 Redis；成对顺序按固定种子随机。",
               f"- 已知集 {known['valid_pairs']}/18 对、留出集 {holdout['valid_pairs']}/10 对有效；已知集 `CJ-H003` 在前两对尝试中分别出现基线和候选的详情工具错误，均保留 trace，第三对有效；留出集无效尝试为 0。正式集合无网关错误、模型回退或 usage 缺失。",

@@ -74,9 +74,9 @@ def prepare() -> dict:
     if git(BASE, "status", "--porcelain") or git(CANDIDATE, "status", "--porcelain"):
         raise ValueError("evaluation worktrees must be clean")
     changes = git(CANDIDATE, "diff", "--name-only", BASE_COMMIT, candidate_commit).splitlines()
-    if changes != ["app/application/prompts/globex.yml"]:
+    if changes != ["app/application/prompts/findora.yml"]:
         raise ValueError(f"unexpected candidate changes: {changes}")
-    if sha(BASE / "app/application/prompts/globex.yml") == sha(CANDIDATE / "app/application/prompts/globex.yml"):
+    if sha(BASE / "app/application/prompts/findora.yml") == sha(CANDIDATE / "app/application/prompts/findora.yml"):
         raise ValueError("prompt variant absent")
     frozen = json.loads((SUITE / "freeze.json").read_text(encoding="utf-8"))
     if sha(SNAPSHOT) != frozen["snapshot_sha256"]:
@@ -92,7 +92,7 @@ def prepare() -> dict:
             raise ValueError(f"{label} catalog hash mismatch")
         manifests[label] = {"commit": git(path, "rev-parse", "HEAD"),
                             "branch": git(path, "branch", "--show-current"),
-                            "prompt_sha256": sha(path / "app/application/prompts/globex.yml"),
+                            "prompt_sha256": sha(path / "app/application/prompts/findora.yml"),
                             "catalog_sha256": sha(catalog), "data_dir": str(data)}
     return manifests
 
@@ -395,7 +395,7 @@ async def parent(suite: str) -> None:
     report["finished_at"] = datetime.now(timezone.utc).isoformat()
     for label, path in (("baseline", BASE), ("candidate", CANDIDATE)):
         if git(path, "rev-parse", "HEAD") != manifests[label]["commit"] or sha(
-                path / "app/application/prompts/globex.yml") != manifests[label]["prompt_sha256"]:
+                path / "app/application/prompts/findora.yml") != manifests[label]["prompt_sha256"]:
             raise ValueError(f"{label} changed during run")
         if sha(RUN_DATA[label] / "cj_catalog.sqlite3") != frozen["snapshot_sha256"]:
             raise ValueError(f"{label} snapshot changed during run")

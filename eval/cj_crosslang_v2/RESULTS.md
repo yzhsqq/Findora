@@ -10,7 +10,7 @@
 ## 版本与有效性
 
 - 基线 commit：`30b9a4f7e22cfe42c234ba0dc0449d717e870aac`；候选 commit：`101f319924b20d795a8987da195fb16e4a2925d6`。
-- 基线提示词版本：`p-3fcc119e8e48706581eb2321c981c6a07115bd8b12b97c47b7547a887f0ae2bc`；候选提示词版本：`p-08a9e060bafc5e0bf7c417211300ea515d0d8d365efa6ed825ae6926acdf70c4`。两个工作树的代码差异仅 `app/application/prompts/globex.yml`。
+- 基线提示词版本：`p-3fcc119e8e48706581eb2321c981c6a07115bd8b12b97c47b7547a887f0ae2bc`；候选提示词版本：`p-08a9e060bafc5e0bf7c417211300ea515d0d8d365efa6ed825ae6926acdf70c4`。两个工作树的代码差异仅 `app/application/prompts/findora.yml`。
 - CJ 快照 SHA-256：`f29e0e107143422f80ca6ac2d4c74c88e9b577ec6f9ca3176c05dfd93bd9928d`；已知题/留出题哈希均在 [freeze.json](freeze.json)。
 - 两侧为独立进程、数据目录、会话与 prompt registry；固定 `deepseek-v4-flash`，关闭语义缓存、队列与 Redis；成对顺序按固定种子随机。
 - 已知集 18/18 对、留出集 10/10 对有效；已知集有 1 次基线详情工具错误，按协议重跑整对后有效；留出集无效尝试为 0。正式集合无网关错误、模型回退或 usage 缺失。

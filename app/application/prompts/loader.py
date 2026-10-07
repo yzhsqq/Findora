@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """PromptLoader
 
-读取并缓存 app/application/prompts/globex.yml，全项目提示词只从这里取。
+读取并缓存 app/application/prompts/findora.yml，全项目提示词只从这里取。
 """
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ import json
 
 import yaml
 
-PROMPTS_PATH = Path(__file__).resolve().parent / "globex.yml"
+PROMPTS_PATH = Path(__file__).resolve().parent / "findora.yml"
 
 
 @lru_cache(maxsize=1)
