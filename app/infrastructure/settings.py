@@ -77,7 +77,7 @@ class Settings:
     llm_min_interval_seconds: float = 1.0  # 相邻请求起跑最小间隔，治速率爬升过快
     llm_max_retries: int = 2  # 瞬时故障重试次数（指数退避）
     # ---- 四期：存储 ----
-    # 默认 SQLite（零外部依赖，落在 DATA_DIR/globex.db）。
+    # 默认 SQLite（零外部依赖，落在 DATA_DIR/findora.db）。
     # 换服务型数据库需自行装异步驱动（aiomysql / asyncpg）并改此 URL，本仓未验证。
     # 特殊值 "file" = 退回三期的 JSON 文件存储（无数据库）
     context_strategy: str = "legacy"
@@ -190,7 +190,7 @@ def load_settings() -> Settings:
         database_url=(
             os.getenv("DATABASE_URL")
             or os.getenv("MYSQL_URL")
-            or f"sqlite+aiosqlite:///{data_dir / 'globex.db'}"
+            or f"sqlite+aiosqlite:///{data_dir / 'findora.db'}"
         ),
         redis_url=os.getenv("REDIS_URL", ""),
         semantic_cache_enabled=os.getenv("SEMANTIC_CACHE_ENABLED", "1") not in ("0", "false", "False"),

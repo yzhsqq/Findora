@@ -3,7 +3,8 @@ import argparse,sqlite3,json,hashlib
 from pathlib import Path
 from datetime import datetime,timezone
 
-FILES=['globex.db','ag_ui_runs.db','buyer_memory.db','buyer_skills.db','context_evidence.db','capabilities.db','prompts/registry.sqlite3','buyer_favorites.db']
+# globex.db 是改名前的旧文件名：老数据目录里可能仍然是它，两个名字都要迁移。
+FILES=['findora.db','globex.db','ag_ui_runs.db','buyer_memory.db','buyer_skills.db','context_evidence.db','capabilities.db','prompts/registry.sqlite3','buyer_favorites.db']
 def quoted(value):return '"'+value.replace('"','""')+'"'
 def convert(value,source,target):
     if isinstance(value,dict):return {k:convert(v,source,target) for k,v in value.items()}

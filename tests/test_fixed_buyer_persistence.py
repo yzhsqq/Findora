@@ -20,16 +20,16 @@ async def test_favorite_api_persists_after_reopen_and_isolates(tmp_path):
         assert await BuyerFavoriteStore(path).list('pao-coder')==[]
 
 def test_migrate_only_selected_identity_keeps_history_and_backup(tmp_path):
-    db=sqlite3.connect(tmp_path/'globex.db')
+    db=sqlite3.connect(tmp_path/'findora.db')
     db.execute('CREATE TABLE conversation_sessions(session_id TEXT,buyer_id TEXT)')
     db.executemany('INSERT INTO conversation_sessions VALUES (?,?)',[('s','old'),('test-s','test-buyer')])
     db.execute('CREATE TABLE agent_session_states(session_id TEXT,state_json TEXT)')
     db.execute('INSERT INTO agent_session_states VALUES (?,?)',('s',json.dumps({'name':'old','content':'旧账号 old 的文字不改'})))
     db.commit();db.close()
     report=migrate(tmp_path,'old','pao-coder')
-    with sqlite3.connect(tmp_path/'globex.db') as db:
+    with sqlite3.connect(tmp_path/'findora.db') as db:
         assert db.execute('SELECT buyer_id FROM conversation_sessions WHERE session_id="s"').fetchone()[0]=='pao-coder'
         assert db.execute('SELECT buyer_id FROM conversation_sessions WHERE session_id="test-s"').fetchone()[0]=='test-buyer'
         state=json.loads(db.execute('SELECT state_json FROM agent_session_states').fetchone()[0])
         assert state=={'name':'pao-coder','content':'旧账号 old 的文字不改'}
-    assert (tmp_path/'backups').exists() and report['tables']['globex.db/conversation_sessions']==1
+    assert (tmp_path/'backups').exists() and report['tables']['findora.db/conversation_sessions']==1
