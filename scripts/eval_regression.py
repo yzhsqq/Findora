@@ -314,9 +314,9 @@ class SessionEventCollector:
         import websockets
 
         event_url = f"{BASE_URL.replace('http://', 'ws://', 1).replace('https://', 'wss://', 1)}/commerce/events"
-        protocols = ["globex-events"]
+        protocols = ["findora-events"]
         if self._token:
-            protocols.append(f"globex-auth.{self._token}")
+            protocols.append(f"findora-auth.{self._token}")
         self._websocket = await websockets.connect(event_url, open_timeout=10, subprotocols=protocols)
         await self._websocket.send(json.dumps({"shopping_session_id": self._session_id, "buyer_id": self._buyer_id}))
 
@@ -447,7 +447,7 @@ async def _run_case_with_events(client, judge_client, case, ground_truth, sessio
 
 def render_report(results: list[dict]) -> str:
     lines = [
-        f"# Globex 评测回归报告（{datetime.now().strftime('%Y-%m-%d %H:%M')}）",
+        f"# Findora 评测回归报告（{datetime.now().strftime('%Y-%m-%d %H:%M')}）",
         "",
         f"总览：{sum(1 for r in results if r['verdict'] == 'PASS')}/{len(results)} PASS，"
         f"平均分 {sum(r['score'] for r in results) / len(results):.3f}",

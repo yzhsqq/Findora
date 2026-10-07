@@ -36,7 +36,7 @@ logger = logging.getLogger(__name__)
 
 _initialized = False
 _provider: TracerProvider | None = None
-_correlation: ContextVar[dict[str, str]] = ContextVar("globex_trace_correlation", default={})
+_correlation: ContextVar[dict[str, str]] = ContextVar("findora_trace_correlation", default={})
 _propagator = TraceContextTextMapPropagator()
 _logging_installed = False
 _SAFE_NAME = re.compile(r"^[A-Za-z0-9_.:/{} -]{1,180}$")
@@ -53,18 +53,18 @@ _SAFE_ATTRIBUTES = {
     "agentscope.usage.cache_input_tokens",
     "agentscope.usage.cache_creation_input_tokens", "langfuse.session.id", "langfuse.observation.type",
     "langfuse.trace.metadata.request_id", "langfuse.trace.metadata.task_id",
-    "globex.request_id", "globex.task_id", "globex.session_hash", "globex.cancelled",
-    "globex.input.characters", "globex.output.characters", "globex.content.redacted",
-    "globex.prompt_version", "globex.prompt_variant", "globex.prompt_deployment_id",
+    "findora.request_id", "findora.task_id", "findora.session_hash", "findora.cancelled",
+    "findora.input.characters", "findora.output.characters", "findora.content.redacted",
+    "findora.prompt_version", "findora.prompt_variant", "findora.prompt_deployment_id",
     "langfuse.trace.metadata.prompt_version",
-    "globex.capability_digest", "langfuse.trace.metadata.capability_digest",
-    "globex.skill.source", "globex.skill.id", "globex.skill.version", "globex.skill.content_hash",
+    "findora.capability_digest", "langfuse.trace.metadata.capability_digest",
+    "findora.skill.source", "findora.skill.id", "findora.skill.version", "findora.skill.content_hash",
 }
 _CONTENT_FIELDS = {
-    "gen_ai.input.messages": "globex.input.characters",
-    "gen_ai.output.messages": "globex.output.characters",
-    "gen_ai.tool.call.arguments": "globex.input.characters",
-    "gen_ai.tool.call.result": "globex.output.characters",
+    "gen_ai.input.messages": "findora.input.characters",
+    "gen_ai.output.messages": "findora.output.characters",
+    "gen_ai.tool.call.arguments": "findora.input.characters",
+    "gen_ai.tool.call.result": "findora.output.characters",
 }
 
 
@@ -109,14 +109,14 @@ def _span_correlation(values: dict[str, str]) -> dict[str, str]:
     result = {}
     for key in ("request_id", "task_id"):
         if values.get(key):
-            result[f"globex.{key}"] = values[key]
+            result[f"findora.{key}"] = values[key]
             result[f"langfuse.trace.metadata.{key}"] = values[key]
     if values.get("session_id"):
-        result["globex.session_hash"] = values["session_id"]
+        result["findora.session_hash"] = values["session_id"]
         result["langfuse.session.id"] = values["session_id"]
     for key in ("prompt_version", "prompt_variant", "prompt_deployment_id", "capability_digest"):
         if values.get(key):
-            result[f"globex.{key}"] = values[key]
+            result[f"findora.{key}"] = values[key]
     if values.get("prompt_version"):
         result["langfuse.trace.metadata.prompt_version"] = values["prompt_version"]
     if values.get("capability_digest"):
@@ -174,7 +174,7 @@ def trace_worker_task(task):
                 span.set_attribute("error.type", type(error).__name__)
                 span.set_status(Status(StatusCode.ERROR))
                 if isinstance(error, asyncio.CancelledError):
-                    span.set_attribute("globex.cancelled", True)
+                    span.set_attribute("findora.cancelled", True)
                 raise
 
 
@@ -216,7 +216,7 @@ def _sanitize_attributes(attributes) -> dict:
             result[key] = value
         elif key in _CONTENT_FIELDS:
             result[_CONTENT_FIELDS[key]] = len(value) if isinstance(value, (str, tuple, list)) else 0
-            result["globex.content.redacted"] = True
+            result["findora.content.redacted"] = True
     return result
 
 
@@ -406,7 +406,7 @@ class TracingASGIMiddleware:
                     span.set_attribute("error.type", type(error).__name__)
                     span.set_status(Status(StatusCode.ERROR))
                     if isinstance(error, asyncio.CancelledError):
-                        span.set_attribute("globex.cancelled", True)
+                        span.set_attribute("findora.cancelled", True)
                     raise
                 finally:
                     logger.info("HTTP 请求结束 method=%s status=%s", method, status)

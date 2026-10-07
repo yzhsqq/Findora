@@ -20,10 +20,10 @@ import websockets
 
 BASE_URL = "http://127.0.0.1:8000"
 WS_URL = "ws://127.0.0.1:8000/commerce/events"
-BUYER_ID = os.getenv("GLOBEX_BUYER_ID", "buyer-001")
-API_TOKEN = os.getenv("GLOBEX_API_TOKEN", "")
+BUYER_ID = os.getenv("FINDORA_BUYER_ID", "buyer-001")
+API_TOKEN = os.getenv("FINDORA_API_TOKEN", "")
 AUTH_HEADERS = {"Authorization": f"Bearer {API_TOKEN}"} if API_TOKEN else {}
-WS_PROTOCOLS = ["globex-events", f"globex-auth.{API_TOKEN}"] if API_TOKEN else ["globex-events"]
+WS_PROTOCOLS = ["findora-events", f"findora-auth.{API_TOKEN}"] if API_TOKEN else ["findora-events"]
 
 
 def validate_smoke_result(body: dict, events: list[dict]) -> None:

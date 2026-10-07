@@ -10,9 +10,9 @@ import websocket  # websocket-client
 from locust import HttpUser, between, task
 
 
-API_TOKEN = os.getenv("GLOBEX_API_TOKEN", "")
+API_TOKEN = os.getenv("FINDORA_API_TOKEN", "")
 AUTH_HEADERS = {"Authorization": f"Bearer {API_TOKEN}"} if API_TOKEN else {}
-WS_PROTOCOLS = ["globex-events", f"globex-auth.{API_TOKEN}"] if API_TOKEN else ["globex-events"]
+WS_PROTOCOLS = ["findora-events", f"findora-auth.{API_TOKEN}"] if API_TOKEN else ["findora-events"]
 
 
 class SyncIntentUser(HttpUser):
@@ -22,7 +22,7 @@ class SyncIntentUser(HttpUser):
     @task
     def submit_intent(self) -> None:
         payload = {
-            "buyer_id": os.getenv("GLOBEX_BUYER_ID", "locust-buyer"),
+            "buyer_id": os.getenv("FINDORA_BUYER_ID", "locust-buyer"),
             "raw_query": "预算300元，抗造又不塑料的旅行三件套",
             "locale": "zh-CN",
             "currency": "CNY",
@@ -39,7 +39,7 @@ class AsyncWsUser(HttpUser):
     def submit_and_stream(self) -> None:
         session_id = f"locust-{uuid.uuid4().hex[:8]}"
         payload = {
-            "buyer_id": os.getenv("GLOBEX_BUYER_ID", "locust-buyer"),
+            "buyer_id": os.getenv("FINDORA_BUYER_ID", "locust-buyer"),
             "raw_query": "找几个适合长途飞行的颈枕，要小众设计",
             "locale": "zh-CN",
             "currency": "CNY",

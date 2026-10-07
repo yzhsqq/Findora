@@ -22,8 +22,8 @@ def buyer_identity(value: object) -> str:
 class IdentityPolicy:
     mode: str = "demo"
     secret: str = field(default="", repr=False)
-    issuer: str = "globex-local"
-    audience: str = "globex-api"
+    issuer: str = "findora-local"
+    audience: str = "findora-api"
     clock: Callable[[], float] = field(default=time.time, repr=False, compare=False)
 
     def __post_init__(self) -> None:
@@ -47,14 +47,14 @@ class IdentityPolicy:
         now = int(self.clock())
         return jwt.encode({"sub": buyer_identity(buyer_id), "iat": now, "exp": now + ttl_seconds,
             "iss": self.issuer, "aud": self.audience}, self.secret, algorithm="HS256",
-            headers={"typ": "globex-access+jwt"})
+            headers={"typ": "findora-access+jwt"})
 
     def verify(self, token: str) -> str:
         if self.mode != "hmac" or not isinstance(token, str) or len(token) > 8192:
             raise IdentityError("身份凭证无效或已过期")
         try:
             header = jwt.get_unverified_header(token)
-            if header != {"alg": "HS256", "typ": "globex-access+jwt"}:
+            if header != {"alg": "HS256", "typ": "findora-access+jwt"}:
                 raise IdentityError("身份凭证类型无效")
             payload = jwt.decode(token, self.secret, algorithms=["HS256"], issuer=self.issuer, audience=self.audience,
                 options={"require": ["sub", "iat", "exp", "iss", "aud"], "verify_exp": False, "verify_iat": False,

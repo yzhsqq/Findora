@@ -20,7 +20,7 @@ async def test_parallel_turns_do_not_mix_usage_and_metrics_never_collect_text(mo
     assert first['cost_usd'] is None
     assert first['tool_errors'] == 1
     text = registry.prometheus()
-    assert 'globex_input_tokens_observed_total 50' in text
+    assert 'findora_input_tokens_observed_total 50' in text
     assert 'private-' not in text
     assert registry.snapshot()['window_count'] == 2
 
@@ -63,7 +63,7 @@ def test_invalid_values_cannot_poison_metrics_or_create_label_cardinality(monkey
     result = metrics.finish_request(observation)
     assert result['input_tokens'] is None and result['ttft_p95_ms'] is None
     assert result['tool_calls'] == 0
-    assert 'globex_queue_dead_lettered_total 2' in registry.prometheus()
+    assert 'findora_queue_dead_lettered_total 2' in registry.prometheus()
     assert 'private-session' not in registry.prometheus()
 
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """启动隔离的真实 Redis 进程验证队列；找不到二进制时明确跳过，不用替身冒充。
 
-GLOBEX_REDIS_SERVER_BIN=/path/to/redis-server uv run pytest -q tests/test_queue_reliability.py
+FINDORA_REDIS_SERVER_BIN=/path/to/redis-server uv run pytest -q tests/test_queue_reliability.py
 只清理本测试新建的 Unix socket Redis，绝不连接或清空用户已有 Redis 实例。
 """
 from __future__ import annotations
@@ -31,9 +31,9 @@ from app.infrastructure.queue.redis_stream_queue import (
 
 @pytest.fixture(scope="module")
 def isolated_redis_url():
-    binary = os.environ.get("GLOBEX_REDIS_SERVER_BIN") or shutil.which("redis-server")
+    binary = os.environ.get("FINDORA_REDIS_SERVER_BIN") or shutil.which("redis-server")
     if not binary:
-        pytest.skip("真实 Redis 测试需要 redis-server；设置 GLOBEX_REDIS_SERVER_BIN 后重跑")
+        pytest.skip("真实 Redis 测试需要 redis-server；设置 FINDORA_REDIS_SERVER_BIN 后重跑")
     with tempfile.TemporaryDirectory(prefix="gbx-redis-", dir="/tmp") as directory:
         socket = Path(directory) / "redis.sock"
         with open(Path(directory) / "redis.log", "w+") as log:
@@ -324,7 +324,7 @@ async def test_lost_lease_invalidates_guard_before_cancelling_handler(real_redis
             stopping.set()
     runner = consume(queue, handler, stopping)
     await asyncio.wait_for(entered.wait(), 2)
-    keys = await real_redis.keys("globex:lease:session:*")
+    keys = await real_redis.keys("findora:lease:session:*")
     await real_redis.set(keys[0], "another-owner", px=1000)
     await asyncio.wait_for(cancelled.wait(), 2)
     await asyncio.wait_for(runner, 2)

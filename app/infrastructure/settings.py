@@ -18,7 +18,7 @@ from dotenv import load_dotenv
 
 from app.infrastructure.langfuse_config import LANGFUSE_FIELDS, LangfuseConfig
 
-# 项目根目录（globex-agent/）
+# 项目根目录（findora-agent/）
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
 def _load_environment(path: Path) -> None:
@@ -115,7 +115,7 @@ class Settings:
     langfuse_base_url: str = field(default="", repr=False)
     langfuse_public_key: str = field(default="", repr=False)
     langfuse_secret_key: str = field(default="", repr=False)
-    otel_service_name: str = "globex-agent"
+    otel_service_name: str = "findora-agent"
     otlp_timeout_seconds: float = 5.0
     session_owner_binding: bool = True
     identity_mode: str = "demo"
@@ -217,7 +217,7 @@ def load_settings() -> Settings:
         langfuse_base_url=os.getenv("LANGFUSE_BASE_URL", ""),
         langfuse_public_key=os.getenv("LANGFUSE_PUBLIC_KEY", ""),
         langfuse_secret_key=os.getenv("LANGFUSE_SECRET_KEY", ""),
-        otel_service_name=os.getenv("OTEL_SERVICE_NAME", "globex-agent"),
+        otel_service_name=os.getenv("OTEL_SERVICE_NAME", "findora-agent"),
         otlp_timeout_seconds=float(os.getenv("OTEL_EXPORTER_OTLP_TRACES_TIMEOUT") or os.getenv("OTEL_EXPORTER_OTLP_TIMEOUT", "5")),
         session_owner_binding=os.getenv("SESSION_OWNER_BINDING", "1") not in ("0", "false", "False"),
         identity_mode=os.getenv("IDENTITY_MODE", "demo"),

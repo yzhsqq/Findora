@@ -1,7 +1,7 @@
-# Globex 全栈编排：app + Qdrant + Redis + React 前端
+# Findora 全栈编排：app + Qdrant + Redis + React 前端
 #
 # 用法：
-#   cd globex-agent
+#   cd findora-agent
 #   export LLM_BASE_URL=<网关地址> LLM_API_KEY=<密钥>   # 敏感配置走环境变量，不落盘
 #   docker compose -f docker/docker-compose.yaml up -d --build
 #   前端 http://localhost:5173，后端 http://localhost:8000
@@ -80,7 +80,7 @@ services:
       OTEL_EXPORTER_OTLP_HEADERS: ${OTEL_EXPORTER_OTLP_HEADERS-}
       OTEL_EXPORTER_OTLP_TRACES_HEADERS: ${OTEL_EXPORTER_OTLP_TRACES_HEADERS-}
       OTEL_EXPORTER_OTLP_TRACES_TIMEOUT: ${OTEL_EXPORTER_OTLP_TRACES_TIMEOUT:-5}
-      OTEL_SERVICE_NAME: globex-api
+      OTEL_SERVICE_NAME: findora-api
     volumes:
       - app-data:/app/data
     depends_on:
@@ -121,7 +121,7 @@ services:
       OTEL_EXPORTER_OTLP_HEADERS: ${OTEL_EXPORTER_OTLP_HEADERS-}
       OTEL_EXPORTER_OTLP_TRACES_HEADERS: ${OTEL_EXPORTER_OTLP_TRACES_HEADERS-}
       OTEL_EXPORTER_OTLP_TRACES_TIMEOUT: ${OTEL_EXPORTER_OTLP_TRACES_TIMEOUT:-5}
-      OTEL_SERVICE_NAME: globex-worker
+      OTEL_SERVICE_NAME: findora-worker
       DATA_DIR: /app/data
     volumes:
       - app-data:/app/data

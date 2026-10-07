@@ -59,7 +59,7 @@ def _long_body(category: str, focus: str, variant: str) -> str:
         f"# {category}{variant}评测知识快照",
         "",
         "## 适用范围",
-        f"本文用于 Globex 离线评测中的{category}问题，重点覆盖{focus}。内容是合成的演示快照，不能替代实时商品说明、法律意见或监管机构公告。",
+        f"本文用于 Findora 离线评测中的{category}问题，重点覆盖{focus}。内容是合成的演示快照，不能替代实时商品说明、法律意见或监管机构公告。",
         "",
         "## 判断卡片",
     ]
@@ -76,7 +76,7 @@ def _entry(filename: str, document_id: str, *, region: str, topic: str) -> dict:
     return {
         "document_id": document_id,
         "filename": filename,
-        "source": "Globex 离线评测知识快照（合成演示，不用于实时法规结论）",
+        "source": "Findora 离线评测知识快照（合成演示，不用于实时法规结论）",
         "source_type": "synthetic_evaluation_fixture",
         "published_at": "2026-08-01",
         "effective_from": "2026-08-01",

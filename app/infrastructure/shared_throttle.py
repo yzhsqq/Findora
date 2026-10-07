@@ -91,7 +91,7 @@ class RedisGatewayThrottle(GatewayThrottle):
         self._config = f"{max_concurrency}:{self._interval_ms}"
         # 不把网关 URL、模型名、API key 写进可枚举的 Redis key；同 hash tag 可放同一槽。
         scope = hashlib.sha256(namespace.encode()).hexdigest()
-        prefix = f"globex:quota:{{{scope}}}"
+        prefix = f"findora:quota:{{{scope}}}"
         self._slots_key = f"{prefix}:slots"
         self._last_key = f"{prefix}:last"
         self._config_key = f"{prefix}:config"

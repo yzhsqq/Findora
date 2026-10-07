@@ -25,18 +25,18 @@ export SESSION_OWNER_BINDING=1
 .venv/bin/python -m scripts.issue_identity_token --buyer-id buyer-001 --ttl-seconds 3600
 ```
 
-签发命令仅供可信操作员本机调用，服务端没有公开 mint、refresh 或第三方登录 endpoint。CLI 输出的短期令牌是客户端凭据；只传令牌，不传服务端密钥。固定 HS256、显式 `globex-access+jwt` 类型、issuer、audience、sub、iat 和 exp，最长有效期 24 小时；未知算法、类型、附加 claim、受众不匹配、篡改与过期均拒绝。实现使用锁定的 PyJWT 2.13.0。校验依据 [JWT BCP](https://www.rfc-editor.org/rfc/rfc8725.html) 和 [JWT 标准](https://www.rfc-editor.org/rfc/rfc7519.html)。
+签发命令仅供可信操作员本机调用，服务端没有公开 mint、refresh 或第三方登录 endpoint。CLI 输出的短期令牌是客户端凭据；只传令牌，不传服务端密钥。固定 HS256、显式 `findora-access+jwt` 类型、issuer、audience、sub、iat 和 exp，最长有效期 24 小时；未知算法、类型、附加 claim、受众不匹配、篡改与过期均拒绝。实现使用锁定的 PyJWT 2.13.0。校验依据 [JWT BCP](https://www.rfc-editor.org/rfc/rfc8725.html) 和 [JWT 标准](https://www.rfc-editor.org/rfc/rfc7519.html)。
 
 HTTP：`Authorization: Bearer <token>`；请求 body/query 的 buyer_id 必须等于签名 sub。覆盖 intents、异步任务、订单读取消、确认 prepare/get/list/resolve、AG-UI run/replay/cancel/session。GET `/commerce/tasks/{id}` 现在同时需要 buyer_id。`/health` 保持公开，不输出签名密钥。身份无效 401、主体或 owner 不符 403、归属未知 404、需迁移或快照冲突 409。严格模式缺归属存储返回 503，不降级跳过检查。
 
 浏览器 WebSocket：
 
 ```js
-const ws = new WebSocket('/commerce/events', ['globex-events', `globex-auth.${token}`]);
+const ws = new WebSocket('/commerce/events', ['findora-events', `findora-auth.${token}`]);
 ws.onopen = () => ws.send(JSON.stringify({shopping_session_id: sessionId, buyer_id: buyerId}));
 ```
 
-示例连接地址实际应为 ws/wss 绝对地址；服务端仅回显 `globex-events`，不回显含令牌子协议。不接受 query token，避免 URL/代理日志泄漏。订阅在身份与 owner 校验后建立；失败关闭码 4401/4403/4400。HTTP 与 WS 必须使用同一 buyer。已有脚本支持 `GLOBEX_BUYER_ID` 与 `GLOBEX_API_TOKEN` 环境变量。
+示例连接地址实际应为 ws/wss 绝对地址；服务端仅回显 `findora-events`，不回显含令牌子协议。不接受 query token，避免 URL/代理日志泄漏。订阅在身份与 owner 校验后建立；失败关闭码 4401/4403/4400。HTTP 与 WS 必须使用同一 buyer。已有脚本支持 `FINDORA_BUYER_ID` 与 `FINDORA_API_TOKEN` 环境变量。
 
 生产应使用 HTTPS/WSS、可信服务端密钥管理和现有企业登录入口；本项没有替用户接入未知第三方系统。更换签名密钥使旧 token 全部失效；逐 token 撤销、刷新、多密钥滚动属于后续身份平台集成边界。
 

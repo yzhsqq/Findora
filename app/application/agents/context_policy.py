@@ -51,7 +51,7 @@ _SUMMARY_TEMPLATE = """<system-info>以下是历史工作摘要；以本轮交�
 
 
 def build_context_config(context_size: int, tool_result_limit: int) -> ContextConfig:
-    """构造 Globex 的上下文压缩策略。
+    """构造 Findora 的上下文压缩策略。
 
     Args:
         context_size (`int`):

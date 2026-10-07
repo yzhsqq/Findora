@@ -113,20 +113,20 @@ def test_settings_repr_hides_otlp_credentials():
 
 def test_selected_skill_trace_keeps_version_evidence_but_never_reference_body():
     clean = tracing._sanitize_attributes({
-        'globex.skill.source': 'server_preload',
-        'globex.skill.id': 'shopping-needs-clarification',
-        'globex.skill.version': '1.0',
-        'globex.skill.content_hash': 'a' * 64,
-        'globex.skill.body': SECRET,
+        'findora.skill.source': 'server_preload',
+        'findora.skill.id': 'shopping-needs-clarification',
+        'findora.skill.version': '1.0',
+        'findora.skill.content_hash': 'a' * 64,
+        'findora.skill.body': SECRET,
         'gen_ai.input.messages': SECRET,
     })
-    assert clean['globex.skill.source'] == 'server_preload'
-    assert clean['globex.skill.id'] == 'shopping-needs-clarification'
-    assert clean['globex.skill.version'] == '1.0'
-    assert clean['globex.skill.content_hash'] == 'a' * 64
-    assert 'globex.skill.body' not in clean
+    assert clean['findora.skill.source'] == 'server_preload'
+    assert clean['findora.skill.id'] == 'shopping-needs-clarification'
+    assert clean['findora.skill.version'] == '1.0'
+    assert clean['findora.skill.content_hash'] == 'a' * 64
+    assert 'findora.skill.body' not in clean
     assert SECRET not in json.dumps(clean, ensure_ascii=False)
-    assert clean['globex.content.redacted'] is True
+    assert clean['findora.content.redacted'] is True
 
 
 def test_unconfigured_tracing_never_installs_exporter(monkeypatch):
@@ -226,8 +226,8 @@ async def test_otlp_real_http_path_auth_and_native_agentscope_parent_chain(trace
     assert attributes(model_span)["langfuse.observation.type"] == "generation"
     for span in exported:
         attrs = attributes(span)
-        assert attrs["globex.request_id"] == task.request_id
-        assert attrs["globex.task_id"] == task.task_id
+        assert attrs["findora.request_id"] == task.request_id
+        assert attrs["findora.task_id"] == task.task_id
         assert attrs["langfuse.session.id"].startswith("sha256:")
     for path, headers, _batch, wire in traced.collector.captured:
         assert path == "/api/public/otel/v1/traces"
@@ -275,8 +275,8 @@ async def test_exception_text_and_traceback_never_reach_otlp(traced):
     exported = spans(traced.collector.captured)[0]
     assert exported.status.code == 2 and exported.status.message == ""
     assert [item.key for item in exported.events[0].attributes] == ["exception.type"]
-    assert attributes(exported)["globex.content.redacted"] is True
-    assert attributes(exported)["globex.input.characters"] == len(SECRET)
+    assert attributes(exported)["findora.content.redacted"] is True
+    assert attributes(exported)["findora.input.characters"] == len(SECRET)
     wire = b"".join(row[3] for row in traced.collector.captured)
     assert SECRET.encode() not in wire and b"private-auth" not in wire
 
@@ -306,7 +306,7 @@ async def test_worker_cancellation_is_error_span_without_exception_body(traced):
     assert await asyncio.to_thread(traced.provider.force_flush, 5000)
     exported = spans(traced.collector.captured)[0]
     assert exported.status.code == 2
-    assert attributes(exported)["globex.cancelled"] is True
+    assert attributes(exported)["findora.cancelled"] is True
     assert attributes(exported)["error.type"] == "CancelledError"
     assert SECRET.encode() not in b"".join(row[3] for row in traced.collector.captured)
 

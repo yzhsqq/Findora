@@ -44,7 +44,7 @@ def test_token_is_short_lived_scoped_and_secret_is_hidden():
 
 @pytest.mark.parametrize("claims,header,algorithm", [
     ({"iss": "other"}, {}, "HS256"), ({"aud": "other"}, {}, "HS256"),
-    ({"aud": ["globex-api", "other"]}, {}, "HS256"),
+    ({"aud": ["findora-api", "other"]}, {}, "HS256"),
     ({"exp": 999}, {}, "HS256"), ({"exp": 9999999}, {}, "HS256"),
     ({"iat": True}, {}, "HS256"), ({"sub": ""}, {}, "HS256"),
     ({"admin": True}, {}, "HS256"), ({}, {"typ": "JWT"}, "HS256"),
@@ -53,9 +53,9 @@ def test_token_is_short_lived_scoped_and_secret_is_hidden():
 ])
 def test_invalid_token_claims_and_algorithms_are_rejected(claims, header, algorithm):
     policy = replace(POLICY, clock=lambda: 1000)
-    payload = {"sub": "buyer-1", "iat": 1000, "exp": 1060, "iss": "globex-local", "aud": "globex-api", **claims}
+    payload = {"sub": "buyer-1", "iat": 1000, "exp": 1060, "iss": "findora-local", "aud": "findora-api", **claims}
     token = jwt.encode(payload, None if algorithm == "none" else policy.secret,
-        algorithm=algorithm, headers={"typ": "globex-access+jwt", **header})
+        algorithm=algorithm, headers={"typ": "findora-access+jwt", **header})
     with pytest.raises(IdentityError):
         policy.verify(token)
 
@@ -178,13 +178,13 @@ def ws_app(tmp_path):
 def test_websocket_auth_protocol_is_not_echoed_and_owner_is_persistent(tmp_path):
     api = ws_app(tmp_path)
     with TestClient(api) as client:
-        with client.websocket_connect("/events", subprotocols=["globex-events", "globex-auth." + POLICY.issue("buyer-1")]) as ws:
-            assert ws.accepted_subprotocol == "globex-events"
+        with client.websocket_connect("/events", subprotocols=["findora-events", "findora-auth." + POLICY.issue("buyer-1")]) as ws:
+            assert ws.accepted_subprotocol == "findora-events"
             ws.send_json({"buyer_id": "buyer-1", "shopping_session_id": "session"})
             assert ws.receive_json()["payload"] == {"safe": True}
     # 新 app / 新 store 仍不能换买家读取该会话。
     with TestClient(ws_app(tmp_path)) as client:
-        with client.websocket_connect("/events", subprotocols=["globex-events", "globex-auth." + POLICY.issue("buyer-2")]) as ws:
+        with client.websocket_connect("/events", subprotocols=["findora-events", "findora-auth." + POLICY.issue("buyer-2")]) as ws:
             ws.send_json({"buyer_id": "buyer-2", "shopping_session_id": "session"})
             with pytest.raises(WebSocketDisconnect) as error:
                 ws.receive_json()
@@ -194,8 +194,8 @@ def test_websocket_auth_protocol_is_not_echoed_and_owner_is_persistent(tmp_path)
 @pytest.mark.parametrize("query,protocols,payload,expected", [
     ("", [], {"buyer_id": "buyer-1", "shopping_session_id": "session"}, 4401),
     ("?token=ignored", [], {"buyer_id": "buyer-1", "shopping_session_id": "session"}, 4401),
-    ("", ["globex-events", "globex-auth.invalid"], {"buyer_id": "buyer-1", "shopping_session_id": "session"}, 4401),
-    ("", ["globex-events", "globex-auth." + POLICY.issue("buyer-1")], {"shopping_session_id": "session"}, 4400),
+    ("", ["findora-events", "findora-auth.invalid"], {"buyer_id": "buyer-1", "shopping_session_id": "session"}, 4401),
+    ("", ["findora-events", "findora-auth." + POLICY.issue("buyer-1")], {"shopping_session_id": "session"}, 4400),
 ])
 def test_websocket_invalid_identity_never_subscribes(tmp_path, query, protocols, payload, expected):
     with TestClient(ws_app(tmp_path)) as client:

@@ -8,7 +8,7 @@ from app.infrastructure.identity import IdentityPolicy
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="本机签发 Globex 短期买家身份令牌，无公开签发接口")
+    parser = argparse.ArgumentParser(description="本机签发 Findora 短期买家身份令牌，无公开签发接口")
     parser.add_argument("--buyer-id", required=True)
     parser.add_argument("--ttl-seconds", type=int, default=3600)
     args = parser.parse_args()

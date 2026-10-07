@@ -34,7 +34,7 @@ TradeEventType = str
 
 # 只观察当前执行任务及其子协程，避免同会话排队时混入另一轮的商品结果。
 _run_observer: ContextVar[Callable[["TradeEvent"], None] | None] = ContextVar(
-    "globex_trade_event_observer", default=None,
+    "findora_trade_event_observer", default=None,
 )
 
 

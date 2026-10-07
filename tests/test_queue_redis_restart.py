@@ -15,7 +15,7 @@ from tests.test_queue_reliability import task, eventually, consume, stop_consume
 
 
 async def test_sigkill_aof_restart_preserves_pending_and_reclaims_both_streams():
-    binary = os.environ.get("GLOBEX_REDIS_SERVER_BIN") or shutil.which("redis-server")
+    binary = os.environ.get("FINDORA_REDIS_SERVER_BIN") or shutil.which("redis-server")
     if not binary:
         pytest.skip("需要官方 redis-server 二进制进行真实进程重启验证")
     with tempfile.TemporaryDirectory(prefix="gbx-aof-", dir="/tmp") as directory:

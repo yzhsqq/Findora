@@ -22,7 +22,7 @@ class ConnectionManager:
     async def serve(self, websocket: WebSocket) -> None:
         protocols = websocket.scope.get("subprotocols", [])
         # 只回显公开协议名，认证令牌不进入响应头、URL 或事件正文。
-        await websocket.accept(subprotocol="globex-events" if "globex-events" in protocols else None)
+        await websocket.accept(subprotocol="findora-events" if "findora-events" in protocols else None)
         try:
             payload = await websocket.receive_json()
             if not isinstance(payload, dict):

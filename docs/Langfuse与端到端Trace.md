@@ -21,7 +21,7 @@
 | `OTEL_EXPORTER_OTLP_HEADERS` | 通用认证头，逗号分隔的 `name=value` |
 | `OTEL_EXPORTER_OTLP_TRACES_HEADERS` | Trace 专用认证头，优先于通用头；支持百分号编码 |
 | `OTEL_EXPORTER_OTLP_TRACES_TIMEOUT` | 导出超时秒数，默认 5；未设置时读取通用 `OTEL_EXPORTER_OTLP_TIMEOUT` |
-| `OTEL_SERVICE_NAME` | 进程服务名称；Compose 分别设置为 `globex-api` 和 `globex-worker` |
+| `OTEL_SERVICE_NAME` | 进程服务名称；Compose 分别设置为 `findora-api` 和 `findora-worker` |
 | `LANGFUSE_BASE_URL` | Langfuse 项目所在地域的基础地址，例如 `https://cloud.langfuse.com` |
 | `LANGFUSE_PUBLIC_KEY` / `LANGFUSE_SECRET_KEY` | 项目公钥和私钥；无显式 OTLP 端点时自动派生 Basic Auth、v4 header 和完整 Trace 端点 |
 
@@ -69,7 +69,7 @@ AgentScope 原生中间件会在内存中构造输入、输出、工具参数/�
 
 保留：父子 Span ID、Trace ID、时间与耗时、HTTP 方法及路由模板、HTTP 状态、模型/工具名称、Token 用量、错误类型、取消标志、请求/任务关联及会话摘要。模型、Agent、工具映射为 Langfuse 的 generation、agent、tool。
 
-删除：对话全文、system prompt、工具描述/定义、工具参数与结果全文、异常正文和 traceback、原始 buyer/session 标识、非白名单 resource/scope/link 属性。输入输出仅保留字符数和 `globex.content.redacted=true`。不提供通过配置绕过此过滤的开关。
+删除：对话全文、system prompt、工具描述/定义、工具参数与结果全文、异常正文和 traceback、原始 buyer/session 标识、非白名单 resource/scope/link 属性。输入输出仅保留字符数和 `findora.content.redacted=true`。不提供通过配置绕过此过滤的开关。
 
 HTTP span 记录路由模板，例如 `/commerce/orders/{order_id}`；不记录实际 URL、查询参数、请求头或请求/响应 body。认证失败时接收器的响应正文也不会写入本模块日志。
 

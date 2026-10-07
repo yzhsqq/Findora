@@ -12,7 +12,7 @@ def record_context_usage(input_tokens, output_tokens, elapsed_ms):
     if sink is not None:sink(sample)
     # Langfuse/OTel 只接收数值；未知值明确记录为未知。
     span=trace.get_current_span()
-    span.set_attribute('globex.context.call_kind',sample['kind'])
-    span.set_attribute('globex.context.usage_known',input_tokens is not None)
-    if input_tokens is not None:span.set_attribute('globex.context.input_tokens',input_tokens)
-    if output_tokens is not None:span.set_attribute('globex.context.output_tokens',output_tokens)
+    span.set_attribute('findora.context.call_kind',sample['kind'])
+    span.set_attribute('findora.context.usage_known',input_tokens is not None)
+    if input_tokens is not None:span.set_attribute('findora.context.input_tokens',input_tokens)
+    if output_tokens is not None:span.set_attribute('findora.context.output_tokens',output_tokens)

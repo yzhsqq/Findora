@@ -20,7 +20,7 @@ def _token(request: Request | WebSocket) -> str:
         return ""
     if isinstance(request, WebSocket):
         protocols = request.headers.get("sec-websocket-protocol", "").split(",")
-        tokens = [item.strip()[len("globex-auth."):] for item in protocols if item.strip().startswith("globex-auth.")]
+        tokens = [item.strip()[len("findora-auth."):] for item in protocols if item.strip().startswith("findora-auth.")]
         if len(tokens) == 1:
             return tokens[0]
     return ""

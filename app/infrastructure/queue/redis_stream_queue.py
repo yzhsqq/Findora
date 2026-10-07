@@ -23,14 +23,14 @@ from app.domain.queue.ports.task_queue import IntentTask, QueueDelivery, TaskQue
 from app.infrastructure.eventbus import TradeEvent
 
 logger = logging.getLogger(__name__)
-_STREAM = "globex:intents"
-_LARGE_STREAM = "globex:intents:large"
-_DEAD_STREAM = "globex:intents:dead"
-_GROUP = "globex-workers"
-_STATUS_PREFIX = "globex:task:"
+_STREAM = "findora:intents"
+_LARGE_STREAM = "findora:intents:large"
+_DEAD_STREAM = "findora:intents:dead"
+_GROUP = "findora-workers"
+_STATUS_PREFIX = "findora:task:"
 _STATUS_TTL = 3600
-_EVENT_CHANNEL_PREFIX = "globex:events:"
-_LEASE_PREFIX = "globex:lease:"
+_EVENT_CHANNEL_PREFIX = "findora:events:"
+_LEASE_PREFIX = "findora:lease:"
 
 _ENQUEUE_SCRIPT = """
 local old = redis.call('GET', KEYS[1])
@@ -151,7 +151,7 @@ class ExecutionLease:
         self.valid = False
 
 
-_execution_lease: ContextVar[ExecutionLease | None] = ContextVar("globex_execution_lease", default=None)
+_execution_lease: ContextVar[ExecutionLease | None] = ContextVar("findora_execution_lease", default=None)
 
 
 def current_execution_lease() -> ExecutionLease | None:

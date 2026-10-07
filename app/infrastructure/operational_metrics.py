@@ -47,7 +47,7 @@ class RequestObservation:
     token: Token | None = field(default=None, repr=False)
 
 
-_current: ContextVar[RequestObservation | None] = ContextVar('globex_operational_metrics', default=None)
+_current: ContextVar[RequestObservation | None] = ContextVar('findora_operational_metrics', default=None)
 
 
 class MetricsRegistry:
@@ -87,11 +87,11 @@ class MetricsRegistry:
             lines = ['# 业务回合指标；进程内累计，不是 HTTP 请求或跨 worker 聚合。']
             for (name, status), value in sorted(self.counters.items()):
                 label = '{status="' + status + '"}' if status else ''
-                lines.append(f'globex_{name}{label} {value}')
+                lines.append(f'findora_{name}{label} {value}')
             total = sum(value for (name, _), value in self.counters.items() if name == 'requests_total')
             for bound in _BUCKETS:
-                lines.append(f'globex_request_duration_ms_bucket{{le="{bound}"}} {self.histogram[bound]}')
-            lines.extend([f'globex_request_duration_ms_bucket{{le="+Inf"}} {total}', f'globex_request_duration_ms_count {total}'])
+                lines.append(f'findora_request_duration_ms_bucket{{le="{bound}"}} {self.histogram[bound]}')
+            lines.extend([f'findora_request_duration_ms_bucket{{le="+Inf"}} {total}', f'findora_request_duration_ms_count {total}'])
             return '\n'.join(lines) + '\n'
 
     def alerts(self, *, minimum_samples: int = 20, latency_p95_ms: float = 60000,

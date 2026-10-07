@@ -103,7 +103,7 @@ async def test_summary_input_shares_locally_without_dangling_tail_reference():
     for _, block in blocks(source.context):
         set_output(block, {'hits': [product()]})
     agent = ContextAwareAgent('agent', '测试', model, state=source)
-    agent._globex_layered_split = True
+    agent._findora_layered_split = True
     token = ShoppingContext.set(ShoppingContextSnapshot('s', 'b', 'zh-CN', 'CNY'))
     try:
         head, tail = await agent._split_context_for_compression(0, [])

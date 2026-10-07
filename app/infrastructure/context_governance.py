@@ -130,7 +130,7 @@ def compression_parts(agent):
 class ContextAwareAgent(Agent):
     """唯一 SDK 版本适配点：禁止原生按 token 拆散完整买家轮次。"""
     async def _split_context_for_compression(self, to_reserved_tokens, tools):
-        if not getattr(self, '_globex_layered_split', False):
+        if not getattr(self, '_findora_layered_split', False):
             return await super()._split_context_for_compression(to_reserved_tokens, tools)
         head, tail = compression_parts(self)
         # 摘要请求也采用同次输入内共享，避免业务计数已去重而摘要仍灌入原始重复正文。
@@ -403,7 +403,7 @@ class LayeredContextMiddleware(MiddlewareBase):
                 previous = agent.state.summary
                 params = getattr(agent.model, 'parameters', None)
                 if params is not None and getattr(params,'max_tokens',None) is None: params.max_tokens = 8192
-                agent._globex_layered_split = True
+                agent._findora_layered_split = True
                 from app.infrastructure.context_usage import context_call_kind, context_usage_sink
                 kind_token = context_call_kind.set('summary')
                 prior_sink = context_usage_sink.get()
@@ -454,7 +454,7 @@ class LayeredContextMiddleware(MiddlewareBase):
                 finally:
                     context_call_kind.reset(kind_token)
                     context_usage_sink.reset(sink_token)
-                    agent._globex_layered_split = False
+                    agent._findora_layered_split = False
                 state = governance(agent)
                 state['summary_usage'] = usage_samples
                 state['summary_attempts'] = attempts
@@ -471,7 +471,7 @@ class LayeredContextMiddleware(MiddlewareBase):
             state['last_compaction'] = report
             if changed or archived:
                 state['checkpoint_id'] = hashlib.sha256(json.dumps(report,sort_keys=True).encode()+str(time.time_ns()).encode()).hexdigest()
-            trace.get_current_span().set_attributes({'globex.context.'+k:v for k,v in report.items() if isinstance(v,(str,int,float,bool))})
+            trace.get_current_span().set_attributes({'findora.context.'+k:v for k,v in report.items() if isinstance(v,(str,int,float,bool))})
             return report
         except BaseException as error:
             agent.state = old_state

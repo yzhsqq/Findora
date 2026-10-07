@@ -47,9 +47,9 @@ async def preload_selected_skill(selection: SelectedSkill, *, registry, agent, b
                                  session_id: str, persistence_guard=None, personal_store=None) -> tuple[UserMsg, dict]:
     """调用权威库的只读 load_skill；工具白名单来自当前实际 Agent toolkit。"""
     with trace.get_tracer(__name__).start_as_current_span("commerce.skill.preload",
-            attributes={"langfuse.observation.type": "retriever", "globex.skill.source": "server_preload",
-                        "globex.skill.id": selection.id, "globex.skill.version": selection.version,
-                        "globex.skill.content_hash": selection.content_hash},
+            attributes={"langfuse.observation.type": "retriever", "findora.skill.source": "server_preload",
+                        "findora.skill.id": selection.id, "findora.skill.version": selection.version,
+                        "findora.skill.content_hash": selection.content_hash},
             record_exception=False, set_status_on_exception=False) as span:
         try:
             snapshot = ShoppingContext.current()
@@ -90,7 +90,7 @@ async def preload_selected_skill(selection: SelectedSkill, *, registry, agent, b
                        + json.dumps(reference, ensure_ascii=False))
             return UserMsg("selected_skill_reference", content), {**selection.payload(), "title": loaded["title"]}
         except asyncio.CancelledError:
-            span.set_attribute("globex.cancelled", True)
+            span.set_attribute("findora.cancelled", True)
             span.set_status(Status(StatusCode.ERROR))
             raise
         except Exception:
