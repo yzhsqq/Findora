@@ -25,7 +25,7 @@ from app.application.tools.product_search_tool import build_product_search_tool
 from app.application.tools.web_search_tool import build_web_search_tool
 from app.application.tools.conversation_fact_lookup import build_conversation_fact_lookup
 from app.infrastructure.persistence.context_evidence import ContextEvidenceStore
-from app.application.usecases.catalog_search import CatalogSearchUseCase
+from app.application.ports.catalog import CatalogSearch
 from app.infrastructure.eventbus import TradeEventBus
 from app.infrastructure.rag.category_knowledge import KNOWLEDGE_DIR
 from app.infrastructure.cj_live_quote import CJLiveQuoteService
@@ -43,7 +43,7 @@ class SearchAgentFactory:
     def __init__(
         self,
         settings: Settings,
-        catalog_search: CatalogSearchUseCase,
+        catalog_search: CatalogSearch,
         bus: TradeEventBus,
         knowledge_base: KnowledgeBase,
         circuit_registry: CircuitBreakerRegistry,

@@ -14,7 +14,7 @@ from typing import Optional
 from agentscope.message import TextBlock, ToolResultState
 from agentscope.tool import ToolChunk
 
-from app.application.usecases.catalog_search import CatalogSearchUseCase
+from app.application.ports.catalog import CatalogSearch
 from app.domain.catalog.product_search_spec import ProductSearchSpec
 from app.domain.catalog.exchange_rate import ExchangeRateTable
 from app.domain.shipping.tariff_schedule import TariffSchedule
@@ -59,7 +59,7 @@ def _normalize_category(category: Optional[str], normalized_query: str) -> Optio
     return next((known for known in _KNOWN_CATEGORIES if known in normalized_query), None)
 
 
-def build_product_search_tool(usecase: CatalogSearchUseCase, bus: TradeEventBus, evidence_store=None, context_strategy="legacy"):
+def build_product_search_tool(usecase: CatalogSearch, bus: TradeEventBus, evidence_store=None, context_strategy="legacy"):
     async def product_search_tool(
         normalized_query: str,
         category: Optional[str] = None,
@@ -85,12 +85,15 @@ def build_product_search_tool(usecase: CatalogSearchUseCase, bus: TradeEventBus,
             top_k (`int`):
                 返回候选数量，默认 5。
             price_max_major (`float | None`):
-                价格上限（target_currency 主单位），买家有预算硬约束时必传，由检索链路结构化过滤。
+                价格上限（target_currency 主单位），买家有预算时必传。
+                样例目录可结构化校验；CJ/Amazon/eBay 快照仅校验 USD 商品价，
+                缺少换汇或到手费用时预算满足情况为 unknown，不能宣称硬约束已满足。
             target_currency (`str`):
                 价格口径币种，默认 "CNY"。
             budget_basis (`str`):
                 预算口径：商品价用 "product"；买家明确说含运费和关税的到手价预算时用 "landed"。
-                到手价预算必须同时传 ship_to，系统以规则估算而非实时结算金额判断。
+                到手价预算必须同时传 ship_to，只有样例目录以规则估算判断；
+                快照缺少完整目的地运税时保持 unknown，不生成虚构的到手价。
             excluded_material_tags (`list[str] | None`):
                 材质黑名单，如买家明确不要塑料时传 ["合成聚合物"]。
             required_material_tags (`list[str] | None`):
@@ -177,17 +180,9 @@ def build_product_search_tool(usecase: CatalogSearchUseCase, bus: TradeEventBus,
             session_id,
             "tool.result",
             {
+                **result,
                 "tool": "product_search_tool",
                 "hit_count": len(result["hits"]),
-                "recall_strategy": result["recall_strategy"],
-                "total_candidates": result["total_candidates"],
-                "rerank_applied": result["rerank_applied"],
-                "query_conditions": result["query_conditions"],
-                "observed_at": result["observed_at"],
-                # 商品卡随事件下发，前端无需再调接口即可渲染（含 landed_price 到手价）
-                "hits": result["hits"],
-                **({"result_ref": result["result_ref"]} if "result_ref" in result else {}),
-                **({"filtered_out": result["filtered_out"]} if "filtered_out" in result else {}),
             },
         )
         from app.infrastructure.context_products import business_view, product_page, token_estimate

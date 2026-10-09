@@ -3,8 +3,7 @@ from fastapi import HTTPException, Query, Request
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.infrastructure.cj_live_quote import CJQuoteError
-from app.infrastructure.persistence.cj_catalog import CJCatalog
-from app.infrastructure.persistence.multi_platform_catalog import MultiPlatformCatalog
+from app.application.ports.catalog import catalog_capabilities
 from app.presentation.identity import require_buyer
 
 
@@ -20,9 +19,7 @@ def register_purchase_record_routes(api, get_store, get_catalog, get_live=None):
         buyer = await require_buyer(request, buyer_id)
         records = await get_store().list(buyer)
         catalog = get_catalog()
-        if isinstance(catalog, MultiPlatformCatalog):
-            catalog = catalog.cj
-        if isinstance(catalog, CJCatalog) and records:
+        if catalog_capabilities(catalog).purchase_records and records:
             cards = await catalog.cards_by_ids([r["product"]["product_id"] for r in records])
             latest = {card["product_id"]: card for card in cards}
             localized = await catalog.localize_saved_cards([r["product"] for r in records])
@@ -42,14 +39,14 @@ def register_purchase_record_routes(api, get_store, get_catalog, get_live=None):
     async def save_record(body: PurchaseRecordWrite, request: Request, buyer_id: str = Query(min_length=1)):
         buyer = await require_buyer(request, buyer_id)
         catalog = get_catalog()
-        if isinstance(catalog, MultiPlatformCatalog):
-            catalog = catalog.cj
-        if not isinstance(catalog, CJCatalog):
+        if not catalog_capabilities(catalog).purchase_records:
             raise HTTPException(409, "当前未启用 CJ 商品库。")
         cards = await catalog.cards_by_ids([body.product_id])
         if not cards:
             raise HTTPException(404, "商品不在当前 CJ 商品库中。")
         product = cards[0]
+        if product.get("source_platform") != "CJdropshipping":
+            raise HTTPException(404, "商品不在当前 CJ 商品库中。")
         if body.sku_id:
             live = get_live() if get_live else None
             if live is not None:

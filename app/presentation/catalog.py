@@ -7,8 +7,7 @@ from fastapi import FastAPI, HTTPException, Query, Request
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.infrastructure.cj_live_quote import CJQuoteError
-from app.infrastructure.persistence.cj_catalog import CJCatalog
-from app.infrastructure.persistence.multi_platform_catalog import MultiPlatformCatalog
+from app.application.ports.catalog import catalog_capabilities
 from app.presentation.identity import require_buyer
 
 
@@ -24,6 +23,16 @@ class CJQuoteRequest(CJDetailRequest):
 
 
 def register_catalog_routes(api: FastAPI, get_catalog: Callable, get_live: Callable | None = None) -> None:
+    @api.get("/commerce/catalog/capabilities")
+    async def describe_catalog_capabilities() -> dict:
+        # Capabilities come from the assembled mode, never from a successful
+        # product read: a damaged snapshot must not hide the navigation.
+        catalog = get_catalog()
+        capabilities = catalog_capabilities(catalog)
+        return {"source": capabilities.source, "platforms": list(capabilities.platforms),
+                "local_orders": capabilities.local_orders, "purchase_records": capabilities.purchase_records,
+                "cj_quote": "cj" in capabilities.platforms and get_live is not None and get_live() is not None}
+
     @api.get("/commerce/catalog")
     async def browse_catalog(
         query: str = Query(default="", max_length=120),
@@ -33,18 +42,13 @@ def register_catalog_routes(api: FastAPI, get_catalog: Callable, get_live: Calla
         page_size: int = Query(default=24, ge=1, le=60),
     ) -> dict:
         catalog = get_catalog()
-        if not isinstance(catalog, (CJCatalog, MultiPlatformCatalog)):
+        capabilities = catalog_capabilities(catalog)
+        if capabilities.source == "fixture":
             return {"source": "fixture", "total": 0, "all_count": 0, "detail_count": 0,
                     "inventory_count": 0, "page": page, "page_size": page_size,
                     "categories": [], "products": []}
         try:
-            if isinstance(catalog, MultiPlatformCatalog):
-                return await catalog.browse(query, category, page, page_size, platform)
-            if platform == "amazon":
-                return {"source": "cj", "total": 0, "all_count": 0, "detail_count": 0,
-                        "inventory_count": 0, "page": page, "page_size": page_size,
-                        "categories": [], "products": []}
-            return await catalog.browse(query, category, page, page_size)
+            return await catalog.browse(query, category, page, page_size, platform)
         except ValueError as error:
             raise HTTPException(status_code=503, detail=str(error)) from error
 

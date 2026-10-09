@@ -26,6 +26,10 @@ def _point_id(product_id: str) -> str:
 
 
 class QdrantProductIndex(ProductVectorIndex):
+    @property
+    def recall_mode(self) -> str:
+        return "dense_bm25" if self._server_side_bm25 and self._bm25_available else "dense_only"
+
     def __init__(self, settings: Settings, *, collection: str | None = None,
                  local_path: Path | None = None) -> None:
         self._server_side_bm25 = bool(settings.qdrant_url)
@@ -161,15 +165,20 @@ class QdrantProductIndex(ProductVectorIndex):
             raise ValueError("混合检索至少需要一条稠密查询向量")
         if not self._schema_checked:
             await self.ensure_ready(len(dense_queries[0]))
-        if self._dense_vector_name != "dense":
-            raise ValueError("CJ 混合检索需要命名 dense 向量集合")
+        if self.recall_mode == "dense_only":
+            # Embedded Qdrant has no server BM25. Fuse the actual dense
+            # rankings without changing existing unnamed collection schemas.
+            scores: dict[str, float] = {}
+            for vector in dense_queries:
+                for rank, hit in enumerate(await self.search(vector, 80), 1):
+                    scores[hit.product_id] = scores.get(hit.product_id, 0.0) + 1.0 / (60 + rank)
+            return [VectorHit(product_id=key, score=score) for key, score in
+                    sorted(scores.items(), key=lambda item: (-item[1], item[0]))[:top_n]]
         prefetch = [
             models.Prefetch(query=vector, using="dense", limit=80)
             for vector in dense_queries
         ]
         if english_query:
-            if not self._bm25_available or not self._server_side_bm25:
-                raise ValueError("CJ 混合检索需要服务端 BM25 稀疏向量")
             prefetch.append(models.Prefetch(
                 query=models.Document(text=english_query, model="Qdrant/bm25"),
                 using="bm25", limit=80,

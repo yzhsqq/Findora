@@ -209,3 +209,17 @@ async def test_disabled_hybrid_keeps_keyword_path_without_rerank(snapshot):
     assert result["hits"]
     assert result["rerank_applied"] is False
     assert reranker.calls == []
+
+
+@pytest.mark.asyncio
+async def test_federation_does_not_mutate_cj_reranker_or_double_rank(snapshot):
+    from app.infrastructure.persistence.multi_platform_catalog import MultiPlatformCatalog
+    local = _Reranker([0.1, 0.9, 0.2])
+    global_ranker = _Reranker([0.9, 0.2, 0.1])
+    catalog = _catalog(snapshot, local)
+    federated = MultiPlatformCatalog(catalog, reranker=global_ranker)
+    assert catalog.reranker is local
+    result = await federated.execute(ProductSearchSpec("travel", top_k=3))
+    assert result["rerank_applied"] and len(global_ranker.calls) == 1 and local.calls == []
+    await catalog.execute(ProductSearchSpec("travel", top_k=3))
+    assert len(local.calls) == 1

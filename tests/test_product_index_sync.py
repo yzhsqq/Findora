@@ -58,6 +58,7 @@ async def test_restart_and_offer_changes_reuse_vectors(tmp_path):
     assert len(embedder.texts) == 2
     await index.close()
 
+
     # 模拟新进程重新打开落盘集合；报价和库存变化不属于检索文本。
     first.skus[0].price = Money.from_major_units(89, "CNY")
     first.skus[0].stock = 3
@@ -134,3 +135,25 @@ async def test_existing_named_dense_and_bm25_collection_reuses_vectors(tmp_path)
     index = _index(tmp_path)
     assert [hit.product_id for hit in await index.search([float(len(product.searchable_text())), 1.0], 5)] == ["P1"]
     await index.close()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("named", [False, True])
+async def test_local_hybrid_config_fuses_dense_without_server_bm25(tmp_path, named):
+    index = _index(tmp_path)
+    try:
+        if named:
+            await index._client.create_collection(
+                collection_name="products",
+                vectors_config={"dense": models.VectorParams(size=2, distance=models.Distance.COSINE)},
+                sparse_vectors_config={"bm25": models.SparseVectorParams(modifier=models.Modifier.IDF)},
+            )
+        await index.ensure_ready(2)
+        await index.upsert_products([_product("P1", "Dog toy"), _product("P2", "Travel bag")],
+                                    [[1.0, 0.0], [0.0, 1.0]], ["one", "two"])
+        hits = await index.hybrid_search([[1.0, 0.0], [1.0, 0.0]], "dog toy", 1)
+        assert [hit.product_id for hit in hits] == ["P1"]
+        assert index.recall_mode == "dense_only"
+        assert hits[0].score == pytest.approx(2 / 61)
+    finally:
+        await index.close()
