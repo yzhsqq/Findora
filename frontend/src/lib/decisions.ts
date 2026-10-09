@@ -1,5 +1,5 @@
 import type { DecisionCheck, DecisionReport, DecisionRequest } from "../types";
-import { readProducts } from "./commerceClient";
+import { readProducts } from "./productCards";
 
 const record = (value: unknown): value is Record<string, unknown> =>
   value !== null && typeof value === "object" && !Array.isArray(value);

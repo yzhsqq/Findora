@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { CJFreightQuote, ProductCard } from "../types";
-import { readProducts } from "../lib/commerceClient";
+import { readProducts } from "../lib/productCards";
 import { productPurchaseUrl } from "../lib/productPurchaseUrl";
 import { isMarketplaceSnapshot, shortPlatformLabel } from "../lib/productPlatform";
 import Icon from "./Icon";

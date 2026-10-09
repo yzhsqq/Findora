@@ -16,6 +16,7 @@ beforeEach(() => {
     const url=new URL(String(input),"http://test"), path=url.pathname, method=init?.method ?? "GET";
     const body=init?.body ? JSON.parse(String(init.body)) : undefined;
     requests.push({ path, method, body, query:url.searchParams, headers:init?.headers });
+    if (path.endsWith("/catalog/capabilities")) return Response.json({source:"fixture"});
     if (path.endsWith("/sessions")) return Response.json({sessions:[]});
     if (path.endsWith("/confirmations")) return Response.json({confirmations:[]});
     if (path === "/commerce/skills") return Response.json({capability_digest:"c".repeat(64),skills:personal});

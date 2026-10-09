@@ -24,6 +24,7 @@ beforeEach(() => {
   vi.stubGlobal("scrollTo", vi.fn());
   Element.prototype.scrollIntoView = vi.fn();
   vi.stubGlobal("fetch", vi.fn(async (url: string, init?: RequestInit) => {
+    if (String(url).includes("/catalog/capabilities")) return Response.json({source: "fixture"});
     if (String(url).includes("/skills?")) return Response.json({ capability_digest: "c".repeat(64), skills: catalog }, { status: skillsStatus });
     if (String(url).includes("/sessions?")) return Response.json({ sessions: [] });
     if (String(url).includes("/confirmations?")) return Response.json({ confirmations: [] });

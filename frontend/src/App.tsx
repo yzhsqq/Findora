@@ -2,7 +2,7 @@ import ContextWorkspace from "./components/ContextWorkspace";
 import { ToolApprovalCards } from "./components/ToolApprovalCards";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useCommerceAgent } from "./hooks/useCommerceAgent";
-import { readProducts } from "./lib/commerceClient";
+import { readProducts } from "./lib/productCards";
 import type { ProductCard, PublishedSkill } from "./types";
 import Icon from "./components/Icon";
 import Markdown from "./components/Markdown";
@@ -39,6 +39,8 @@ export default function App() {
   const agent = useCommerceAgent();
   const [selectedSkill, setSelectedSkill] = useState<PublishedSkill | null>(null);
   const [catalogSource, setCatalogSource] = useState<"cj" | "multi" | "fixture" | null>(null);
+  const [catalogError, setCatalogError] = useState("");
+  const [catalogRevision, setCatalogRevision] = useState(0);
   const [purchaseRevision, setPurchaseRevision] = useState(0);
   const [planPickerOpen, setPlanPickerOpen] = useState(false);
   const [slashMenuOpen, setSlashMenuOpen] = useState(false);
@@ -63,17 +65,19 @@ export default function App() {
   }, [view]);
   useEffect(() => {
     let active = true;
-    void agent.workspaceRequest("/catalog?page_size=1").then(data => {
+    setCatalogError("");
+    void agent.workspaceRequest("/catalog/capabilities").then(data => {
       if (!active) return;
-      const source = data.source === "multi" ? "multi" : data.source === "cj" ? "cj" : "fixture";
+      if (!["multi", "cj", "fixture"].includes(String(data.source))) throw new Error("商品库能力信息无效");
+      const source = data.source as "multi" | "cj" | "fixture";
       setCatalogSource(source);
       if (source !== "fixture" && readView() === "shopping") {
         setView("catalog");
         window.scrollTo({ top: 0 });
       }
-    }).catch(() => {});
+    }).catch(() => { if (active) setCatalogError("商品库暂时无法连接，请重试。"); });
     return () => { active = false; };
-  }, [agent.workspaceRequest]);
+  }, [agent.workspaceRequest, catalogRevision]);
   const [contextBusy,setContextBusy] = useState(false);
   const busy = agent.status === "running" || contextBusy;
   const favoriteIds = useMemo(
@@ -307,7 +311,7 @@ export default function App() {
   </div>;
   const navItems: { id: View; label: string; icon: string }[] = [
     { id: "shopping", label: "我的选购", icon: "bag" },
-    ...(catalogSource === "cj" || catalogSource === "multi" ? [{ id: "catalog" as View, label: catalogSource === "multi" ? "多平台商品库" : "CJ 商品库", icon: "globe" }] : []),
+    ...(catalogSource !== "fixture" ? [{ id: "catalog" as View, label: catalogSource === "multi" ? "多平台商品库" : catalogSource === "cj" ? "CJ 商品库" : "商品库", icon: "globe" }] : []),
     { id: "orders", label: "我的订单", icon: "bag" },
     { id: "history", label: "对话历史", icon: "chat" },
     { id: "favorites", label: "心选收藏", icon: "heart" },
@@ -386,7 +390,7 @@ export default function App() {
               <span>Findora</span>
               <span>／</span>
               <span>
-                {view === "catalog" ? catalogSource === "multi" ? "多平台商品库" : "CJ 商品库" : view === "orders" ? "我的订单" : view === "skills" ? "我的 Skill" : view === "preferences" ? "长期偏好" : view === "history"
+                {view === "catalog" ? catalogSource === "multi" ? "多平台商品库" : catalogSource === "cj" ? "CJ 商品库" : "商品库" : view === "orders" ? "我的订单" : view === "skills" ? "我的 Skill" : view === "preferences" ? "长期偏好" : view === "history"
                   ? "选购对话历史"
                   : view === "favorites"
                     ? "心选收藏"
@@ -420,6 +424,8 @@ export default function App() {
               </button>
             ))}
           </nav>
+          {catalogError && <div role="alert"><p>{catalogError}</p><button onClick={() => setCatalogRevision(value => value + 1)}>重试连接商品库</button></div>}
+          {view === "catalog" && catalogSource === null && !catalogError && <p role="status">正在连接商品库…</p>}
           {view === "orders" && <MyOrders request={agent.workspaceRequest} confirmations={agent.confirmations} busy={agent.confirmationBusy || busy} error={agent.confirmationError} onPrepare={agent.prepareCancel} onResolve={agent.resolveConfirmation} onRefresh={agent.refreshConfirmations} onViewProduct={setDetail} onBrowse={() => switchView(catalogSource === "cj" || catalogSource === "multi" ? "catalog" : "shopping")} purchaseRevision={purchaseRevision} />}
           {(view === "skills" || view === "preferences") && <BuyerWorkspace key={view} mode={view} busy={busy}
             request={agent.workspaceRequest} onSkillsChanged={agent.refreshSkills} />}

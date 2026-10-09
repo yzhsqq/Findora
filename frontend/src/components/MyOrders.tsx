@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import ConfirmationCards from "./ConfirmationCards";
 import type { ProductCard, PurchaseRecord, TradeConfirmation } from "../types";
-import { readProducts } from "../lib/commerceClient";
+import { readProducts } from "../lib/productCards";
 import { cjPurchaseUrl } from "../lib/cjProductLink";
 import { money, ProductImage } from "./ProductCards";
 import "./buyerWorkspace.css";

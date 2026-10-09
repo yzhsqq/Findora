@@ -1,11 +1,11 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { readProducts } from "../lib/commerceClient";
+import { readProducts } from "../lib/productCards";
 import type { ProductCard } from "../types";
 import ProductCards from "./ProductCards";
 import "./cjCatalogPage.css";
 
 type Request = (path: string, method?: string, body?: Record<string, unknown>) => Promise<Record<string, unknown>>;
-type Snapshot = { total: number; all_count: number; detail_count: number; inventory_count: number; page: number; products: ProductCard[]; categories: string[]; source_counts: Record<string, number> };
+type Snapshot = { total: number; all_count: number; detail_count: number; inventory_count: number; page: number; products: ProductCard[]; categories: string[]; source_counts: Record<string, number>; unavailable: string[] };
 const CATEGORIES = ["", "Bags & Shoes", "Sports & Outdoors", "Consumer Electronics", "Phones & Accessories", "Home, Garden & Furniture", "Health, Beauty & Hair", "Pet Supplies", "Computer & Office", "Toys, Kids & Babies"];
 const LABELS = ["全部", "箱包鞋履", "户外运动", "消费电子", "手机配件", "家居园艺", "美妆个护", "宠物用品", "电脑办公", "玩具母婴"];
 
@@ -25,6 +25,7 @@ export default function CjCatalogPage({ request, multiPlatform = false, favorite
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
   const [busy, setBusy] = useState(true);
   const [error, setError] = useState("");
+  const [revision, setRevision] = useState(0);
   useEffect(() => {
     let active = true;
     const params = new URLSearchParams({ query, category, platform, page: String(page), page_size: "24" });
@@ -37,11 +38,13 @@ export default function CjCatalogPage({ request, multiPlatform = false, favorite
         page: Number(data.page) || page, products: readProducts(data.products),
         categories: Array.isArray(data.categories) ? data.categories.filter((c): c is string => typeof c === "string") : [],
         source_counts: data.source_counts && typeof data.source_counts === "object" ? data.source_counts as Record<string, number> : {},
+        unavailable: data.source_status && typeof data.source_status === "object"
+          ? Object.entries(data.source_status).filter(([, status]) => status === "unavailable").map(([name]) => ({ cj: "CJ", amazon: "Amazon", ebay: "eBay" }[name] || name)) : [],
       });
     }).catch(e => { if (active) setError(e instanceof Error ? e.message : "商品目录读取失败"); })
       .finally(() => { if (active) setBusy(false); });
     return () => { active = false; };
-  }, [request, query, category, page, platform]);
+  }, [request, query, category, page, platform, revision]);
   const categories = multiPlatform ? ["", ...(snapshot?.categories || [])] : CATEGORIES;
   const categoryLabel = (value: string) => LABELS[CATEGORIES.indexOf(value)] || ({ "Home & Kitchen": "家居厨房", "Tools & Home Improvement": "工具与家装", "Electronics": "电子产品", "Patio, Lawn & Garden": "庭院园艺", "Industrial & Scientific": "工业与科研", "Arts, Crafts & Sewing": "艺术手工与缝纫", "Pet Supplies": "宠物用品", "Health & Household": "健康家居", "Beauty & Personal Care": "美妆个护", "Baby": "母婴用品", "Baby Products": "母婴用品", "Office Products": "办公用品", "Clothing, Shoes & Jewelry": "服饰鞋包",
   "Grocery & Gourmet Food": "食品与杂货", "Toys & Games": "玩具与游戏", "Collectibles & Fine Art": "收藏品与艺术品",
@@ -91,7 +94,8 @@ export default function CjCatalogPage({ request, multiPlatform = false, favorite
       </div>
     </div>
     <div className="cj-list-heading" id="catalog-results"><div><span>EXPLORE / 商品目录</span><h2>{query ? `“${query}”的搜索结果` : category ? categoryLabel(category) : "逛逛全部商品"}</h2></div><span>共 {snapshot?.total.toLocaleString("zh-CN") ?? "—"} 件 · 商品名称、属性或编号匹配</span></div>
-    {error && <p className="cj-error" role="alert">{error}</p>}
+    {error && <div className="cj-error" role="alert">{error} <button onClick={() => setRevision(value => value + 1)}>重试读取商品</button></div>}
+    {!busy && !error && !!snapshot?.unavailable.length && <div className="cj-error" role="status">{snapshot.unavailable.join("、")} 暂时无法读取，当前商品与统计仅包含可用平台。 <button onClick={() => setRevision(value => value + 1)}>重试全部平台</button></div>}
     {busy && <p className="cj-loading" role="status">正在读取{multiPlatform ? "多平台" : " CJ "}商品快照…</p>}
     {!busy && !error && snapshot && (snapshot.products.length ? <>
       <ProductCards products={snapshot.products} favoriteIds={favoriteIds} comparedIds={comparedIds} onFavorite={onFavorite} onCompare={onCompare} onDetail={onDetail} />
