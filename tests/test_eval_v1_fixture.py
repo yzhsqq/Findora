@@ -29,9 +29,9 @@ def test_dataset_validation_entrypoint_includes_official_eval_gate():
 def test_every_official_bucket_has_dev_and_release_coverage():
     """70/30 不能靠把整个场景切到同一侧来凑数。"""
     root = Path(__file__).resolve().parents[1] / "eval" / "v1"
-    product = [json.loads(line) for line in (root / "product_retrieval.jsonl").read_text().splitlines() if line]
-    knowledge = [json.loads(line) for line in (root / "knowledge_retrieval.jsonl").read_text().splitlines() if line]
-    agent = yaml.safe_load((root / "agent_cases.yaml").read_text())["cases"]
+    product = [json.loads(line) for line in (root / "product_retrieval.jsonl").read_text(encoding="utf-8").splitlines() if line]
+    knowledge = [json.loads(line) for line in (root / "knowledge_retrieval.jsonl").read_text(encoding="utf-8").splitlines() if line]
+    agent = yaml.safe_load((root / "agent_cases.yaml").read_text(encoding="utf-8"))["cases"]
 
     for rows, bucket_key in ((product, "kind"), (knowledge, "kind"), (agent, "scenario")):
         coverage: dict[str, set[str]] = {}
@@ -42,9 +42,9 @@ def test_every_official_bucket_has_dev_and_release_coverage():
 
 def test_official_cases_have_executable_metadata_and_real_multiturn_scenarios():
     root = Path(__file__).resolve().parents[1] / "eval" / "v1"
-    product = [json.loads(line) for line in (root / "product_retrieval.jsonl").read_text().splitlines() if line]
-    knowledge = [json.loads(line) for line in (root / "knowledge_retrieval.jsonl").read_text().splitlines() if line]
-    agent = yaml.safe_load((root / "agent_cases.yaml").read_text())["cases"]
+    product = [json.loads(line) for line in (root / "product_retrieval.jsonl").read_text(encoding="utf-8").splitlines() if line]
+    knowledge = [json.loads(line) for line in (root / "knowledge_retrieval.jsonl").read_text(encoding="utf-8").splitlines() if line]
+    agent = yaml.safe_load((root / "agent_cases.yaml").read_text(encoding="utf-8"))["cases"]
 
     assert all(
         row.get("template_family")
@@ -66,7 +66,7 @@ def test_official_cases_have_executable_metadata_and_real_multiturn_scenarios():
 def test_release_agent_cases_cover_every_required_capability():
     """release 不能把知识或长上下文等整类能力留在 dev。"""
     root = Path(__file__).resolve().parents[1] / "eval" / "v1"
-    agent = yaml.safe_load((root / "agent_cases.yaml").read_text())['cases']
+    agent = yaml.safe_load((root / "agent_cases.yaml").read_text(encoding="utf-8"))['cases']
     release_capabilities = {
         capability
         for row in agent if row["split"] == "release"
@@ -79,7 +79,7 @@ def test_release_agent_cases_cover_every_required_capability():
 def test_order_and_safety_cases_include_a_complete_shipping_address():
     """订单题要以确认策略为唯一变量，不能因地址缺失产生假失败或假通过。"""
     root = Path(__file__).resolve().parents[1] / "eval" / "v1"
-    agent = yaml.safe_load((root / "agent_cases.yaml").read_text())["cases"]
+    agent = yaml.safe_load((root / "agent_cases.yaml").read_text(encoding="utf-8"))["cases"]
 
     for row in agent:
         if row["scenario"] not in {"order", "safety"}:
@@ -92,12 +92,12 @@ def test_order_and_safety_cases_include_a_complete_shipping_address():
 
 def test_order_and_safety_gold_products_are_orderable_to_cn():
     root = Path(__file__).resolve().parents[1]
-    agent = yaml.safe_load((root / "eval" / "v1" / "agent_cases.yaml").read_text())["cases"]
+    agent = yaml.safe_load((root / "eval" / "v1" / "agent_cases.yaml").read_text(encoding="utf-8"))["cases"]
     catalog = {
         row["product_id"]: row
         for row in (
             json.loads(line)
-            for line in (root / "data" / "catalog-v1.jsonl").read_text().splitlines()
+            for line in (root / "data" / "catalog-v1.jsonl").read_text(encoding="utf-8").splitlines()
             if line
         )
     }
@@ -115,12 +115,12 @@ def test_order_and_safety_gold_products_are_orderable_to_cn():
 def test_order_confirmation_names_an_in_stock_sku():
     """订单第二轮点名的规格必须可购，不能要求 Agent 对缺货 SKU 下单。"""
     root = Path(__file__).resolve().parents[1]
-    agent = yaml.safe_load((root / "eval" / "v1" / "agent_cases.yaml").read_text())["cases"]
+    agent = yaml.safe_load((root / "eval" / "v1" / "agent_cases.yaml").read_text(encoding="utf-8"))["cases"]
     catalog = {
         row["product_id"]: row
         for row in (
             json.loads(line)
-            for line in (root / "data" / "catalog-v1.jsonl").read_text().splitlines()
+            for line in (root / "data" / "catalog-v1.jsonl").read_text(encoding="utf-8").splitlines()
             if line
         )
     }
@@ -140,7 +140,7 @@ def test_order_confirmation_names_an_in_stock_sku():
 
 def test_long_context_cases_start_with_an_actual_product_lookup():
     root = Path(__file__).resolve().parents[1] / "eval" / "v1"
-    agent = yaml.safe_load((root / "agent_cases.yaml").read_text())["cases"]
+    agent = yaml.safe_load((root / "agent_cases.yaml").read_text(encoding="utf-8"))["cases"]
 
     for row in agent:
         if row["scenario"] == "long_context":

@@ -29,11 +29,11 @@ def env(tmp_path):
         "sub_agents": {"search": {"name": "search", "system_prompt": "检索正文"},
                        "trade": {"name": "trade", "system_prompt": "交易正文"}}}
     baseline_path, candidate_path = tmp_path / "baseline.yml", tmp_path / "candidate.yml"
-    baseline_path.write_text(yaml.safe_dump(prompt, allow_unicode=True))
+    baseline_path.write_text(yaml.safe_dump(prompt, allow_unicode=True), encoding="utf-8")
     initial = registry.bootstrap(baseline_path)
     baseline = initial["effective_version"]["version_id"]
     prompt["main_agent"]["system_prompt"] = "候选正文"
-    candidate_path.write_text(yaml.safe_dump(prompt, allow_unicode=True))
+    candidate_path.write_text(yaml.safe_dump(prompt, allow_unicode=True), encoding="utf-8")
     candidate = registry.import_version(candidate_path)["version_id"]
     return SimpleNamespace(registry=registry, path=path, contract=contract, initial=initial,
         baseline=baseline, candidate=candidate, baseline_path=baseline_path, candidate_path=candidate_path, tmp=tmp_path)
