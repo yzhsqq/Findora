@@ -4,7 +4,7 @@ from __future__ import annotations
 from sqlalchemy import JSON, Boolean, CheckConstraint, Index, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.infrastructure.persistence.sql.tables import Base
+from app.infrastructure.persistence.sql.tables import Base, _BigInt
 
 
 class SkuInventoryRow(Base):
@@ -13,8 +13,11 @@ class SkuInventoryRow(Base):
     sku_id: Mapped[str] = mapped_column(String(64), primary_key=True)
     product_id: Mapped[str] = mapped_column(String(64))
     title: Mapped[str] = mapped_column(String(255))
-    stock: Mapped[int] = mapped_column(Integer)
-    unit_price_minor: Mapped[int] = mapped_column(Integer)
+    # 库存与单价用 _BigInt（MySQL BIGINT / SQLite INTEGER）：校验上限是 2^63-1，
+    # 而 MySQL 的 INT 只有 32 位，超过 2^31-1 会溢出。金额以最小货币单位存储，
+    # 溢出是静默损坏而非报错，必须对齐成 64 位。
+    stock: Mapped[int] = mapped_column(_BigInt)
+    unit_price_minor: Mapped[int] = mapped_column(_BigInt)
     currency: Mapped[str] = mapped_column(String(8))
     __table_args__ = (
         CheckConstraint("stock >= 0", name="ck_trade_stock_nonnegative"),

@@ -26,6 +26,7 @@ from sqlalchemy import (
     UniqueConstraint,
     func,
 )
+from sqlalchemy.dialects import mysql
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 # 自增主键类型：SQLite 降为 INTEGER（其 AUTOINCREMENT 只认 INTEGER PRIMARY KEY），
@@ -33,6 +34,10 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 _AutoPk = BigInteger().with_variant(Integer, "sqlite")
 # 金额类（最小货币单位）同理，保证两边都能建表
 _BigInt = BigInteger().with_variant(Integer, "sqlite")
+# 大文本：MySQL 的 TEXT 上限 65535 字节，而 agent_session_states.state_json 实测最大
+# 175923 字节（Agent 全量状态快照）。不升 LONGTEXT 会在写入时截断或直接报错，
+# 且从 SQLite 迁移时不会立刻暴露。SQLite 的 TEXT 本就无长度上限，无需变体。
+_LongText = Text().with_variant(mysql.LONGTEXT, "mysql")
 
 
 class Base(DeclarativeBase):
@@ -60,7 +65,7 @@ class ConversationMessageRow(Base):
     turn_index: Mapped[int] = mapped_column(Integer)
     buyer_id: Mapped[str] = mapped_column(String(64), default="")
     role: Mapped[str] = mapped_column(String(16))  # buyer / agent
-    content: Mapped[str] = mapped_column(Text)
+    content: Mapped[str] = mapped_column(_LongText)
     model: Mapped[str] = mapped_column(String(64), default="")
     latency_ms: Mapped[int] = mapped_column(Integer, default=0)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
@@ -84,7 +89,7 @@ class AgentSessionStateRow(Base):
     __tablename__ = "agent_session_states"
 
     session_id: Mapped[str] = mapped_column(String(64), primary_key=True)
-    state_json: Mapped[str] = mapped_column(Text)
+    state_json: Mapped[str] = mapped_column(_LongText)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime, server_default=func.now(), onupdate=func.now(),
     )

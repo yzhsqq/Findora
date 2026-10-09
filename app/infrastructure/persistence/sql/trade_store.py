@@ -1,13 +1,21 @@
-"""SQLite 交易台账：确认、库存、订单和操作幂等键共用一个真实事务。
+"""交易台账：确认、库存、订单和操作幂等键共用一个真实事务。
 
-仅支持 SQLite。BEGIN IMMEDIATE 在读取确认前取得写锁，因此不同连接、
-不同进程执行同一确认也只会产生一次交易。文件仓储不能提供这个保证。
+幂等保证分两套机制：
+  - SQLite：BEGIN IMMEDIATE 在读取确认前取得整库写锁，不同连接、不同进程执行
+    同一确认也只会产生一次交易。
+  - MySQL/InnoDB：行锁 + `SELECT ... FOR UPDATE` + 唯一索引。resolve_confirmation
+    对确认行加 FOR UPDATE 串行化同一确认的并发决议；prepare_confirmation 靠
+    operation_id 唯一约束，插入撞键时回滚重读幂等返回。
+
+文件仓储不能提供这些保证。
 """
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import hmac
 import json
+import time
 import uuid
 from contextlib import asynccontextmanager
 from dataclasses import fields
@@ -15,6 +23,7 @@ from datetime import datetime, timezone
 from typing import Callable, Literal
 
 from sqlalchemy import func, select, text, update
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
 
 from app.domain.catalog.money import Money
@@ -29,7 +38,18 @@ from app.infrastructure.persistence.sql.trade_tables import (
 )
 
 _SCOPE = {"amount_scope": "merchandise_only", "order_kind": "purchase_intent"}
-_MAX_SQLITE_INT = 2**63 - 1
+# 64 位有符号整数上限：SQLite INTEGER 与 MySQL BIGINT 一致，作为库存/金额/数量的校验上限。
+_MAX_INT = 2**63 - 1
+
+
+def _is_retryable_ddl(err: BaseException) -> bool:
+    """建表失败是否属于并发初始化的瞬时冲突（锁竞争或同名表已存在）。
+
+    "already exists"：两个进程都通过了 checkfirst 才同时 CREATE，输的一方报
+    表已存在，重试时 checkfirst 会直接跳过。其余错误立即上抛。
+    """
+    message = str(err).lower()
+    return any(marker in message for marker in ("lock", "busy", "already exists"))
 
 
 def _utc(value: datetime) -> datetime:
@@ -51,7 +71,7 @@ def _string(value: object, name: str, maximum: int = 255) -> str:
 
 
 def _integer(value: object, name: str, minimum: int = 0) -> int:
-    if type(value) is not int or not minimum <= value <= _MAX_SQLITE_INT:
+    if type(value) is not int or not minimum <= value <= _MAX_INT:
         raise TradeStoreError("INVALID_ARGUMENT", f"{name} 必须为不小于 {minimum} 的整数")
     return value
 
@@ -108,8 +128,8 @@ def _normalize_create(payload: dict) -> dict:
 
 class SqlTradeStore(TradeStore):
     def __init__(self, engine: AsyncEngine, *, clock: Callable[[], datetime] | None = None) -> None:
-        if engine.dialect.name != "sqlite":
-            raise ValueError("SqlTradeStore 当前仅支持 SQLite，不能对其他数据库声称事务兼容")
+        if engine.dialect.name not in ("sqlite", "mysql"):
+            raise ValueError("SqlTradeStore 仅支持 SQLite 与 MySQL，不能对其他数据库声称事务兼容")
         self._engine = engine
         self._sessions = async_sessionmaker(engine, expire_on_commit=False)
         self._clock = clock or (lambda: datetime.now(timezone.utc))
@@ -118,8 +138,9 @@ class SqlTradeStore(TradeStore):
     async def _transaction(self):
         async with self._sessions() as db:
             try:
-                # 必须先取得数据库写锁，再检查库存、状态和幂等键。
-                await db.execute(text("BEGIN IMMEDIATE"))
+                if self._engine.dialect.name == "sqlite":
+                    # 必须先取得数据库写锁，再检查库存、状态和幂等键。
+                    await db.execute(text("BEGIN IMMEDIATE"))
                 yield db
                 await db.commit()
             except BaseException:
@@ -127,16 +148,36 @@ class SqlTradeStore(TradeStore):
                 await db.rollback()
                 raise
 
-    async def initialize_inventory(self, products: list[Product]) -> None:
-        async with self._engine.connect() as connection:
+    async def _ensure_schema(self) -> None:
+        """幂等建表。
+
+        SQLite：BEGIN IMMEDIATE 串行化 checkfirst 与 CREATE，避免首次多进程并发建表互撞。
+        MySQL：checkfirst 与 CREATE 之间仍可能并发（两个进程都看不到表、都 CREATE，
+        输的一方报 "already exists"），按锁/已存在重试；其余错误立即上抛。
+        """
+        if self._engine.dialect.name == "sqlite":
+            async with self._engine.connect() as connection:
+                try:
+                    await connection.execute(text("BEGIN IMMEDIATE"))
+                    await connection.run_sync(Base.metadata.create_all)
+                    await connection.commit()
+                except BaseException:
+                    await connection.rollback()
+                    raise
+            return
+        deadline = time.monotonic() + 8.0
+        for attempt in range(20):
             try:
-                # create_all 的 checkfirst 也必须串行，否则首次多进程启动会同时建表。
-                await connection.execute(text("BEGIN IMMEDIATE"))
-                await connection.run_sync(Base.metadata.create_all)
-                await connection.commit()
-            except BaseException:
-                await connection.rollback()
-                raise
+                async with self._engine.begin() as connection:
+                    await connection.run_sync(Base.metadata.create_all)
+                return
+            except SQLAlchemyError as err:
+                if not _is_retryable_ddl(err) or attempt == 19 or time.monotonic() >= deadline:
+                    raise
+                await asyncio.sleep(min(0.05, max(0.0, deadline - time.monotonic())))
+
+    async def initialize_inventory(self, products: list[Product]) -> None:
+        await self._ensure_schema()
         async with self._transaction() as db:
             seen: set[str] = set()
             for product in products:
@@ -221,7 +262,22 @@ class SqlTradeStore(TradeStore):
                 created_at=now.isoformat(), resolved_at=None,
             )
             db.add(row)
-            await db.flush()
+            try:
+                await db.flush()
+            except IntegrityError:
+                # 并发下另一事务已用同一 operation_id 抢先提交（唯一约束）。
+                # 回滚后重读：SQLAlchemy 会在下一次查询自动开启新事务、取新快照，
+                # 因此能看到对方已提交的行，走幂等分支返回，而不是把唯一键冲突抛给调用方。
+                await db.rollback()
+                existing = await db.scalar(
+                    select(TradeConfirmationRow).where(TradeConfirmationRow.operation_id == operation_id)
+                )
+                if existing is None:  # 唯一约束保证必然存在，此处仅作防御性兜底
+                    raise
+                self._owner(existing, buyer_id, session_id)
+                if existing.request_hash != request_hash:
+                    raise TradeStoreError("OPERATION_CONFLICT", "同一操作编号不能更改商品、数量、地址或操作")
+                return self._confirmation(existing)
             return self._confirmation(row)
 
     async def get_confirmation(self, confirmation_id: str, *, buyer_id: str, session_id: str) -> dict:
@@ -246,7 +302,7 @@ class SqlTradeStore(TradeStore):
         if type(approved) is not bool:
             raise TradeStoreError("INVALID_ARGUMENT", "确认决议必须为布尔值")
         async with self._transaction() as db:
-            row = await self._load_confirmation(db, confirmation_id, buyer_id, session_id)
+            row = await self._load_confirmation(db, confirmation_id, buyer_id, session_id, for_update=True)
             if (not isinstance(snapshot_hash, str) or len(snapshot_hash) != 64
                     or any(character not in "0123456789abcdef" for character in snapshot_hash)
                     or not hmac.compare_digest(row.snapshot_hash, snapshot_hash)):
@@ -317,7 +373,7 @@ class SqlTradeStore(TradeStore):
         for line in lines:
             outcome = await db.execute(update(SkuInventoryRow).where(
                 SkuInventoryRow.sku_id == line.sku_id, SkuInventoryRow.product_id == line.product_id,
-                SkuInventoryRow.stock <= _MAX_SQLITE_INT - line.quantity,
+                SkuInventoryRow.stock <= _MAX_INT - line.quantity,
             ).values(stock=SkuInventoryRow.stock + line.quantity))
             if outcome.rowcount != 1:
                 raise TradeStoreError("INVENTORY_MIGRATION_REQUIRED", "旧订单 SKU 缺少持久库存记录，请完成迁移后再取消")
@@ -338,10 +394,15 @@ class SqlTradeStore(TradeStore):
         if row.buyer_id != buyer_id or row.session_id != session_id:
             raise TradeStoreError("OWNER_MISMATCH", "无权访问此买家或会话的交易确认")
 
-    async def _load_confirmation(self, db: AsyncSession, confirmation_id: str, buyer_id: str, session_id: str) -> TradeConfirmationRow:
+    async def _load_confirmation(self, db: AsyncSession, confirmation_id: str, buyer_id: str, session_id: str, *, for_update: bool = False) -> TradeConfirmationRow:
         _string(buyer_id, "buyer_id", 64)
         _string(session_id, "session_id", 64)
-        row = await db.get(TradeConfirmationRow, confirmation_id)
+        stmt = select(TradeConfirmationRow).where(TradeConfirmationRow.confirmation_id == confirmation_id)
+        if for_update and self._engine.dialect.name == "mysql":
+            # 锁定确认行，串行化同一确认的并发决议，防止"同一确认产生两笔订单"。
+            # SQLite 由 BEGIN IMMEDIATE 整库串行化，其方言也会忽略 FOR UPDATE。
+            stmt = stmt.with_for_update()
+        row = await db.scalar(stmt)
         if row is None:
             raise TradeStoreError("NOT_FOUND", "交易确认不存在")
         self._owner(row, buyer_id, session_id)

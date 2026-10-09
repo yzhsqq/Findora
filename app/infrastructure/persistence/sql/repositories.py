@@ -23,6 +23,7 @@ import logging
 import asyncio
 import sqlite3
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Optional
 
 from sqlalchemy import delete, event, func, select
@@ -56,16 +57,19 @@ from app.infrastructure.persistence.sql.tables import (
 logger = logging.getLogger(__name__)
 
 
-def create_engine(database_url: str) -> AsyncEngine:
+def create_engine(database_url: str, poolclass=None) -> AsyncEngine:
     """创建异步引擎。连接池参数必须按驱动分开给。
 
     SQLite：不能传 pool_size / max_overflow（对其默认池无意义），pool_recycle 也无处可用
     （本地文件连接不会被服务端回收）。开 WAL 让读写不互斥，缓解 worker 与 API
     双进程并发写时的 "database is locked"。
     服务型数据库：必需 pool_pre_ping，否则空闲连接被服务端回收后首次查询必报断连。
+
+    poolclass：高频短事务的调用方（如 AG-UI 运行日志）可传 NullPool，
+    让每次操作新建并关闭连接，避免同一 SQLite 文件上长期并存多个池化连接。
     """
     if database_url.startswith("sqlite"):
-        engine = create_async_engine(database_url, echo=False)
+        engine = create_async_engine(database_url, echo=False, poolclass=poolclass)
 
         @event.listens_for(engine.sync_engine, "connect")
         def _enable_wal(dbapi_conn, _record):  # noqa: ANN001
@@ -95,11 +99,38 @@ def create_engine(database_url: str) -> AsyncEngine:
     )
 
 
+def run_migrations(database_url: str) -> None:
+    """同步执行 Alembic 迁移到最新版本。
+
+    须在独立线程调用（内部 env.py 自建事件循环）。schema 从此版本化：新增/变更表
+    一律写 Alembic 迁移，不再靠 create_all 隐式建表。
+    """
+    from alembic import command
+    from alembic.config import Config
+
+    # 无文件的 Config：不读 alembic.ini，也就不会触发 env.py 的 fileConfig——
+    # 否则它会在宿主进程里重配 root logger（换 handler/level），污染应用与 pytest 的日志。
+    root = Path(__file__).resolve().parents[4]  # app/infrastructure/persistence/sql -> 项目根
+    cfg = Config()
+    cfg.set_main_option("script_location", str(root / "migrations"))
+    cfg.set_main_option("sqlalchemy.url", database_url)
+    command.upgrade(cfg, "head")
+
+
 async def bootstrap_schema(engine: AsyncEngine) -> None:
-    """幂等建表。生产环境应改用 Alembic 迁移。"""
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-    logger.info("数据库表结构已就绪（%s）", engine.url.get_backend_name())
+    """把数据库 schema 迁移到最新版本（Alembic）。
+
+    SQLite 内存库（``:memory:``）例外：Alembic 在独立线程用 NullPool 另开连接，
+    而内存库每条连接各是一份独立库，迁移建的表测试引擎看不到；内存库本就每次全新、
+    无需版本化，回退到同引擎 create_all（与迁移基线同源，均出自 Base.metadata）。
+    """
+    if engine.url.get_backend_name() == "sqlite" and engine.url.database == ":memory:":
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+        return
+    url = engine.url.render_as_string(hide_password=False)
+    await asyncio.to_thread(run_migrations, url)
+    logger.info("数据库 schema 已迁移至最新（%s）", engine.url.get_backend_name())
 
 
 class SqlSessionStore(SqlFencedSessionStore):

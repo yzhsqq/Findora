@@ -4,6 +4,7 @@ import asyncio
 
 import aiosqlite
 import pytest
+import sqlalchemy
 
 from app.infrastructure.ag_ui_journal import AGUIJournal
 from tests.test_ag_ui_journal import body
@@ -51,6 +52,9 @@ async def test_invalid_database_is_not_retried_as_lock_contention(tmp_path):
     path = tmp_path / "invalid.db"
     path.write_bytes(b"not a SQLite database" * 100)
     journal = AGUIJournal(path)
-    with pytest.raises(aiosqlite.DatabaseError, match="not a database"):
+    # 存储层改走 SQLAlchemy 后，底层 sqlite3.DatabaseError 被包装成
+    # sqlalchemy.exc.DatabaseError（原类型成为 __cause__）。断言的语义不变：
+    # 非锁错误的报错必须立刻抛出，不能按锁竞争重试拖到超时。
+    with pytest.raises(sqlalchemy.exc.DatabaseError, match="not a database"):
         await asyncio.wait_for(journal.initialize(), 1)
     assert not journal._initialized

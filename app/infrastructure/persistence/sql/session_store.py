@@ -11,7 +11,7 @@ from contextlib import asynccontextmanager
 from dataclasses import replace
 from datetime import datetime, timezone
 
-from sqlalchemy import Integer, String, Text, Float, select, text, update
+from sqlalchemy import Double, Integer, String, select, text, update
 from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -19,7 +19,12 @@ from app.domain.session.ports.session_store import (
     SessionClaim, SessionNotFound, SessionOwnerMismatch, SessionOwnerUnbound,
     SessionStateCorrupt, SessionStore, StaleSessionWrite,
 )
-from app.infrastructure.persistence.sql.tables import AgentSessionStateRow, Base, ConversationSessionRow
+from app.infrastructure.persistence.sql.tables import (
+    AgentSessionStateRow,
+    Base,
+    ConversationSessionRow,
+    _LongText,
+)
 
 
 class SessionWriteClaimRow(Base):
@@ -45,7 +50,7 @@ class ContextCheckpointRow(Base):
     session_id: Mapped[str] = mapped_column(String(256), index=True)
     buyer_id: Mapped[str] = mapped_column(String(128))
     revision: Mapped[int] = mapped_column(Integer)
-    payload: Mapped[str] = mapped_column(Text)
+    payload: Mapped[str] = mapped_column(_LongText)
 
 
 class ContextOperationRow(Base):
@@ -56,8 +61,10 @@ class ContextOperationRow(Base):
     request_id: Mapped[str] = mapped_column(String(128))
     expected_revision: Mapped[int] = mapped_column(Integer)
     status: Mapped[str] = mapped_column(String(32))
-    payload: Mapped[str] = mapped_column(Text, default='{}')
-    deadline: Mapped[float] = mapped_column(Float, default=0)
+    payload: Mapped[str] = mapped_column(_LongText, default='{}')
+    # Double 而非 Float：MySQL 的 FLOAT 是 4 字节，装不下 Unix 秒（1.79e9）的
+    # 亚秒精度，超时判断会失准。SQLite 侧 Double 仍是 REAL，行为不变。
+    deadline: Mapped[float] = mapped_column(Double, default=0)
 
 
 def _identifier(value: str, label: str) -> str:
@@ -76,12 +83,24 @@ def _valid_json(state_json: str) -> None:
 
 class SqlFencedSessionStore(SessionStore):
     def __init__(self, engine: AsyncEngine) -> None:
-        if engine.dialect.name != "sqlite":
-            raise ValueError("持久会话 fencing 当前仅交付 SQLite 实现")
+        if engine.dialect.name not in ("sqlite", "mysql"):
+            raise ValueError(f"持久会话 fencing 未支持 {engine.dialect.name} 方言")
         self._engine = engine
         self._sessions = async_sessionmaker(engine, expire_on_commit=False)
         self._ready = False
         self._init_lock = asyncio.Lock()
+
+    async def _begin_write(self, connection) -> None:
+        """进入写事务。
+
+        SQLite 是单写者模型，必须显式 BEGIN IMMEDIATE 提前拿写锁，否则默认 DEFERRED
+        会在提交时才升级锁，并发下直接报 "database is locked"。
+        MySQL/InnoDB 不需等价语句：save_claim 的 fencing 靠
+        `UPDATE ... WHERE revision=? AND fence=?` 的行锁 + 唯一索引保证 CAS 原子性，
+        显式加锁反而会放大锁范围。
+        """
+        if self._engine.dialect.name == "sqlite":
+            await connection.execute(text("BEGIN IMMEDIATE"))
 
     async def initialize(self) -> None:
         if self._ready:
@@ -91,7 +110,7 @@ class SqlFencedSessionStore(SessionStore):
                 return
             async with self._engine.connect() as connection:
                 try:
-                    await connection.execute(text("BEGIN IMMEDIATE"))
+                    await self._begin_write(connection)
                     await connection.run_sync(lambda sync: Base.metadata.create_all(sync, tables=[
                         AgentSessionStateRow.__table__, ConversationSessionRow.__table__, SessionWriteClaimRow.__table__,
                         TaskAccessBindingRow.__table__, ContextCheckpointRow.__table__, ContextOperationRow.__table__,
@@ -107,7 +126,7 @@ class SqlFencedSessionStore(SessionStore):
         await self.initialize()
         async with self._sessions() as db:
             try:
-                await db.execute(text("BEGIN IMMEDIATE"))
+                await self._begin_write(db)
                 yield db
                 await db.commit()
             except BaseException:
