@@ -2,7 +2,7 @@
 # Run with: docker compose --env-file .env -f docker/docker-compose.yaml -f docker/docker-compose.cj.yaml up -d --build app
 services:
   app:
-    environment:
+    environment: &snapshot-environment
       CATALOG_SOURCE: cj
       CJ_CATALOG_PATH: /app/data/cj_catalog/cj_catalog.sqlite3
       HYBRID_RECALL_ENABLED: "1"
@@ -13,7 +13,7 @@ services:
       QUEUE_ENABLED: "0"
       REDIS_URL: ""
       SEMANTIC_CACHE_ENABLED: "0"
-    volumes:
+    volumes: &snapshot-volumes
       # Run the current working-tree source over the built image. Local
       # acceptance only, for machines that cannot pull base images to rebuild;
       # drop this once `up -d --build` works. No runtime deps changed with the
@@ -35,7 +35,10 @@ services:
 
   # Serve the locally verified `npm run build` output. This avoids pulling npm
   # packages again during a local release; rebuild frontend/dist after edits.
-  frontend_prebuilt:
+  # 替换基础 frontend，而非增加另一个绑定 5173 的服务。
+  # !reset 需要 Docker Compose >= 2.24；先在宿主机执行 npm run build。
+  frontend:
+    build: !reset null
     image: nginx:stable-alpine
     ports:
       - "5173:80"
@@ -52,3 +55,11 @@ services:
       app:
         condition: service_started
     restart: unless-stopped
+
+  worker:
+    # 快照页面走 AG-UI，不消费旧 intents 队列。显式点名 worker 仍需
+    # 配置同一模式的 Redis/QUEUE；默认启动不包含此兼容组件。
+    profiles: ["snapshot-worker"]
+    environment:
+      <<: *snapshot-environment
+    volumes: *snapshot-volumes

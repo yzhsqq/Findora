@@ -379,6 +379,37 @@ scripts/localize_ebay_catalog.py
 
 原始商品事实保留，便于后续校验、复核与展示。
 
+### 商品主快照迁移到 MySQL（可选）
+
+CJ / Amazon / eBay 三个平台的商品主快照都可一次性全量迁入 MySQL，逐行按字节长度 + SHA-256 校验无截断。用 `--platform` 选择平台（默认 `cj`）：
+
+```bash
+# 先建一个以 _snapshot_verify 结尾的隔离库（脚本的库名安全闸，防止误写业务库）
+mysql -u root -p -e "CREATE DATABASE findora_cj_snapshot_verify CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+# CJ / Amazon / eBay 各迁一次（各自建库，字符集同上）
+uv run python scripts/migrate_snapshot_to_mysql.py "mysql+asyncmy://root:<密码>@127.0.0.1:3306/findora_cj_snapshot_verify" data/cj_catalog.sqlite3 --platform cj
+uv run python scripts/migrate_snapshot_to_mysql.py "mysql+asyncmy://root:<密码>@127.0.0.1:3306/findora_amazon_snapshot_verify" data/amazon_catalog.sqlite3 --platform amazon
+uv run python scripts/migrate_snapshot_to_mysql.py "mysql+asyncmy://root:<密码>@127.0.0.1:3306/findora_ebay_snapshot_verify" data/ebay_catalog.sqlite3 --platform ebay
+```
+
+前置条件：本地 MySQL 8，`sql_mode` 含 `STRICT_TRANS_TABLES`（无严格模式会静默截断超长值），`max_allowed_packet` 足够大（单行不超过其 80%）。脚本先建 utf8mb4 + LONGTEXT 临时表，全部行校验通过才原子换名；遇非法 UTF-8 或 malformed JSON 默认中止，可加 `--skip-bad-rows` 跳过并落清单。迁移报告与跳过清单写入源库同目录（`snapshot_migration_report_*.txt`、`snapshot_skipped_*.txt`）。
+
+迁移后用独立交叉校验逐行比对字节长度 + SHA-256（刻意不 import 迁移逻辑），再做目录读取一致性冒烟：
+
+```bash
+uv run python scripts/verify_snapshot_migration.py "mysql+asyncmy://root:<密码>@127.0.0.1:3306/findora_amazon_snapshot_verify" data/amazon_catalog.sqlite3 --platform amazon
+uv run python scripts/verify_amz_ebay_mysql_path.py   # SQLite 与 MySQL 的卡片数/检索命中数一致
+uv run python scripts/verify_cj_mysql_path.py         # CJ 检索链路 SQLite 与 MySQL 结果一致
+```
+
+启用 MySQL 数据源：在 `.env` 填入对应 DSN（留空则回落到本地 SQLite）。三份 DSN 互相独立，可只切其中一个平台。**本地化派生库（含中文 FTS5）不参与迁移**——它属于可再生的 AI 派生数据，仍留在本地 SQLite，可按需由 `scripts/localize_*.py` 重新生成：
+
+```dotenv
+CJ_MYSQL_DSN=mysql+pymysql://root:<密码>@127.0.0.1:3306/findora_cj_snapshot_verify
+AMAZON_MYSQL_DSN=mysql+pymysql://root:<密码>@127.0.0.1:3306/findora_amazon_snapshot_verify
+EBAY_MYSQL_DSN=mysql+pymysql://root:<密码>@127.0.0.1:3306/findora_ebay_snapshot_verify
+```
+
 ### 混合检索与精排
 
 Findora 支持关键词检索与可选的语义检索增强机制。

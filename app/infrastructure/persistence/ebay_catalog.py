@@ -13,10 +13,12 @@ import re
 import sqlite3
 from urllib.parse import urlsplit
 
+from app.infrastructure.persistence.snapshot_import import import_records
 from app.domain.catalog.product_search_spec import ProductSearchSpec
 from app.domain.catalog.ports.retrieval_ports import EmbeddingClient, ProductVectorIndex, Reranker
 from app.infrastructure.context import ShoppingContext
 from app.infrastructure.persistence.ebay_localization import EbayLocalization, LANGUAGE_FIELDS
+from app.infrastructure.persistence.sql.readonly_mysql import ReadonlyMySQLConnection
 
 
 # eBay item ids are numeric listing ids; CJ ids are longer, so the ranges do not overlap.
@@ -225,56 +227,19 @@ def normalize(record: dict, *, fallback_timestamp: str | None = None) -> dict:
 
 
 def import_snapshot(input_path: Path, output_path: Path, *, merge: bool = False, skip_invalid: bool = False) -> dict:
-    records = json.loads(input_path.read_text(encoding="utf-8-sig"))
-    if not isinstance(records, list) or not records:
-        raise ValueError("输入必须为非空 eBay JSON 数组")
-    # Collected eBay files carry no per-record timestamp; the file mtime is the
-    # only honest observation time and is shared by the whole batch.
-    fallback_timestamp = datetime.fromtimestamp(input_path.stat().st_mtime, timezone.utc).isoformat()
-    reused = 0
-    invalid = 0
-    if merge and output_path.is_file():
-        with closing(sqlite3.connect(output_path.resolve().as_uri() + "?mode=ro", uri=True)) as db:
-            try:
-                previous = [json.loads(row[0]) for row in db.execute("SELECT raw_json FROM ebay_products")]
-            except sqlite3.OperationalError:
-                previous = []
-        reused = len(previous)
-        records = previous + records
-    normalized = {}
-    for record in records:
-        if not isinstance(record, dict):
-            raise ValueError("eBay 记录必须为对象")
-        try:
-            card = normalize(record, fallback_timestamp=fallback_timestamp)
-        except ValueError:
-            if not skip_invalid:
-                raise
-            invalid += 1
-            continue
-        key = card["product_id"]
-        previous = normalized.get(key)
-        if previous and datetime.fromisoformat(previous[0]["updated_at"].replace("Z", "+00:00")) > datetime.fromisoformat(card["updated_at"].replace("Z", "+00:00")):
-            continue
-        normalized[key] = (card, record)
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    with closing(sqlite3.connect(output_path)) as db, db:
-        db.execute("CREATE TABLE IF NOT EXISTS ebay_products (product_id TEXT PRIMARY KEY, card_json TEXT NOT NULL, raw_json TEXT NOT NULL)")
-        db.execute("DELETE FROM ebay_products")
-        db.executemany("INSERT INTO ebay_products VALUES (?,?,?)", [
-            (key, json.dumps(card, ensure_ascii=False), json.dumps(raw, ensure_ascii=False))
-            for key, (card, raw) in normalized.items()])
-    return {"products": len(normalized), "priced": sum(c[0]["price_kind"] != "unknown" for c in normalized.values()),
-            "duplicates": len(records) - len(normalized) - invalid, "reused_existing": reused,
-            "skipped_invalid": invalid, "output": str(output_path.resolve())}
+    fallback = datetime.fromtimestamp(input_path.stat().st_mtime, timezone.utc).isoformat()
+    return import_records(input_path, output_path, table="ebay_products", label="eBay",
+                          normalize=lambda record: normalize(record, fallback_timestamp=fallback), merge=merge, skip_invalid=skip_invalid)
 
 
 class EbayCatalog:
-    def __init__(self, path: Path, *, embedder: EmbeddingClient | None = None,
+    def __init__(self, path: Path, *, mysql_dsn: str | None = None,
+                 embedder: EmbeddingClient | None = None,
                  vector_index: ProductVectorIndex | None = None, reranker: Reranker | None = None,
                  hybrid_enabled: bool = False):
         self.path = path.resolve()
-        if not self.path.is_file():
+        self.mysql_dsn = mysql_dsn
+        if not mysql_dsn and not self.path.is_file():
             raise ValueError("eBay 快照不存在，请先运行 scripts/import_ebay_catalog.py")
         self.localization = EbayLocalization(self.path.with_name("ebay_localization.sqlite3"))
         self.embedder = embedder
@@ -286,6 +251,10 @@ class EbayCatalog:
         self._documents_by_id: dict[str, EbaySearchDocument] = {}
 
     def _cards(self) -> list[dict]:
+        if self.mysql_dsn:
+            with closing(ReadonlyMySQLConnection(self.mysql_dsn)) as db:
+                return [json.loads(row["card_json"]) for row in
+                        db.execute("SELECT card_json FROM ebay_products ORDER BY product_id")]
         with closing(sqlite3.connect(self.path.as_uri() + "?mode=ro", uri=True)) as db:
             return [json.loads(row[0]) for row in db.execute("SELECT card_json FROM ebay_products ORDER BY product_id")]
 

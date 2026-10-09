@@ -19,11 +19,16 @@ from pathlib import Path
 from typing import Any
 
 from app.domain.catalog.product_search_spec import ProductSearchSpec
+from app.application.ports.catalog import CatalogCapabilities
 from app.domain.catalog.ports.retrieval_ports import EmbeddingClient, ProductVectorIndex, Reranker
 from app.infrastructure.context import ShoppingContext
 from app.infrastructure.cj_product_links import product_link_fields
 from app.infrastructure.cj_catalog_snapshot import resolve_catalog_snapshot
 from app.infrastructure.persistence.cj_localization import CJLocalization
+from app.infrastructure.persistence.sql.readonly_mysql import (
+    ReadonlyMySQLConnection as _MySQLConnection,
+    scalar as _scalar,
+)
 
 
 _BASE_WORDS = {
@@ -124,13 +129,51 @@ def _terms(query: str, *, experimental_lexicon: bool = False) -> list[str]:
     return list(dict.fromkeys([*translated, *english]))[:8]
 
 
+def _json_text(column: str, path: str, *, mysql: bool) -> str:
+    """取 JSON 标量并解引号。
+
+    SQLite 的 ``json_extract`` 直接返回 SQL 文本；MySQL 返回的是 JSON 类型，
+    比较字符串前必须再包一层 ``JSON_UNQUOTE``，否则拿到的值带双引号、永远比不上。
+    """
+    if mysql:
+        return f"JSON_UNQUOTE(JSON_EXTRACT({column}, '{path}'))"
+    return f"json_extract({column}, '{path}')"
+
+
+def _variant_match(column: str, path: str, *, mysql: bool, lower: bool) -> str:
+    """``detail_json`` 里 variants 数组的成员匹配。
+
+    SQLite 走 ``json_each`` 表值函数；MySQL 没有它，改用 8.0 的 ``JSON_TABLE``。
+    两者语义等价：把数组展开成一张临时表再比对。
+    """
+    if mysql:
+        # JSON_TABLE 的 PATH 不支持通配后再取键，需写成 '$.variants[*]' + COLUMNS。
+        key = path.rsplit(".", 1)[-1]
+        expression = f"LOWER(v.{key})" if lower else f"v.{key}"
+        return (
+            f"EXISTS (SELECT 1 FROM JSON_TABLE({column}, '$.variants[*]' "
+            f"COLUMNS ({key} VARCHAR(128) PATH '{path}')) v "
+            f"WHERE {expression} = {'LOWER(%s)' if lower else '%s'})"
+        )
+    expression = f"lower(json_extract(v.value, '{path}'))" if lower else f"json_extract(v.value, '{path}')"
+    # SQLite 分支保留 COLLATE NOCASE，冻结样例的大小写行为不能变。
+    target = "lower(?)" if lower else "? COLLATE NOCASE"
+    return (
+        f"EXISTS (SELECT 1 FROM json_each({column}, '$.variants') v "
+        f"WHERE {expression} = {target})"
+    )
+
+
 class CJCatalog:
+    capabilities = CatalogCapabilities(source="cj", platforms=("cj",), local_orders=False, purchase_records=True)
+
     source = "cj"
 
     def __init__(
         self,
         path: Path,
         *,
+        mysql_dsn: str | None = None,
         experimental_lexicon: bool = False,
         embedder: EmbeddingClient | None = None,
         vector_index: ProductVectorIndex | None = None,
@@ -139,6 +182,9 @@ class CJCatalog:
         localization: CJLocalization | None = None,
     ):
         self.path = path
+        # 非空即走 MySQL。SQLite 保持默认，保证冻结样例与既有测试不受影响。
+        self.mysql_dsn = mysql_dsn
+        self._ph = "%s" if mysql_dsn else "?"
         self.experimental_lexicon = experimental_lexicon
         self.embedder = embedder
         self.vector_index = vector_index
@@ -149,7 +195,16 @@ class CJCatalog:
         self._documents: list[CJSearchDocument] | None = None
         self._documents_by_id: dict[str, CJSearchDocument] = {}
 
-    def _db(self) -> sqlite3.Connection:
+    def _params(self, args):
+        """归一化查询参数：sqlite3 不接受 None，pymysql 不接受多余空序列。"""
+        if self.mysql_dsn:
+            return args or None
+        return tuple(args)
+
+    def _db(self):
+        """返回连接；MySQL 用 DictCursor，让下游 ``row["pid"]`` 取值与 sqlite3.Row 一致。"""
+        if self.mysql_dsn:
+            return _MySQLConnection(self.mysql_dsn)
         snapshot = resolve_catalog_snapshot(self.path)
         if not snapshot.is_file():
             raise ValueError("CJ 商品快照不存在，请先运行采集脚本")
@@ -242,28 +297,32 @@ class CJCatalog:
         if (query.strip() and re.search(r"[\u3400-\u9fff]", query) and not (direct_id or direct_sku)
                 and self.localization is not None and self.localization.available()):
             return self._browse_localized(query, categories, page, page_size)
+        mysql = bool(self.mysql_dsn)
+        ph = self._ph
+        name_en = _json_text("list_json", "$.nameEn", mysql=mysql)
         if categories and not (direct_id or direct_sku):
-            clauses.append("first_category IN (" + ",".join("?" for _ in categories) + ")")
+            clauses.append("first_category IN (" + ",".join(ph for _ in categories) + ")")
             args.extend(categories)
         if direct_id:
-            clauses.append("(pid = ? COLLATE NOCASE OR EXISTS (SELECT 1 FROM json_each(products.detail_json, '$.variants') v "
-                           "WHERE json_extract(v.value, '$.vid') = ? COLLATE NOCASE))")
+            # MySQL 目标表是 *_ci 排序规则，等值比较天然不区分大小写，故不写 COLLATE NOCASE。
+            pid_compare = f"pid = {ph}" if mysql else f"pid = {ph} COLLATE NOCASE"
+            clauses.append(f"({pid_compare} OR "
+                           f"{_variant_match('products.detail_json', '$.vid', mysql=mysql, lower=False)})")
             args.extend((direct_id, direct_id))
         elif direct_sku:
-            clauses.append("(lower(json_extract(list_json, '$.sku')) = lower(?) OR "
-                           "EXISTS (SELECT 1 FROM json_each(products.detail_json, '$.variants') v "
-                           "WHERE lower(json_extract(v.value, '$.variantSku')) = lower(?)))")
+            clauses.append(f"(lower({_json_text('list_json', '$.sku', mysql=mysql)}) = lower({ph}) OR "
+                           f"{_variant_match('products.detail_json', '$.variantSku', mysql=mysql, lower=True)})")
             args.extend((direct_sku, direct_sku))
         elif terms:
-            clauses.append("(" + " OR ".join("lower(json_extract(list_json, '$.nameEn')) LIKE ?" for _ in terms) + ")")
+            clauses.append("(" + " OR ".join(f"lower({name_en}) LIKE {ph}" for _ in terms) + ")")
             args.extend(f"%{term}%" for term in terms)
         elif query.strip():
-            clauses.append("lower(json_extract(list_json, '$.nameEn')) LIKE ?")
+            clauses.append(f"lower({name_en}) LIKE {ph}")
             args.append(f"%{query.strip().lower()}%")
         where = " WHERE " + " AND ".join(clauses) if clauses else ""
         order_args: list[object] = []
         if terms:
-            weights = " + ".join("(CASE WHEN lower(json_extract(list_json, '$.nameEn')) LIKE ? THEN ? ELSE 0 END)" for _ in terms)
+            weights = " + ".join(f"(CASE WHEN lower({name_en}) LIKE {ph} THEN {ph} ELSE 0 END)" for _ in terms)
             order = f"({weights}) DESC, list_fetched_at DESC, pid DESC"
             for term in terms:
                 order_args.extend((f"%{term}%", len(term)))
@@ -272,11 +331,14 @@ class CJCatalog:
             # time would fill the first storefront page with one category.
             order = "pid DESC" if not category else "list_fetched_at DESC, pid DESC"
         with closing(self._db()) as db:
-            total = db.execute("SELECT count(*) FROM products" + where, args).fetchone()[0]
-            rows = db.execute("SELECT * FROM products" + where + " ORDER BY " + order + " LIMIT ? OFFSET ?", [*args, *order_args, page_size, (page - 1) * page_size]).fetchall()
-            all_count = db.execute("SELECT count(*) FROM products").fetchone()[0]
-            detailed = db.execute("SELECT count(*) FROM products WHERE detail_json IS NOT NULL").fetchone()[0]
-            inventory = db.execute("SELECT count(*) FROM products WHERE inventory_json IS NOT NULL").fetchone()[0]
+            total = _scalar(db.execute("SELECT count(*) FROM products" + where, self._params(args)))
+            rows = db.execute(
+                "SELECT * FROM products" + where + " ORDER BY " + order + f" LIMIT {ph} OFFSET {ph}",
+                self._params([*args, *order_args, page_size, (page - 1) * page_size]),
+            ).fetchall()
+            all_count = _scalar(db.execute("SELECT count(*) FROM products"))
+            detailed = _scalar(db.execute("SELECT count(*) FROM products WHERE detail_json IS NOT NULL"))
+            inventory = _scalar(db.execute("SELECT count(*) FROM products WHERE inventory_json IS NOT NULL"))
         return {
             "source": "cj", "total": total, "all_count": all_count,
             "detail_count": detailed, "inventory_count": inventory,
@@ -296,9 +358,9 @@ class CJCatalog:
         found = self._rows_by_ids(selected)
         rows = [found[pid] for pid in selected if pid in found]
         with closing(self._db()) as db:
-            all_count = db.execute("SELECT count(*) FROM products").fetchone()[0]
-            detailed = db.execute("SELECT count(*) FROM products WHERE detail_json IS NOT NULL").fetchone()[0]
-            inventory = db.execute("SELECT count(*) FROM products WHERE inventory_json IS NOT NULL").fetchone()[0]
+            all_count = _scalar(db.execute("SELECT count(*) FROM products"))
+            detailed = _scalar(db.execute("SELECT count(*) FROM products WHERE detail_json IS NOT NULL"))
+            inventory = _scalar(db.execute("SELECT count(*) FROM products WHERE inventory_json IS NOT NULL"))
         return {
             "source": "cj", "total": len(ranked_ids), "all_count": all_count,
             "detail_count": detailed, "inventory_count": inventory,
@@ -307,7 +369,12 @@ class CJCatalog:
             "products": self._localized_cards(rows),
         }
 
-    async def browse(self, query: str = "", category: str = "", page: int = 1, page_size: int = 24) -> dict:
+    async def browse(self, query: str = "", category: str = "", page: int = 1, page_size: int = 24,
+                     platform: str = "") -> dict:
+        if platform not in {"", "cj"}:
+            return {"source": "cj", "total": 0, "all_count": 0, "detail_count": 0,
+                    "inventory_count": 0, "page": page, "page_size": page_size,
+                    "categories": [], "products": []}
         return await asyncio.to_thread(self._browse, query, category, page, page_size)
 
     async def cards_by_ids(self, product_ids: list[str]) -> list[dict]:
@@ -387,12 +454,12 @@ class CJCatalog:
     def _rows_by_ids(self, product_ids: list[str]) -> dict[str, sqlite3.Row]:
         if not product_ids:
             return {}
-        placeholders = ",".join("?" for _ in product_ids)
+        placeholders = ",".join(self._ph for _ in product_ids)
         with closing(self._db()) as db:
             rows = db.execute(f"SELECT * FROM products WHERE pid IN ({placeholders})", product_ids).fetchall()
         return {str(row["pid"]): row for row in rows}
 
-    async def _hybrid_search(self, spec: ProductSearchSpec) -> dict:
+    async def _hybrid_search(self, spec: ProductSearchSpec, *, allow_rerank: bool = True) -> dict:
         if not self.vector_available or self.embedder is None or self.vector_index is None:
             raise CJSearchUnavailable("CJ 商品检索暂不可用，请稍后重试")
         await self.list_all()
@@ -428,9 +495,11 @@ class CJCatalog:
             for score, document in fused
         ]
         rescored.sort(key=lambda item: (-item[0], item[1].product_id))
-        strategy = "cj_qdrant_rrf" if english_query else "cj_qdrant_dense"
+        recall_mode = getattr(self.vector_index, "recall_mode", "dense_bm25")
+        uses_bm25 = bool(english_query) and recall_mode == "dense_bm25"
+        strategy = "cj_qdrant_rrf" if uses_bm25 else "cj_qdrant_dense"
         rerank_applied = False
-        if self.reranker is not None and rescored:
+        if allow_rerank and self.reranker is not None and rescored:
             try:
                 scores = await asyncio.wait_for(
                     self.reranker.rerank(raw_query, [document.searchable_text() for _, document in rescored]),
@@ -470,16 +539,21 @@ class CJCatalog:
             "hits": cards,
             "total_candidates": len(rescored),
             "recall_strategy": strategy,
-            "retrieval_variant": "cj_qdrant_dense_bm25_rrf_v2",
+            "retrieval_variant": "cj_qdrant_dense_bm25_rrf_v2" if uses_bm25 else "cj_qdrant_dense_rrf_v1",
+            "recall_mode": recall_mode,
             "vector_available": True,
             "category_mode": "rerank" if rerank_applied else "soft_boost",
-            "query_variants": {"dense": dense_texts, "bm25": english_query},
+            "query_variants": {"dense": dense_texts, "bm25": english_query if uses_bm25 else ""},
             "rerank_applied": rerank_applied,
-            "data_scope": "CJ 快照混合检索；USD 列表参考价。库存、目的地配送、运费、税费和最终到手价未实时核验，不能当作已满足的筛选条件。",
+            "data_scope": ("CJ 快照混合检索" if uses_bm25 else "CJ 快照稠密向量检索（未启用 BM25）") + "；USD 列表参考价。库存、目的地配送、运费、税费和最终到手价未实时核验，不能当作已满足的筛选条件。",
             "filtered_out": [],
         }
 
-    async def execute(self, spec: ProductSearchSpec) -> dict:
+    async def recall(self, spec: ProductSearchSpec) -> dict:
+        """Federated recall leaves ranking to the caller without mutating this adapter."""
+        return await self.execute(spec, allow_rerank=False)
+
+    async def execute(self, spec: ProductSearchSpec, *, allow_rerank: bool = True) -> dict:
         # Unknown shipping, material and currency conversions are reported as
         # unknown by the decision layer; they must not be used as hard filters.
         exact = spec.normalized_query.strip()
@@ -495,7 +569,7 @@ class CJCatalog:
         )
         if self.hybrid_enabled and not (direct_identifier or opaque_identifier):
             try:
-                return await self._hybrid_search(spec)
+                return await self._hybrid_search(spec, allow_rerank=allow_rerank)
             except CJSearchUnavailable:
                 # Only an actual product ID/SKU can be recovered by exact lookup.
                 # A free-text outage must remain an error, never a false "no products".

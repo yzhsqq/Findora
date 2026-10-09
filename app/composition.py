@@ -140,11 +140,11 @@ class Container:
             await self.context_service.startup()
         if self.ag_ui_runtime is not None:
             await self.ag_ui_runtime.startup()
-        if self.db_engine is not None and (self.trade_store is None or self.db_engine is not self.trade_db_engine):
+        if self.trade_db_engine is not None:
             try:
-                await bootstrap_schema(self.db_engine)
+                await bootstrap_schema(self.trade_db_engine)
             except Exception as err:  # noqa: BLE001
-                logger.warning("数据库建表失败，持久化能力不可用：%s", err)
+                logger.warning("数据库迁移失败，持久化能力不可用：%s", err)
         # 交易账本不可降级到内存：持久化失败时拒绝启动，避免返回虚假成功。
         if self.trade_store is not None:
             await self.trade_store.initialize_inventory(await self.product_repo.list_all())
@@ -162,7 +162,8 @@ class Container:
                     batch_size=1000,
                 )
                 self.catalog_search.set_vector_available(index_ready)
-                self.runtime["product_index"] = "ready" if index_ready else "bm25_only"
+                self.runtime["product_index"] = "ready" if index_ready else "unavailable"
+                self.runtime["product_recall_mode"] = self.vector_index.recall_mode if index_ready else "unavailable"
                 # Every non-CJ snapshot owns its own collection and is synced here.
                 for name, catalog in getattr(self.catalog_search, "extra_sources", list)():
                     if catalog.vector_index is None:
@@ -290,6 +291,12 @@ async def build_container() -> Container:
             raise RuntimeError("检测到旧 orders.json，请先核对并迁移至交易账本，不能忽略历史订单后启动")
     # file 模式只影响会话和偏好；交易仍使用持久 SQLite 原子账本。
     trade_db_engine = db_engine or create_engine(f"sqlite+aiosqlite:///{settings.data_dir / 'trade.db'}")
+    # 运行日志：SQLite 下沿用独立的 ag_ui_runs.db（高频事件写与会话状态隔离，减少锁竞争）；
+    # 切到服务型数据库后行锁足够细，与会话同库，DATABASE_URL 一处决定形态。
+    if db_engine is not None and db_engine.dialect.name != "sqlite":
+        journal_engine = db_engine
+    else:
+        journal_engine = create_engine(f"sqlite+aiosqlite:///{settings.data_dir / 'ag_ui_runs.db'}")
     trade_store = SqlTradeStore(trade_db_engine)
     confirmations = ConfirmationService(product_repo, trade_store, bus=bus)
 
@@ -329,6 +336,7 @@ async def build_container() -> Container:
     cj_localization = (CJLocalization(settings.data_dir / "cj_localization.sqlite3")
                        if settings.catalog_source == "cj" else None)
     catalog_search = (CJCatalog(cj_catalog_path,
+                                mysql_dsn=settings.cj_mysql_dsn,
                                 experimental_lexicon=settings.cj_experimental_lexicon,
                                 embedder=embedder, vector_index=vector_index,
                                 reranker=None if (settings.amazon_catalog_path or settings.ebay_catalog_path) else reranker,
@@ -346,10 +354,12 @@ async def build_container() -> Container:
         # no marketplace snapshot reranks on its own.
         catalog_search = MultiPlatformCatalog(
             catalog_search,
-            AmazonCatalog(settings.amazon_catalog_path, embedder=embedder, vector_index=amazon_vector_index,
+            AmazonCatalog(settings.amazon_catalog_path, mysql_dsn=settings.amazon_mysql_dsn,
+                          embedder=embedder, vector_index=amazon_vector_index,
                           hybrid_enabled=settings.hybrid_recall_enabled) if settings.amazon_catalog_path else None,
             reranker,
-            EbayCatalog(settings.ebay_catalog_path, embedder=embedder, vector_index=ebay_vector_index,
+            EbayCatalog(settings.ebay_catalog_path, mysql_dsn=settings.ebay_mysql_dsn,
+                        embedder=embedder, vector_index=ebay_vector_index,
                         hybrid_enabled=settings.hybrid_recall_enabled) if settings.ebay_catalog_path else None,
         )
     cj_live_quote = (CJLiveQuoteService.from_snapshot(
@@ -423,7 +433,7 @@ async def build_container() -> Container:
                  "cj_experimental_lexicon": settings.cj_experimental_lexicon,
                  "hybrid_recall_enabled": settings.hybrid_recall_enabled,
                  "product_vector_collection": vector_collection},
-        ag_ui_runtime=AGUIRuntime(AGUIJournal(settings.data_dir / "ag_ui_runs.db"), orchestrator, confirmations),
+        ag_ui_runtime=AGUIRuntime(AGUIJournal(journal_engine), orchestrator, confirmations),
         session_store=session_store,
         identity_policy=identity_policy,
         prompt_registry=prompt_registry,

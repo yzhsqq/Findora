@@ -1,6 +1,7 @@
 """Contract checks for CJ snapshot presentation, without network calls."""
 import json
 import sqlite3
+from types import SimpleNamespace
 
 import pytest
 
@@ -8,6 +9,8 @@ from app.application.usecases.shopping_decision import build_decision_report
 from app.domain.catalog.ports.retrieval_ports import EmbeddingClient, ProductVectorIndex, VectorHit
 from app.domain.catalog.product_search_spec import ProductSearchSpec
 from app.infrastructure.persistence.cj_catalog import CJCatalog
+from app.infrastructure.vector.index_bootstrap import bootstrap_product_index
+from app.infrastructure.vector.qdrant_product_index import QdrantProductIndex
 
 
 class _Embedding(EmbeddingClient):
@@ -20,6 +23,30 @@ class _Embedding(EmbeddingClient):
     async def embed_batch(self, texts: list[str]) -> list[list[float]]:
         self.texts.extend(texts)
         return [[1.0, 0.0] for _ in texts]
+
+
+@pytest.mark.asyncio
+async def test_real_local_index_bootstrap_and_cj_search_report_dense_capability(tmp_path):
+    path = tmp_path / "cj.sqlite3"
+    with sqlite3.connect(path) as db:
+        db.execute("""CREATE TABLE products(pid TEXT PRIMARY KEY,first_category TEXT,second_category TEXT,
+            third_category TEXT,list_json TEXT,list_fetched_at TEXT,detail_json TEXT,detail_fetched_at TEXT,
+            inventory_json TEXT,inventory_fetched_at TEXT)""")
+        db.execute("INSERT INTO products VALUES(?,?,?,?,?,?,?,?,?,?)", (
+            "2507170748351600701", "Pet Supplies", "Dogs", "Toys",
+            json.dumps({"nameEn": "Dog toy", "sellPrice": "4"}), "2026-10-08", None, None, None, None))
+    index = QdrantProductIndex(SimpleNamespace(qdrant_url="", qdrant_collection="test", data_dir=tmp_path))
+    catalog = CJCatalog(path, embedder=_Embedding(), vector_index=index, hybrid_enabled=True)
+    try:
+        ready = await bootstrap_product_index(catalog, catalog.embedder, index, "fake", 2)
+        assert ready
+        catalog.set_vector_available(ready)
+        result = await catalog.execute(ProductSearchSpec("dog toy", raw_query="狗玩具"))
+        assert result["hits"][0]["product_id"] == "2507170748351600701"
+        assert result["recall_mode"] == "dense_only" and result["query_variants"]["bm25"] == ""
+        assert result["recall_strategy"] == "cj_qdrant_dense"
+    finally:
+        await index.close()
 
 
 class _VectorIndex(ProductVectorIndex):

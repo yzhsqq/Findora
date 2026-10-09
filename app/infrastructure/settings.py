@@ -35,6 +35,20 @@ def _load_environment(path: Path) -> None:
 _load_environment(PROJECT_ROOT / ".env")
 
 
+def _database_url(data_dir: Path) -> str:
+    explicit = os.getenv("DATABASE_URL") or os.getenv("MYSQL_URL")
+    if explicit:
+        return explicit
+    legacy, current = data_dir / "globex.db", data_dir / "findora.db"
+    if legacy.exists() and current.exists():
+        raise RuntimeError(
+            "数据目录同时存在 globex.db 和 findora.db；请设置 DATABASE_URL "
+            "明确选择已有数据库，停止服务并备份后再执行迁移。"
+        )
+    selected = legacy if legacy.exists() else current
+    return f"sqlite+aiosqlite:///{selected}"
+
+
 @dataclass(frozen=True)
 class Settings:
     llm_base_url: str
@@ -127,6 +141,11 @@ class Settings:
     amazon_catalog_path: Path | None = None  # 与 CJ 并行的美国站快照；空值关闭
     ebay_catalog_path: Path | None = None  # 与 CJ 并行的 eBay 美国站快照；空值关闭
     cj_experimental_lexicon: bool = False  # 上轮未发布词典，仅显式实验时开启
+    # 快照目录数据源：非空时读 MySQL，空时读本地 SQLite。本地化派生库（含 FTS5）
+    # 不受此控制，仍走本地 SQLite，按需由 localize 脚本再生。
+    cj_mysql_dsn: str | None = None
+    amazon_mysql_dsn: str | None = None
+    ebay_mysql_dsn: str | None = None
 
 
 def load_settings() -> Settings:
@@ -153,6 +172,9 @@ def load_settings() -> Settings:
         amazon_catalog_path=Path(os.environ["AMAZON_CATALOG_PATH"]) if os.getenv("AMAZON_CATALOG_PATH") else None,
         ebay_catalog_path=Path(os.environ["EBAY_CATALOG_PATH"]) if os.getenv("EBAY_CATALOG_PATH") else None,
         cj_experimental_lexicon=os.getenv("CJ_EXPERIMENTAL_LEXICON", "0") in ("1", "true", "True"),
+        cj_mysql_dsn=os.getenv("CJ_MYSQL_DSN") or None,
+        amazon_mysql_dsn=os.getenv("AMAZON_MYSQL_DSN") or None,
+        ebay_mysql_dsn=os.getenv("EBAY_MYSQL_DSN") or None,
         port=int(os.getenv("PORT", "8000")),
         log_level=os.getenv("LOG_LEVEL", "info"),
         # embedding 默认复用 LLM 网关（OpenAI 兼容 /v1/embeddings）
@@ -187,11 +209,7 @@ def load_settings() -> Settings:
         llm_min_interval_seconds=float(os.getenv("LLM_MIN_INTERVAL_SECONDS", "1.0")),
         llm_max_retries=int(os.getenv("LLM_MAX_RETRIES", "2")),
         # 兼容早期变量名 MYSQL_URL；两者都没配时默认本地 SQLite
-        database_url=(
-            os.getenv("DATABASE_URL")
-            or os.getenv("MYSQL_URL")
-            or f"sqlite+aiosqlite:///{data_dir / 'findora.db'}"
-        ),
+        database_url=_database_url(data_dir),
         redis_url=os.getenv("REDIS_URL", ""),
         semantic_cache_enabled=os.getenv("SEMANTIC_CACHE_ENABLED", "1") not in ("0", "false", "False"),
         semantic_cache_threshold=float(os.getenv("SEMANTIC_CACHE_THRESHOLD", "0.95")),

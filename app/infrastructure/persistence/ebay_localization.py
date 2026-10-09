@@ -1,12 +1,8 @@
-"""Chinese presentation of eBay snapshots; prices and identities stay unchanged."""
-from __future__ import annotations
-
-from contextlib import closing
-from copy import deepcopy
-import hashlib
-import json
+"""ebay localization parameters; shared projection preserves platform facts."""
 from pathlib import Path
-import sqlite3
+from app.infrastructure.persistence.snapshot_localization import (
+    LANGUAGE_FIELDS, SnapshotLocalization, init_db, snapshot_fingerprint,
+)
 
 VERSION = "ebay-zh-v1"
 CATEGORY_ZH = {"Toys & Hobbies": "玩具与爱好", "Collectibles & Art": "收藏品与艺术",
@@ -23,59 +19,12 @@ CATEGORY_ZH = {"Toys & Hobbies": "玩具与爱好", "Collectibles & Art": "收�
                "Sports Memorabilia": "体育纪念品", "Dolls & Bears": "娃娃与毛绒",
                "Pottery & Glass": "陶瓷玻璃", "Travel": "旅行",
                "Everything Else": "其他", "Home Audio": "家用音响", "未分类": "未分类"}
-LANGUAGE_FIELDS = ("title", "image_alt", "category", "description", "highlights", "price_conditions",
-                   "source_title", "source_category", "source_description", "source_highlights", "source_price_conditions")
 
 
 def fingerprint(card: dict) -> str:
-    inputs = [VERSION, card["title"], card["brand"], card["category"],
-              card.get("description", ""), card["highlights"]]
-    return hashlib.sha256(json.dumps(inputs, ensure_ascii=False).encode()).hexdigest()
+    return snapshot_fingerprint(card, VERSION)
 
 
-def init_db(db: sqlite3.Connection) -> None:
-    db.executescript("""
-        CREATE TABLE IF NOT EXISTS localized_products (
-            product_id TEXT PRIMARY KEY, fingerprint TEXT NOT NULL, payload TEXT NOT NULL
-        );
-        CREATE TABLE IF NOT EXISTS localized_strings (
-            kind TEXT NOT NULL, source TEXT NOT NULL, translated TEXT NOT NULL,
-            PRIMARY KEY(kind, source)
-        );
-    """)
-
-
-class EbayLocalization:
+class EbayLocalization(SnapshotLocalization):
     def __init__(self, path: Path):
-        self.path = path.resolve()
-
-    def project(self, cards: list[dict]) -> list[dict]:
-        if not cards:
-            return []
-        products, strings = {}, {}
-        if self.path.is_file():
-            with closing(sqlite3.connect(self.path.as_uri() + "?mode=ro", uri=True)) as db:
-                products = {pid: (digest, json.loads(payload)) for pid, digest, payload in db.execute(
-                    "SELECT product_id,fingerprint,payload FROM localized_products")}
-                strings = {(kind, source): translated for kind, source, translated in db.execute(
-                    "SELECT kind,source,translated FROM localized_strings")}
-        result = []
-        for source in cards:
-            card = deepcopy(source)
-            card["source_category"] = source["category"]
-            card["category"] = CATEGORY_ZH.get(source["category"], source["category"])
-            row = products.get(source["product_id"])
-            if row and row[0] == fingerprint(source):
-                localized = row[1]
-                card.update(source_title=source["title"], source_description=source.get("description", ""),
-                            source_highlights=source["highlights"], title=localized["title"],
-                            image_alt=localized["title"], description=localized["description"],
-                            highlights=localized["highlights"])
-            for sku in card["skus"]:
-                translated = strings.get(("spec", sku["spec"]))
-                if translated:
-                    sku["source_spec"], sku["spec"] = sku["spec"], translated
-            card["source_price_conditions"] = source.get("price_conditions", [])
-            card["price_conditions"] = [strings.get(("condition", text), text) for text in card["source_price_conditions"]]
-            result.append(card)
-        return result
+        super().__init__(path, categories=CATEGORY_ZH, fingerprint=fingerprint)

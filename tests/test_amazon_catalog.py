@@ -60,6 +60,24 @@ def test_normalization_keeps_unknowns_and_variant_price_scope():
     assert "Prime Big Deal" in card["price_conditions"][0]
 
 
+@pytest.mark.asyncio
+async def test_capabilities_do_not_depend_on_readable_snapshot_and_cj_filters_other_platforms(catalogs):
+    cj, amazon = catalogs
+    api = FastAPI()
+    current = [cj]
+    register_catalog_routes(api, lambda: current[0])
+    async with AsyncClient(transport=ASGITransport(app=api), base_url="http://test") as client:
+        for platform in ("amazon", "ebay"):
+            response = await client.get("/commerce/catalog", params={"platform": platform})
+            assert response.status_code == 200 and response.json()["products"] == []
+        assert (await client.get("/commerce/catalog", params={"platform": "cj"})).json()["total"] == 3
+        current[0] = MultiPlatformCatalog(cj, amazon)
+        cj.path.unlink()
+        response = await client.get("/commerce/catalog/capabilities")
+        assert response.json() == {"source": "multi", "platforms": ["cj", "amazon"],
+                                   "local_orders": False, "purchase_records": True, "cj_quote": False}
+
+
 def test_missing_price_remains_unknown_and_does_not_borrow_another_variant_price():
     card = normalize(record(final_price=None))
     assert card["price_kind"] == "unknown" and card["price_text"] == "报价待核实"
