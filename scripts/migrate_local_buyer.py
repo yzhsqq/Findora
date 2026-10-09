@@ -4,7 +4,7 @@ from pathlib import Path
 from datetime import datetime,timezone
 
 # globex.db 是改名前的旧文件名：老数据目录里可能仍然是它，两个名字都要迁移。
-FILES=['findora.db','globex.db','ag_ui_runs.db','buyer_memory.db','buyer_skills.db','context_evidence.db','capabilities.db','prompts/registry.sqlite3','buyer_favorites.db']
+FILES=['findora.db','globex.db','ag_ui_runs.db','buyer_memory.db','buyer_skills.db','context_evidence.db','capabilities.db','prompts/registry.sqlite3','buyer_favorites.db','purchase_records.sqlite3','trade.db']
 def quoted(value):return '"'+value.replace('"','""')+'"'
 def convert(value,source,target):
     if isinstance(value,dict):return {k:convert(v,source,target) for k,v in value.items()}
@@ -14,6 +14,9 @@ def convert(value,source,target):
 def migrate(data,source,target):
     if source==target:raise ValueError('源用户不能与目标相同')
     paths=[data/f for f in FILES if (data/f).exists()]
+    with sqlite3.connect(':memory:') as check:
+        if len(paths)>check.getlimit(sqlite3.SQLITE_LIMIT_ATTACHED):
+            raise ValueError('数据库数量超过 SQLite 附加上限；请先明确权威库与归档安排，未修改数据')
     backup=data/'backups'/('buyer-migration-'+datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ'))
     backup.mkdir(parents=True)
     for path in paths:
@@ -36,7 +39,7 @@ def migrate(data,source,target):
                     if count:report['tables'][p.name+'/'+table]=count
                 # 消息中的可信 name、嵌套买家字段需一起更新；不替换自然语言正文的子串。
                 for col in cols:
-                    if col not in ('state_json','input_json','projection_json','messages_json','payload','result'):continue
+                    if col not in ('state_json','input_json','projection_json','messages_json','payload','result','snapshot'):continue
                     for rowid,raw in db.execute(f'SELECT rowid,{quoted(col)} FROM {full} WHERE {quoted(col)} LIKE ?',('%'+source+'%',)).fetchall():
                         try:parsed=json.loads(raw)
                         except (ValueError,TypeError):continue
@@ -58,7 +61,7 @@ def migrate(data,source,target):
     except BaseException:
         db.rollback();raise
     finally:db.close()
-    (backup/'migration.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
+    (backup/'migration.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
     return report
 
 if __name__=='__main__':
